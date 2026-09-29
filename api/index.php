@@ -41,6 +41,7 @@ function config(): array
         'name' => getenv('DB_DATABASE') ?: ($values['DB_NAME'] ?? ''),
         'user' => getenv('DB_USERNAME') ?: ($values['DB_USER'] ?? ''),
         'pass' => getenv('DB_PASSWORD') ?: ($values['DB_PASS'] ?? ''),
+        'import_key' => getenv('OFTAPLUS_IMPORT_KEY') ?: ($values['IMPORT_KEY'] ?? ''),
     ];
 }
 
@@ -128,6 +129,46 @@ try {
         $like = '%' . $q . '%';
         $statement->execute([$like, $like, $like]);
         respond(['ok' => true, 'items' => $statement->fetchAll()]);
+    }
+
+    if ($method === 'POST' && $path === '/customers/import') {
+        $cfg = config();
+        $providedKey = (string) ($_SERVER['HTTP_X_IMPORT_KEY'] ?? '');
+        if ($cfg['import_key'] === '' || !hash_equals($cfg['import_key'], $providedKey)) {
+            fail('No autorizado.', 401);
+        }
+        $input = body();
+        $items = is_array($input['items'] ?? null) ? $input['items'] : [];
+        if (count($items) > 10000) fail('El lote supera el límite permitido.', 422);
+        $company = tenant($pdo);
+        $statement = $pdo->prepare('INSERT INTO customers (company_id, code, name, customer_type, tax_id, email, phone, address, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), customer_type = VALUES(customer_type), tax_id = VALUES(tax_id), email = VALUES(email), phone = VALUES(phone), address = VALUES(address), active = VALUES(active), updated_at = CURRENT_TIMESTAMP');
+        $imported = 0;
+        $pdo->beginTransaction();
+        try {
+            foreach ($items as $item) {
+                if (!is_array($item)) continue;
+                $code = trim((string) ($item['code'] ?? ''));
+                $name = trim((string) ($item['name'] ?? ''));
+                if ($code === '' || $name === '') continue;
+                $statement->execute([
+                    (int) $company['id'],
+                    substr($code, 0, 50),
+                    substr($name, 0, 180),
+                    'person',
+                    ($item['tax_id'] ?? null) !== null ? substr(trim((string) $item['tax_id']), 0, 40) : null,
+                    ($item['email'] ?? null) !== null ? substr(trim((string) $item['email']), 0, 190) : null,
+                    ($item['phone'] ?? null) !== null ? substr(trim((string) $item['phone']), 0, 50) : null,
+                    ($item['address'] ?? null) !== null ? substr(trim((string) $item['address']), 0, 255) : null,
+                    !empty($item['active']) ? 1 : 0,
+                ]);
+                $imported++;
+            }
+            $pdo->commit();
+        } catch (Throwable $error) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $error;
+        }
+        respond(['ok' => true, 'imported' => $imported], 201);
     }
 
     if ($method === 'POST' && $path === '/documents/draft') {
