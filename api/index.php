@@ -124,10 +124,14 @@ try {
     if ($method === 'GET' && $path === '/customers') {
         $q = trim((string) ($_GET['q'] ?? ''));
         $limit = min(max((int) ($_GET['limit'] ?? 20), 1), 50);
-        $statement = $pdo->prepare('SELECT id, code, name, email, phone FROM customers WHERE active = 1 AND (name LIKE ? OR code LIKE ? OR email LIKE ?) ORDER BY name LIMIT ' . $limit);
+        $offset = min(max((int) ($_GET['offset'] ?? 0), 0), 1000000);
+        $where = 'FROM customers WHERE active = 1 AND (name LIKE ? OR code LIKE ? OR email LIKE ?)';
         $like = '%' . $q . '%';
+        $countStatement = $pdo->prepare('SELECT COUNT(*) ' . $where);
+        $countStatement->execute([$like, $like, $like]);
+        $statement = $pdo->prepare('SELECT id, code, name, email, phone ' . $where . ' ORDER BY name LIMIT ' . $limit . ' OFFSET ' . $offset);
         $statement->execute([$like, $like, $like]);
-        respond(['ok' => true, 'items' => $statement->fetchAll()]);
+        respond(['ok' => true, 'items' => $statement->fetchAll(), 'total' => (int) $countStatement->fetchColumn()]);
     }
 
     if ($method === 'POST' && $path === '/documents/draft') {
