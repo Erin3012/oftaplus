@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Réplica visual estática de Oftaplus" />
+    <title>Oftaplus · Dashboard</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand"><a class="brand" href="#dashboard" aria-label="Oftaplus inicio"><span class="brand-mark" aria-hidden="true"><i></i><b></b><em></em></span><span class="brand-name">Oftaplus</span></a><button class="icon-button sidebar-close" id="sidebar-close" aria-label="Cerrar menú">×</button></div>
+        <div class="workspace-switcher"><span class="workspace-dot"></span><span><strong>Oftaplus</strong><small>Empresa activa</small></span><span class="chevron">⌄</span></div>
+        <nav class="main-nav" aria-label="Navegación principal">
+          <a class="nav-item is-active" href="#dashboard" data-route="dashboard"><span class="nav-icon">⌂</span>General</a>
+          <button class="nav-group is-open" type="button" data-group="Ingresos"><span class="nav-icon">↗</span><span>Ingresos</span><span class="group-chevron">⌃</span></button>
+          <div class="nav-children is-open" data-children="Ingresos"><a href="#boletas" data-route="boletas">Boletas</a><a href="#guias-emitidas" data-route="guias-emitidas">Guías emitidas</a><a href="#facturas-emitidas" data-route="facturas-emitidas">Facturas emitidas</a><a href="#cobros" data-route="cobros">Cobros</a><a href="#pedidos-clientes" data-route="pedidos-clientes">Pedidos de clientes</a><a href="#clientes" data-route="clientes">Clientes</a><a href="#informes-ventas" data-route="informes-ventas">Informes</a></div>
+          <button class="nav-group" type="button" data-group="Gastos"><span class="nav-icon">↙</span><span>Gastos</span><span class="group-chevron">⌄</span></button>
+          <div class="nav-children" data-children="Gastos"><a href="#guias-recibidas" data-route="guias-recibidas">Guías recibidas</a><a href="#pagos" data-route="pagos">Pagos</a></div>
+          <button class="nav-group" type="button" data-group="CRM"><span class="nav-icon">◎</span><span>CRM</span><span class="group-chevron">⌄</span></button>
+          <div class="nav-children" data-children="CRM"><a href="#crm-envio" data-route="crm-envio">Envío</a><a href="#crm-dashboard" data-route="crm-dashboard">Dashboard</a><a href="#crm-historico-sms" data-route="crm-historico-sms">Histórico SMS</a><a href="#crm-plantillas" data-route="crm-plantillas">Plantillas SMS</a><a href="#crm-ajustes" data-route="crm-ajustes">Ajustes</a></div>
+          <a class="nav-item" href="#analisis" data-route="analisis"><span class="nav-icon">▥</span>Análisis <span class="new-pill">New</span></a>
+        </nav>
+        <div class="sidebar-footer"><a href="#ayuda"><span>?</span> Centro de ayuda</a><a href="#soporte"><span>◌</span> Soporte</a><small>Oftaplus 6.3.244</small></div>
+      </aside>
+      <div class="app-main">
+        <header class="topbar"><button class="icon-button menu-toggle" id="menu-toggle" aria-label="Abrir menú">☰</button><div class="topbar-context"><span class="eyebrow">Empresa activa</span><strong>Oftaplus</strong></div><div class="topbar-actions"><button class="top-action js-notify" type="button" data-message="Nuevo documento disponible en la siguiente fase"><span>＋</span> Nuevo documento</button><button class="icon-button" type="button" aria-label="Configuración">⚙</button><button class="icon-button" type="button" aria-label="Notificaciones">♧<sup>2</sup></button><button class="user-menu" type="button"><span class="avatar">ER</span><span class="user-copy"><strong>Eric Roca Fernandez</strong><small>Administrador</small></span><span>⌄</span></button></div></header>
+        <main class="content" id="app-content" tabindex="-1"></main>
+      </div>
+    </div>
+    <div class="scrim" id="scrim"></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,374 @@
+{
+  "assets": [
+    {
+      "contentType": "text/css",
+      "id": "2332a7afa7e402e5",
+      "kind": "stylesheet",
+      "name": "theme.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/2332a7afa7e402e5.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/theme.css.xhtml?ln=primefaces-sentinelo&v=12.0.0&e=12.0.10"
+    },
+    {
+      "contentType": "text/css",
+      "id": "b79be0195e6f7e34",
+      "kind": "stylesheet",
+      "name": "primeicons.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/b79be0195e6f7e34.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/primeicons/primeicons.css.xhtml?ln=primefaces&v=12.0.0&e=12.0.10"
+    },
+    {
+      "contentType": "text/css",
+      "id": "34ea84902fbb5cfb",
+      "kind": "stylesheet",
+      "name": "grids-responsive-min.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/34ea84902fbb5cfb.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/grids-responsive-min.css.xhtml?ln=sentinel-layout"
+    },
+    {
+      "contentType": "text/css",
+      "id": "1f9b2afc48c8f040",
+      "kind": "stylesheet",
+      "name": "theme.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/1f9b2afc48c8f040.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/theme.css.xhtml?ln=css&v=6.3.244"
+    },
+    {
+      "contentType": "text/css",
+      "id": "617dcfcb394e76ea",
+      "kind": "stylesheet",
+      "name": "chat.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/617dcfcb394e76ea.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/chat.css.xhtml?ln=sentinel-layout&v=6.1.21"
+    },
+    {
+      "contentType": "text/css",
+      "id": "69e8c1c916dbb80f",
+      "kind": "stylesheet",
+      "name": "iconos-final2.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/69e8c1c916dbb80f.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/iconos-final2.css.xhtml?ln=sentinel-layout"
+    },
+    {
+      "contentType": "text/css",
+      "id": "49d7998bb419cff3",
+      "kind": "stylesheet",
+      "name": "tailwind.min.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/49d7998bb419cff3.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/tailwind.min.css.xhtml?ln=css&v=6.3.231"
+    },
+    {
+      "contentType": "text/css",
+      "id": "0564cab3c3a6f59c",
+      "kind": "stylesheet",
+      "name": "tailwind-fix.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/0564cab3c3a6f59c.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/tailwind-fix.css.xhtml?ln=css"
+    },
+    {
+      "contentType": "text/css",
+      "id": "4a629268c39cea75",
+      "kind": "stylesheet",
+      "name": "bibliotecaInformes.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/4a629268c39cea75.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/bibliotecaInformes.css.xhtml?ln=sentinel-layout&v=6.3.228"
+    },
+    {
+      "contentType": "text/css",
+      "id": "129f1303d060654b",
+      "kind": "stylesheet",
+      "name": "components.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/129f1303d060654b.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/components.css.xhtml?ln=primefaces&v=12.0.0&e=12.0.10"
+    },
+    {
+      "contentType": "text/css",
+      "id": "69fb8c65f3bcc3b8",
+      "kind": "stylesheet",
+      "name": "fileupload.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/69fb8c65f3bcc3b8.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/fileupload/fileupload.css.xhtml?ln=primefaces&v=12.0.0&e=12.0.10"
+    },
+    {
+      "contentType": "text/css",
+      "id": "b259be1c350be08d",
+      "kind": "stylesheet",
+      "name": "calendar.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/b259be1c350be08d.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/calendar/calendar.css.xhtml?ln=primefaces&v=12.0.0&e=12.0.10"
+    },
+    {
+      "contentType": "text/css",
+      "id": "5db8273c8cf54922",
+      "kind": "stylesheet",
+      "name": "suneditor.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/5db8273c8cf54922.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/suneditor/suneditor.css.xhtml?ln=primefaces-extensions&v=12.0.0&e=12.0.10"
+    },
+    {
+      "contentType": "text/css",
+      "id": "52367977faa69932",
+      "kind": "stylesheet",
+      "name": "inputnumber.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/52367977faa69932.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/inputnumber/inputnumber.css.xhtml?ln=primefaces&v=12.0.0&e=12.0.10"
+    },
+    {
+      "contentType": "text/css",
+      "id": "01c583c4a93e10d6",
+      "kind": "stylesheet",
+      "name": "signature.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/01c583c4a93e10d6.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/signature/signature.css.xhtml?ln=primefaces&v=12.0.0&e=12.0.10"
+    },
+    {
+      "contentType": "text/css",
+      "id": "6712794f3974a5ee",
+      "kind": "stylesheet",
+      "name": "font-icon-layout.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/6712794f3974a5ee.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/font-icon-layout.css.xhtml?ln=sentinel-layout"
+    },
+    {
+      "contentType": "text/css",
+      "id": "a7dbba225e0b757b",
+      "kind": "stylesheet",
+      "name": "siichile.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/a7dbba225e0b757b.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/siichile.css.xhtml?ln=sentinel-layout"
+    },
+    {
+      "contentType": "text/css",
+      "id": "582ec0bc9bf8a147",
+      "kind": "stylesheet",
+      "name": "webPos.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/582ec0bc9bf8a147.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/webPos.css.xhtml?ln=sentinel-layout"
+    },
+    {
+      "contentType": "text/css",
+      "id": "df23b9df5ca13fce",
+      "kind": "stylesheet",
+      "name": "siigo.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/df23b9df5ca13fce.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/siigo.css.xhtml?ln=sentinel-layout"
+    },
+    {
+      "contentType": "text/css",
+      "id": "ba58232a4929be31",
+      "kind": "stylesheet",
+      "name": "flaticon-1-7-7.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/ba58232a4929be31.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/flaticon-1-7-7.css.xhtml?ln=sentinel-layout&v=6.1.21"
+    },
+    {
+      "contentType": "text/css",
+      "id": "db1f76a413f37820",
+      "kind": "stylesheet",
+      "name": "gesmo-5-3-67.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/db1f76a413f37820.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/gesmo-5-3-67.css.xhtml?ln=sentinel-layout&v=6.1.200"
+    },
+    {
+      "contentType": "text/css",
+      "id": "7b1569bb1d628d69",
+      "kind": "stylesheet",
+      "name": "new-css-forms.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/7b1569bb1d628d69.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/new-css-forms.css.xhtml?ln=sentinel-layout&v=6.3.253"
+    },
+    {
+      "contentType": "text/css",
+      "id": "298c4b83c9dd68cc",
+      "kind": "stylesheet",
+      "name": "new-css-list.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/298c4b83c9dd68cc.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/new-css-list.css.xhtml?ln=sentinel-layout&v=6.3.194"
+    },
+    {
+      "contentType": "text/css",
+      "id": "3d5b75248ac68024",
+      "kind": "stylesheet",
+      "name": "boot.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/3d5b75248ac68024.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/boot.css.xhtml?ln=sentinel-layout"
+    },
+    {
+      "contentType": "text/css",
+      "id": "b4f0dbc55ecb0074",
+      "kind": "stylesheet",
+      "name": "bootstrap-grid.min.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/b4f0dbc55ecb0074.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/bootstrap-grid.min.css.xhtml?ln=sentinel-layout"
+    },
+    {
+      "contentType": "text/css",
+      "id": "2e65d351460463da",
+      "kind": "stylesheet",
+      "name": "def-layout-5-3-64.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/2e65d351460463da.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/def-layout-5-3-64.css.xhtml?ln=sentinel-layout&v=6.3.219"
+    },
+    {
+      "contentType": "text/css",
+      "id": "bd9d6080a09955b2",
+      "kind": "stylesheet",
+      "name": "gesmo2-5.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/bd9d6080a09955b2.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/gesmo2-5.css.xhtml?ln=sentinel-layout&v=6.1.21"
+    },
+    {
+      "contentType": "text/css",
+      "id": "ae63e74baa65e157",
+      "kind": "stylesheet",
+      "name": "inputs-5.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/ae63e74baa65e157.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/inputs-5.css.xhtml?ln=sentinel-layout&v=6.3.247"
+    },
+    {
+      "contentType": "text/css",
+      "id": "3d4cc3f1c2edb6c6",
+      "kind": "stylesheet",
+      "name": "menu-5-3-64.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/3d4cc3f1c2edb6c6.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/menu-5-3-64.css.xhtml?ln=sentinel-layout&v=6.1.21"
+    },
+    {
+      "contentType": "text/css",
+      "id": "39ba50c0e04d1b9f",
+      "kind": "stylesheet",
+      "name": "NewFile-4.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/39ba50c0e04d1b9f.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/NewFile-4.css.xhtml?ln=sentinel-layout&v=6.1.21"
+    },
+    {
+      "contentType": "text/css",
+      "id": "2584363ec310ba2c",
+      "kind": "stylesheet",
+      "name": "primeflex.min.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/2584363ec310ba2c.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/primeflex.min.css.xhtml?ln=sentinel-layout"
+    },
+    {
+      "contentType": "text/css",
+      "id": "4abff169a22b6965",
+      "kind": "stylesheet",
+      "name": "primeflex3.min.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/4abff169a22b6965.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/primeflex3.min.css.xhtml?ln=sentinel-layout&v=6.1.21"
+    },
+    {
+      "contentType": "text/css",
+      "id": "85828820583219fb",
+      "kind": "stylesheet",
+      "name": "list-5-3-16.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/85828820583219fb.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/list-5-3-16.css.xhtml?ln=sentinel-layout&v=6.1.21"
+    },
+    {
+      "contentType": "text/css",
+      "id": "9b08bc310876080f",
+      "kind": "stylesheet",
+      "name": "footer-toolbar-collapse.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/9b08bc310876080f.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/css/footer-toolbar-collapse.css.xhtml?ln=sentinel-layout&v=1.0.1"
+    },
+    {
+      "contentType": "text/css",
+      "id": "415414cd4c12f097",
+      "kind": "stylesheet",
+      "name": "inputswitch.css.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/415414cd4c12f097.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/inputswitch/inputswitch.css.xhtml?ln=primefaces&v=12.0.0&v=6.1.21&e=12.0.10"
+    },
+    {
+      "contentType": "text/css",
+      "id": "3d06bca57317a8eb",
+      "kind": "stylesheet",
+      "name": "css",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/3d06bca57317a8eb",
+      "url": "https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i"
+    },
+    {
+      "contentType": "text/css",
+      "id": "b60ef2f4c5ab2ce2",
+      "kind": "stylesheet",
+      "name": "ag-grid.css",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/b60ef2f4c5ab2ce2.css",
+      "url": "https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-grid.css"
+    },
+    {
+      "contentType": "text/css",
+      "id": "1931a7ab482bdedf",
+      "kind": "stylesheet",
+      "name": "ag-theme-alpine.css",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/1931a7ab482bdedf.css",
+      "url": "https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-alpine.css"
+    },
+    {
+      "contentType": "image/svg+xml",
+      "id": "59cbd0e2423f3570",
+      "kind": "image",
+      "name": "logo-gesvision.svg.xhtml",
+      "path": "C:\\Users\\local1\\AppData\\Local\\Temp/browser-use/assets/dcd7da29-17d0-417d-8dae-71a0beb219fc/59cbd0e2423f3570.xhtml",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/images/logo-gesvision.svg.xhtml?ln=sentinel-layout"
+    }
+  ],
+  "failures": [
+    {
+      "contentType": "application/x-font-woff2",
+      "id": "cd6828f8cf49af91",
+      "name": "primeicons.woff2.xhtml",
+      "reason": "Asset response type application/x-font-woff2 is not valid for stylesheet",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/primeicons/primeicons.woff2.xhtml?ln=primefaces&v=12.0.0&e=12.0.10"
+    },
+    {
+      "contentType": "application/font-sfnt",
+      "id": "844a4cdcc0dfce1d",
+      "name": "iconos.ttf.xhtml",
+      "reason": "Asset response type application/font-sfnt is not valid for stylesheet",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/fonts3/iconos.ttf.xhtml?ln=sentinel-layout&fhs1fm%27"
+    },
+    {
+      "contentType": "application/font-woff",
+      "id": "008d50c818058233",
+      "name": "sentinel.woff.xhtml",
+      "reason": "Asset response type application/font-woff is not valid for stylesheet",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/fonts/sentinel.woff.xhtml?ln=sentinel-layout&33675971"
+    },
+    {
+      "contentType": "application/font-sfnt",
+      "id": "999fcb38d8d2b948",
+      "name": "siigo.ttf.xhtml",
+      "reason": "Asset response type application/font-sfnt is not valid for stylesheet",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/fonts/siigo/siigo.ttf.xhtml?ln=sentinel-layout&7e0hdv"
+    },
+    {
+      "contentType": "application/font-woff",
+      "id": "f9965fdffa960185",
+      "name": "flaticon.woff.xhtml",
+      "reason": "Asset response type application/font-woff is not valid for stylesheet",
+      "url": "https://app.gesvision.com/gesmo/javax.faces.resource/fonts/flaticon.woff.xhtml?ln=sentinel-layout"
+    },
+    {
+      "contentType": null,
+      "id": "c97752dd1e648254",
+      "name": "KFO5CnqEu92Fr1Mu53ZEC9_Vu3r1gIhOszmkBnka.woff2",
+      "reason": "Loaded resource fetch failed: Asset bundling failed; page fetch failed: Browser Use encountered an error interacting with this webpage: TypeError: Failed to fetch\n    at FJ (<anonymous>:1:41)\n    at <anonymous>:1:354",
+      "url": "https://fonts.gstatic.com/s/roboto/v51/KFO5CnqEu92Fr1Mu53ZEC9_Vu3r1gIhOszmkBnka.woff2"
+    },
+    {
+      "contentType": null,
+      "id": "890de452eac592c6",
+      "name": "KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBA.woff2",
+      "reason": "Loaded resource fetch failed: Asset bundling failed; page fetch failed: Browser Use encountered an error interacting with this webpage: TypeError: Failed to fetch\n    at FJ (<anonymous>:1:41)\n    at <anonymous>:1:354",
+      "url": "https://fonts.gstatic.com/s/roboto/v51/KFO7CnqEu92Fr1ME7kSn66aGLdTylUAMa3yUBA.woff2"
+    },
+    {
+      "contentType": null,
+      "id": "ad8eaaee70875823",
+      "name": "calendar-bi.jpg",
+      "reason": "Loaded resource fetch failed: Asset bundling failed; page fetch failed: Browser Use encountered an error interacting with this webpage: TypeError: Failed to fetch\n    at FJ (<anonymous>:1:41)\n    at <anonymous>:1:354",
+      "url": "https://gesvision.com/calendar-bi.jpg"
+    }
+  ]
+}

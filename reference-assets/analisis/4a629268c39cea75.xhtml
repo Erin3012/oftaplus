@@ -1,0 +1,783 @@
+/**
+ * Biblioteca de Informes - Estilos unificados con el Constructor
+ * 
+ * Sistema de diseño coherente usando:
+ * - Paleta zinc (gris neutro)
+ * - Bordes redondeados consistentes (rounded-xl, rounded-2xl)
+ * - Sombras sutiles
+ * - Transiciones suaves
+ * 
+ * @version 2.0 - Adaptado al estilo del constructor
+ */
+
+/* =============================
+   Variables globales
+   ============================= */
+:root {
+    --zinc-50: #fafafa;
+    --zinc-100: #f4f4f5;
+    --zinc-200: #e4e4e7;
+    --zinc-300: #d4d4d8;
+    --zinc-400: #a1a1aa;
+    --zinc-500: #71717a;
+    --zinc-600: #52525b;
+    --zinc-700: #3f3f46;
+    --zinc-800: #27272a;
+    --zinc-900: #18181b;
+    
+    --amber-100: #fef3c7;
+    --amber-300: #fcd34d;
+    
+    --red-300: #fca5a5;
+    --red-600: #dc2626;
+    
+    --emerald-100: #d1fae5;
+    --emerald-700: #047857;
+    
+    /* Colores para chips de agrupaciones/indicadores */
+    --sky-50: #f0f9ff;
+    --sky-200: #bae6fd;
+    --sky-900: #0c4a6e;
+    --emerald-50: #ecfdf5;
+    --emerald-200: #a7f3d0;
+    --emerald-900: #064e3b;
+}
+
+
+--tw-inset-shadow {
+    syntax: "*";
+    inherits: false;
+    initial-value: 0 0 #0000;
+}
+--tw-inset-ring-shadow {
+    syntax: "*";
+    inherits: false;
+    initial-value: 0 0 #0000;
+}
+/* =============================
+   Reset y base
+   ============================= */
+* {
+    box-sizing: border-box;
+}
+
+.biblioteca-wrapper {
+    min-height: 100vh;
+    background-color: var(--zinc-50); /* bg-zinc-50 */
+    padding: 1rem 1.5rem 1.5rem; /* px-4 py-6 del prototipo (adaptado) */
+}
+
+/* =============================
+   Header
+   ============================= */
+.biblioteca-header {
+    margin: 0 auto 1rem; /* mb-4 del prototipo */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem; /* gap-2 del prototipo */
+}
+
+.biblioteca-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* gap-2 del prototipo */
+}
+
+.biblioteca-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2rem; /* h-8 */
+    width: 2rem; /* w-8 */
+    border-radius: 0.75rem; /* rounded-xl */
+    background-color: var(--zinc-900); /* bg-zinc-900 */
+    color: white; /* text-white */
+    font-size: 1rem;
+}
+
+.biblioteca-title {
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 600; /* font-semibold */
+    color: var(--zinc-800);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.biblioteca-subtitle {
+    font-size: 0.75rem;
+    color: var(--zinc-500);
+    margin: 0;
+    display: none; /* Ocultar el subtítulo para coincidir con el prototipo */
+}
+
+.biblioteca-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* =============================
+   Botones de vista
+   ============================= */
+.btn-vista {
+    padding: 0.375rem 0.625rem; /* px-2.5 py-1.5 del prototipo */
+    font-size: 0.75rem; /* text-xs */
+    border-radius: 0.75rem; /* rounded-xl */
+    border: 1px solid var(--zinc-300); /* border-zinc-300 */
+    background-color: white;
+    color: var(--zinc-700);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-vista:hover {
+    background-color: var(--zinc-100);
+}
+
+.btn-vista.active {
+    background-color: var(--zinc-900); /* bg-zinc-900 */
+    color: white; /* text-white */
+    border-color: var(--zinc-900); /* border-zinc-900 */
+}
+
+/* =============================
+   Controles (búsqueda, filtros)
+   ============================= */
+.biblioteca-controles {
+    margin: 0 auto 1rem; /* mb-4 del prototipo */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem; /* gap-2 del prototipo */
+}
+
+.control-input,
+.control-select {
+    padding: 0.5rem 0.75rem; /* px-3 py-2 del prototipo */
+    font-size: 0.875rem; /* text-sm */
+    border-radius: 0.75rem; /* rounded-xl */
+    border: 1px solid var(--zinc-300); /* border-zinc-300 */
+    background-color: white;
+    color: var(--zinc-700);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.control-input {
+    width: 16rem; /* w-64 del prototipo */
+}
+
+.control-input:focus,
+.control-select:focus {
+    outline: none;
+    border-color: var(--zinc-600);
+    box-shadow: 0 0 0 3px rgba(113, 113, 122, 0.1);
+}
+
+.control-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem; /* gap-2 del prototipo */
+    font-size: 0.875rem; /* text-sm */
+    color: var(--zinc-700);
+    cursor: pointer;
+    user-select: none;
+}
+
+.control-checkbox input[type="checkbox"] {
+    cursor: pointer;
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Chip/Tab para favoritos (estilo coherente con otros filtros) */
+.control-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 0.75rem; /* px-3 py-2 */
+    font-size: 0.875rem; /* text-sm */
+    border-radius: 0.75rem; /* rounded-xl */
+    border: 1px solid var(--zinc-300); /* border-zinc-300 */
+    background-color: white;
+    color: var(--zinc-700);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.control-chip:hover {
+    background-color: var(--zinc-50);
+    border-color: var(--zinc-400);
+}
+
+.control-chip.active {
+    background-color: var(--amber-100); /* bg-amber-100 */
+    border-color: var(--amber-300); /* border-amber-300 */
+    color: #d97706; /* Ámbar oscuro */
+    font-weight: 500;
+}
+
+/* =============================
+   Grid de tarjetas
+   ============================= */
+.biblioteca-grid {
+    margin: 0 auto 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.informe-card {
+    border: 1px solid var(--zinc-200); /* border border-zinc-200 */
+    border-radius: 1.25rem; /* rounded-2xl */
+    padding: 0.75rem; /* p-3 */
+    background-color: white; /* bg-white */
+    transition: all 0.2s ease; /* transition */
+    display: flex;
+    flex-direction: column;
+}
+
+.informe-card:hover {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* hover:shadow-sm del prototipo */
+}
+
+/* Preview con barras (exacto al prototipo) */
+.card-preview {
+    height: 7rem; /* h-28 del prototipo */
+    margin-bottom: 0.75rem; /* mb-3 del prototipo */
+    border-radius: 0.75rem; /* rounded-xl */
+    background-color: var(--zinc-50); /* bg-zinc-50 */
+    border: 1px solid var(--zinc-200);
+    padding: 0.5rem; /* p-2 */
+    display: flex;
+    align-items: flex-end;
+    gap: 0.25rem; /* gap-1 */
+    overflow: hidden;
+}
+
+.preview-bar {
+    flex: 1; /* flex-1 */
+    background-color: var(--zinc-200); /* bg-zinc-200 */
+    border-radius: 0.375rem; /* rounded-md */
+    transition: none; /* Sin transición en el prototipo */
+}
+
+/* Header de tarjeta */
+.card-header-info {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.card-info-left {
+    min-width: 0;
+    flex: 1;
+}
+
+.informe-card-title {
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 600; /* font-semibold */
+    color: var(--zinc-800);
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 0; /* sin margen inferior adicional */
+}
+
+.card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem; /* gap-2 */
+    font-size: 0.75rem; /* text-xs */
+    color: var(--zinc-500); /* text-zinc-500 */
+    margin-top: 0.125rem; /* mt-0.5 */
+}
+
+.origen-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem; /* gap-1 */
+    padding: 0.125rem 0.375rem; /* px-1.5 py-0.5 */
+    font-size: 0.625rem; /* text-[10px] */
+    font-weight: normal;
+    border: 1px solid var(--zinc-200); /* border-zinc-200 */
+    border-radius: 0.375rem; /* rounded-md */
+    color: var(--zinc-700);
+    background-color: transparent;
+}
+
+.meta-text {
+    font-size: 0.75rem;
+    color: var(--zinc-500);
+}
+
+/* Botón favorito */
+.btn-favorito {
+    background-color: white;
+    border: 1px solid var(--zinc-300); /* border border-zinc-300 */
+    border-radius: 0.5rem; /* rounded-lg */
+    padding: 0.25rem 0.5rem; /* px-2 py-1 */
+    font-size: 0.875rem; /* text-sm */
+    color: var(--zinc-700);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+
+.btn-favorito:hover {
+    background-color: var(--zinc-100); /* hover:bg-zinc-100 */
+}
+
+.btn-favorito.active {
+    background-color: var(--amber-100); /* bg-amber-100 */
+    border-color: var(--amber-300); /* border-amber-300 */
+    color: #d97706;
+}
+
+/* Tags (chips de agrupaciones e indicadores) */
+.card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem; /* gap-1 */
+    margin-top: 0.5rem; /* mt-2 */
+}
+
+.tag {
+    display: inline-block;
+    padding: 0.125rem 0.375rem; /* px-1.5 py-0.5 */
+    font-size: 0.625rem; /* text-[10px] */
+    border: 1px solid;
+    border-radius: 0.375rem; /* rounded-md */
+}
+
+/* Chips de agrupaciones (dimensiones) - color sky como en el constructor */
+.tag-agrupacion {
+    background-color: #f0f9ff; /* bg-sky-50 */
+    border-color: #bae6fd; /* border-sky-200 */
+    color: #0c4a6e; /* text-sky-900 */
+}
+
+/* Chips de indicadores (métricas) - color emerald como en el constructor */
+.tag-indicador {
+    background-color: #ecfdf5; /* bg-emerald-50 */
+    border-color: #a7f3d0; /* border-emerald-200 */
+    color: #064e3b; /* text-emerald-900 */
+}
+
+/* Acciones de tarjeta */
+.card-actions {
+    flex:1;
+    align-items: center;
+    gap: 0.5rem; /* gap-2 del prototipo */
+    margin-top: 0.75rem; /* mt-3 del prototipo */
+}
+
+.btn-action {
+    padding: 0.375rem 0.625rem; /* px-2.5 py-1.5 del prototipo */
+    font-size: 0.75rem; /* text-xs */
+    font-weight: normal; /* Sin font-medium */
+    border-radius: 0.75rem; /* rounded-xl */
+    border: 1px solid;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.btn-action.btn-primary {
+    background-color: var(--zinc-900); /* bg-zinc-900 */
+    border-color: var(--zinc-900);
+    color: white; /* text-white */
+}
+
+.btn-action.btn-primary:hover {
+    background-color: var(--zinc-800);
+    border-color: var(--zinc-800);
+}
+
+.btn-action.btn-secondary {
+    background-color: white;
+    border-color: var(--zinc-300); /* border-zinc-300 */
+    color: var(--zinc-700);
+    flex: 1; /* Para que el botón Duplicar use el espacio disponible */
+}
+
+.btn-action.btn-secondary:hover {
+    background-color: var(--zinc-50);
+}
+
+.btn-action.btn-danger {
+    background-color: white;
+    border-color: var(--red-300); /* border-red-300 */
+    color: var(--red-600); /* text-red-600 */
+    margin-left: auto; /* ml-auto del prototipo */
+}
+
+.btn-action.btn-danger:hover {
+    background-color: #fef2f2;
+}
+
+/* =============================
+   Lista (tabla)
+   ============================= */
+.biblioteca-lista {
+    margin: 0 auto 2rem;
+    border-radius: 1.25rem; /* rounded-2xl como el prototipo */
+    border: 1px solid var(--zinc-200);
+    background-color: white;
+    overflow: hidden;
+}
+
+.lista-table {
+    width: 100%;
+    font-size: 0.875rem; /* text-sm */
+    border-collapse: collapse;
+}
+
+.lista-table thead {
+    background-color: var(--zinc-50); /* bg-zinc-50 */
+}
+
+.lista-table th {
+    text-align: left; /* text-left */
+    padding: 0.5rem 0.75rem; /* px-3 py-2 */
+    font-weight: 600;
+    color: var(--zinc-700);
+    border-bottom: 1px solid var(--zinc-200);
+    font-size: 0.875rem;
+}
+
+.lista-table td {
+    padding: 0.5rem 0.75rem; /* px-3 py-2 */
+    border-top: 1px solid var(--zinc-100); /* border-t border-zinc-100 */
+}
+
+.lista-cell-nombre {
+    font-weight: 500; /* font-medium */
+    color: var(--zinc-800);
+}
+
+.lista-cell-fecha {
+    color: var(--zinc-500);
+    font-size: 0.875rem;
+}
+
+.lista-cell-tags {
+    color: var(--zinc-500);
+    font-size: 0.75rem; /* text-xs */
+}
+
+.lista-cell-fav {
+    font-size: 1.125rem;
+    color: #d97706;
+    text-align: center;
+}
+
+.lista-cell-acciones {
+    text-align: left; /* text-left como en el prototipo */
+}
+
+.acciones-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* gap-2 */
+}
+
+.btn-action-sm {
+    padding: 0.25rem 0.5rem; /* px-2 py-1 del prototipo */
+    font-size: 0.75rem; /* text-xs */
+    border-radius: 0.5rem; /* rounded-lg */
+    border: 1px solid var(--zinc-300); /* border-zinc-300 */
+    background-color: white;
+    color: var(--zinc-700);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.btn-action-sm:hover {
+    background-color: var(--zinc-100);
+}
+
+.btn-action-sm.btn-primary {
+    background-color: var(--zinc-900); /* bg-zinc-900 */
+    border-color: var(--zinc-900); /* border-zinc-900 */
+    color: white; /* text-white */
+}
+
+.btn-action-sm.btn-primary:hover {
+    background-color: var(--zinc-800);
+}
+
+.btn-action-sm.btn-danger {
+    border-color: var(--red-300); /* border-red-300 */
+    color: var(--red-600); /* text-red-600 */
+}
+
+.btn-action-sm.btn-danger:hover {
+    background-color: #fef2f2;
+}
+
+/* =============================
+   Paginación
+   ============================= */
+.biblioteca-paginacion {
+    margin: 2rem auto 0; /* mt-4 del prototipo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.btn-paginacion {
+    padding: 0.375rem 0.625rem; /* px-2.5 py-1.5 */
+    font-size: 0.75rem; /* text-xs */
+    border-radius: 0.75rem; /* rounded-xl */
+    border: 1px solid var(--zinc-300); /* border-zinc-300 */
+    background-color: white;
+    color: var(--zinc-700);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-paginacion:hover:not(:disabled) {
+    background-color: var(--zinc-100); /* hover:bg-zinc-100 */
+}
+
+.btn-paginacion:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.paginacion-info {
+    font-size: 0.75rem; /* text-xs */
+    color: var(--zinc-500); /* text-zinc-500 */
+}
+
+/* =============================
+   Estados (loading, error, vacío)
+   ============================= */
+.biblioteca-loading {
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2.5rem 1rem; /* py-10 */
+    text-align: center;
+    font-size: 0.875rem; /* text-sm */
+    color: var(--zinc-500); /* text-zinc-500 */
+}
+
+.biblioteca-loading-full {
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.estado-vacio {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1rem; /* py-10 */
+    text-align: center;
+}
+
+.vacio-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.vacio-title {
+    font-size: 1rem; /* text-base aproximadamente */
+    font-weight: 600; /* font-semibold */
+    color: var(--zinc-800);
+    margin: 0 0 0.375rem 0;
+}
+
+.vacio-desc {
+    font-size: 0.875rem; /* text-sm */
+    color: var(--zinc-500); /* text-zinc-500 */
+    margin: 0 0 1rem 0;
+}
+
+/* =============================
+   Botones globales
+   ============================= */
+.btn-primary {
+    padding: 0.375rem 0.625rem; /* px-2.5 py-1.5 del prototipo (para header) */
+    font-size: 0.75rem; /* text-xs */
+    font-weight: normal;
+    border-radius: 0.75rem; /* rounded-xl */
+    border: 1px solid var(--zinc-900); /* border-zinc-900 */
+    background-color: var(--zinc-900); /* bg-zinc-900 */
+    color: white; /* text-white */
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--zinc-800);
+    border-color: var(--zinc-800);
+}
+
+.btn-secondary {
+    padding: 0.375rem 0.625rem; /* px-2.5 py-1.5 */
+    font-size: 0.75rem; /* text-xs */
+    font-weight: normal;
+    border-radius: 0.75rem; /* rounded-xl */
+    border: 1px solid var(--zinc-300); /* border-zinc-300 */
+    background-color: white;
+    color: var(--zinc-700);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-secondary:hover {
+    background-color: var(--zinc-100); /* hover:bg-zinc-100 */
+}
+
+/* =============================
+   Spinner
+   ============================= */
+.spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--zinc-200);
+    border-top-color: var(--zinc-600);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.spinner.big {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-width: 3px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* =============================
+   Responsividad
+   ============================= */
+@media (max-width: 1024px) {
+    .biblioteca-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+
+    .biblioteca-controles {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .control-input {
+        min-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .biblioteca-wrapper {
+        padding: 1rem;
+    }
+
+    .biblioteca-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .biblioteca-header-right {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .biblioteca-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .biblioteca-lista {
+        overflow-x: auto;
+    }
+
+    .lista-table {
+        min-width: 800px;
+    }
+}
+
+/* =============================
+   Scrollbar personalizada
+   ============================= */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--zinc-100);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--zinc-300);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--zinc-400);
+}
+
+/* =============================
+   Constructor wrapper
+   ============================= */
+.constructor-wrapper {
+    min-height: 100vh;
+    background-color: var(--zinc-50);
+}
+
+.constructor-wrapper .max-w-7xl {
+}
+
+.constructor-wrapper .mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.constructor-wrapper .px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.constructor-wrapper .pt-4 {
+    padding-top: 1rem;
+}
+
+/* =============================
+   Utilidades globales
+   ============================= */
+button {
+    font-family: inherit;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.p-8 {
+    padding: 2rem;
+}
+
+.text-zinc-500 {
+    color: var(--zinc-500);
+}
+
+/* Eliminar transiciones globales para más control */

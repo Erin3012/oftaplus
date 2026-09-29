@@ -1,0 +1,70 @@
+/*
+ * Colapsa en un menu "Mas" los botones de la barra inferior de los formularios
+ * (Cobros, Vencimientos, Doc. Asociados, Stock, Observaciones, Canjear puntos...)
+ * en lugar de dejarlos saltar de linea cuando no caben. El menu se despliega
+ * hacia arriba, igual que el resto de overlays de ese pie de formulario.
+ * Ver footer-toolbar-collapse.js.
+ */
+.fake-footer-tabs .flex-1.align-self-center,
+.fake-footer-tabs .flex-auto.align-self-center {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center;
+    overflow: hidden;
+    max-width: 100%;
+    position: relative;
+}
+
+.footer-toolbar-item-hidden {
+    display: none !important;
+}
+
+.footer-toolbar-more-btn {
+    display: none;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer-toolbar-more-dropdown {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    margin-bottom: 8px;
+    background: #ffffff;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.18);
+    min-width: 210px;
+    max-width: 320px;
+    z-index: 10000;
+    padding: 6px 0;
+}
+
+.footer-toolbar-more-dropdown.footer-toolbar-more-open {
+    display: block;
+}
+
+.footer-toolbar-more-dropdown .footer-toolbar-more-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333333;
+    white-space: nowrap;
+}
+
+.footer-toolbar-more-dropdown .footer-toolbar-more-item:hover {
+    background-color: #f3f5f8;
+}
+
+.footer-toolbar-more-dropdown .footer-toolbar-more-item .footer-toolbar-more-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+}

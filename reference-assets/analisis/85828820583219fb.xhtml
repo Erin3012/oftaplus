@@ -1,0 +1,308 @@
+
+
+.ui-datagrid,.ui-datagrid:hover, .ui-datagrid:focus{
+	border: inherit;
+}
+
+
+/* ------- PAGINACIÓN DATA TABLE -------- */
+
+/* Centrar paginacion */
+
+
+/* FIN Centrar paginacion */
+
+
+	.tablelistado .ui-datatable .ui-icon-arrowthick-1-s{
+		background-image:url("/gesmo/javax.faces.resource/images/right-one-arrow-for-data.svg.xhtml?ln=primefaces-sentinel");
+		background-position:center !important;
+		background-size:110%;
+		background-repeat:no-repeat;
+	}
+
+	.tablelistado .ui-datatable .ui-icon-arrowthick-1-s{
+		background-image:url("/gesmo/javax.faces.resource/images/right-one-arrow-for-data.svg.xhtml?ln=primefaces-sentinel");
+		background-position:center !important;
+		background-size:110%; background-repeat:no-repeat;
+	}
+
+	.tablelistado .ui-datatable-footer{background-color:#F9FAFC; color:#B9CDD5;}
+
+	@media ( max-width: 35em ) {
+		.tablelistado .ui-datatable-reflow .ui-datatable-data td {
+			border:0px !important;
+		}
+
+	}
+
+
+/* Estructura Celdas th General */
+
+
+
+
+	/* Hover */
+
+
+	/* TH ACTIVE */
+
+
+
+	/* FIN TH ACTIVE */
+
+/* FIN Estructura Celdas th General */
+
+/* TH FinalColum */
+
+	.tablelistado .lastcolumn {
+		text-align: left !important;
+	}
+
+	.tablelistado .lastcolumn .linkPanel i:hover {
+	    font-style: normal;
+	    text-decoration: none;
+	    color: #fff;
+	}
+
+/* FIN TH FinalColum */
+
+/* Columna Selección */
+
+
+
+
+/* FIN Columna Selección */
+
+/* Estructura Celdas td General */
+
+
+
+
+/* FIN Estructura Celdas General */
+
+/* Lineas Hover y Seleccionadas */
+
+
+/* FIN Lineas Hover y Seleccionadas */
+
+
+
+/* Lineas Alternas de cada color */
+
+
+/* FIN Lineas Alternas de cada color */
+
+/* Columna desplegar linea */
+
+	.tablelistado .ui-datatable .rowtog {
+	    width: 20px;
+	    padding: 0px !important;
+	    padding-left: 6px !important;
+	}
+
+/* FIN Columna desplegar linea */
+
+.tablelistado .tableInforme.ui-datatable table tbody tr td {
+	color: RGBA(0, 0, 0, .87);
+	font-size: 13px;
+	border: 0px;
+	border-bottom: solid 0px #D7E8EE;
+	height: 26px;
+	padding-left: 12px !important;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.tablelistado .tableInforme.ui-datatable table tbody tr:hover:not(.ui-expanded-row-content) td {
+	background-color: #B3E5FC;
+	white-space: inherit;
+	overflow: inherit;
+	text-overflow: inherit;
+}
+
+.tablelistado .tableInforme.ui-datatable table thead tr th,
+.tablelistado .tableInforme.ui-datatable table tfoot tr td,
+.tablelistado .tableInforme.ui-datatable table thead tr th {
+	background-color: #ecf0f1;
+	font-family: 'helvetica';
+	font-size: 13px;
+}
+
+.tablelistado .tableInforme.ui-datatable table thead tr th,
+.tablelistado  .tableInforme.ui-datatable table tfoot tr td,
+.tablelistado  .tableInforme.ui-datatable table thead tr th {
+	text-align: left;
+	color: #999999;
+	font-size: 14px;
+	border-bottom: solid 1px #E5EBF0;
+	background-color: #F9FAFB;
+	position: relative;
+	border-left: 0px solid #e1e1e1 !important;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+}
+
+.tablelistado .tableInforme.ui-datatable .ui-datatable-scrollable-header
+{
+	border-radius: 0px 0px 0px 0px;
+	-moz-border-radius: 0px 0px 0px 0px;
+	-webkit-border-radius: 0px 0px 0px 0px;
+	border: 0px solid #000000;
+}
+
+.tablelistado .tableInforme.ui-datatable .ui-datatable-odd {
+	background-color: #fafafa;
+}
+
+/*  Estilos Iconos Data table*/
+
+/*  FIN Estilos Iconos Data table*/
+
+
+/* Input Custom Filter */
+
+	
+
+/* FIN Input Custom Filtar */
+
+/* Input Select */
+
+
+/* FIN Input Select */
+
+
+/* TABLAS HIJAS DESPLEGADAS */
+
+	.tablelistado .ui-datatable .custom-expanded-row .ui-datatable-tablewrapper table thead tr th {
+			padding: 0px 27px !important;
+			background-color: #b8d6e4 !important;
+	}
+	.tablelistado .ui-datatable .custom-expanded-row .ui-datatable-tablewrapper table thead tr th .ui-column-title {
+			color: #fff;
+	}
+
+	.tablelistado .custom-expanded-row .ui-datatable-tablewrapper {
+	  margin: 0px 0px 5px 50px;
+	}
+
+	.tablelistado .tablelistado .ui-datatable .custom-expanded-row .ui-datatable-tablewrapper table thead tr td {
+			padding: 0px 20px;
+	}
+
+	.tablelistado .custom-expanded-row table {
+		border-left: 5px solid #b8d6e4;
+	}
+
+.custom-expanded-row{
+	-moz-animation-name: expandir;
+	-moz-animation-iteration-count: 1;
+	-moz-animation-timing-function: linear;
+	-moz-animation-duration: 0.3s;
+
+	-webkit-animation-name: expandir;
+	-webkit-animation-iteration-count: 1;
+	-webkit-animation-timing-function: linear;
+	-webkit-animation-duration: 0.3s;
+
+	animation-name: expandir;
+	animation-iteration-count: 1;
+	animation-timing-function: linear;
+	animation-duration: 0.3s;
+}
+
+@-moz-keyframes expandir {
+    0% {
+        -moz-transform: translateY(-100%);
+    }
+    100% {
+        -moz-transform: translateY(0);
+    }
+}
+@-webkit-keyframes expandir {
+    0% {
+        -webkit-transform: translateY(-100%);
+    }
+    100% {
+        -webkit-transform: translateY(0);
+    }
+}
+@keyframes expandir {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* FIN TABLAS HIJAS DESPLEGADAS */
+
+
+/* FOOTER TABLAS */
+
+
+.tablelistado .ui-datatable .ui-datatable-tablewrapper table tfoot tr td{
+	height: 35px !important;
+	background-color: #ecf0f1 !important;
+}
+
+.tablelistado .ui-datatable .ui-datatable-tablewrapper table tfoot tr td p{
+	padding: 10px 0 10px 20px;
+	margin: 0;
+	font-weight: bold;
+	color: rgba('0,0,0,0.87') !important;
+}
+
+
+/* FIN FOOTER TABLAS */
+
+.tablelistado .ui-datatable .ui-datatable-tablewrapper table tr td:last-child {
+	padding-left: 15px !important;
+}
+
+
+
+
+/* ICONOS ESTADO LISTADO */
+
+	.tablelistado .ui-datatable table tbody tr td.cabecera-iconos {
+		padding-left: 0px !important;
+	}
+
+	.iconestado {
+		border: 1px solid rgba(0,0,0,0.54);
+    background-color: rgba(0,0,0,0.12);
+    width: 10px;
+    color: rgba(0,0,0,0.87);
+    border-radius: 3px;
+		margin-left: 3px;
+	}
+
+	.iconestado:hover {
+		border: 1px solid rgba(0,0,0,0.54);
+    width: 10px;
+    color: rgba(0,0,0,0.85);
+    border-radius: 3px;
+
+	}
+
+	
+	/* Retenciones */
+
+		.iconoUnaLetra {
+			padding: 3px 6px;
+	   
+		}
+
+	/* Vistos Buenos */
+
+		.iconoDosLetras {
+			padding: 3px 2px;
+	      
+		}
+
+/* FIN ICONOS ESTADO LISTADO */

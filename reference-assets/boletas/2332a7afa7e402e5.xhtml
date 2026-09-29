@@ -1,0 +1,3284 @@
+/*/ jQuery UI - v1.10.4 - 2014-06-03
+* http://jqueryui.com
+* Includes: jquery.ui.theme.css
+* To view and modify this theme, visit http://jqueryui.com/themeroller/?ffDefault=Lucida%20Grande%2CLucida%20Sans%2CArial%2Csans-serif&fwDefault=normal&fsDefault=1.1em&cornerRadius=10px&bgColorHeader=3a8104&bgTextureHeader=highlight_soft&bgImgOpacityHeader=33&borderColorHeader=3f7506&fcHeader=ffffff&iconColorHeader=ffffff&bgColorContent=285c00&bgTextureContent=inset_soft&bgImgOpacityContent=10&borderColorContent=72b42d&fcContent=ffffff&iconColorContent=72b42d&bgColorDefault=4ca20b&bgTextureDefault=highlight_soft&bgImgOpacityDefault=60&borderColorDefault=45930b&fcDefault=ffffff&iconColorDefault=ffffff&bgColorHover=4eb305&bgTextureHover=highlight_soft&bgImgOpacityHover=50&borderColorHover=8bd83b&fcHover=ffffff&iconColorHover=ffffff&bgColorActive=285c00&bgTextureActive=highlight_hard&bgImgOpacityActive=30&borderColorActive=72b42d&fcActive=ffffff&iconColorActive=ffffff&bgColorHighlight=fbf5d0&bgTextureHighlight=glass&bgImgOpacityHighlight=55&borderColorHighlight=f9dd34&fcHighlight=363636&iconColorHighlight=4eb305&bgColorError=ffdc2e&bgTextureError=diagonals_thick&bgImgOpacityError=95&borderColorError=fad000&fcError=2b2b2b&iconColorError=cd0a0a&bgColorOverlay=444444&bgTextureOverlay=diagonals_thick&bgImgOpacityOverlay=15&opacityOverlay=30&bgColorShadow=aaaaaa&bgTextureShadow=diagonals_small&bgImgOpacityShadow=0&opacityShadow=30&thicknessShadow=0px&offsetTopShadow=4px&offsetLeftShadow=4px&cornerRadiusShadow=4px
+* Copyright 2014 jQuery Foundation and other contributors; Licensed MIT */
+
+/* FONT-FACE*/
+@font-face {
+	font-family: 'titillium_webregular';
+	src:
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-regular-webfont.eot.xhtml?ln=primefaces-sentinel");
+	src:
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-regular-webfont.eot.xhtml?ln=primefaces-sentinel#iefix")
+		format('embedded-opentype'),
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-regular-webfont.woff.xhtml?ln=primefaces-sentinel")
+		format('woff'),
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-regular-webfont.ttf.xhtml?ln=primefaces-sentinel")
+		format('truetype'),
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-regular-webfont.svg.xhtml?ln=primefaces-sentinel#titillium_webregular")
+		format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'titillium_websemibold';
+	src:
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-semibold-webfont.eot.xhtml?ln=primefaces-sentinel");
+	src:
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-semibold-webfont.eot.xhtml?ln=primefaces-sentinel#iefix")
+		format('embedded-opentype'),
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-semibold-webfont.woff.xhtml?ln=primefaces-sentinel")
+		format('woff'),
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-semibold-webfont.ttf.xhtml?ln=primefaces-sentinel")
+		format('truetype'),
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-semibold-webfont.svg.xhtml?ln=primefaces-sentinel#titillium_websemibold")
+		format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'titillium_webbold';
+	src:
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-bold-webfont.eot.xhtml?ln=primefaces-sentinel");
+	src:
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-bold-webfont.eot.xhtml?ln=primefaces-sentinel#iefix")
+		format('embedded-opentype'),
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-bold-webfont.woff.xhtml?ln=primefaces-sentinel")
+		format('woff'),
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-bold-webfont.ttf.xhtml?ln=primefaces-sentinel")
+		format('truetype'),
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-bold-webfont.svg.xhtml?ln=primefaces-sentinel#titillium_webbold")
+		format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'titillium_webbold_italic';
+	src:
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-bolditalic-webfont.eot.xhtml?ln=primefaces-sentinel");
+	src:
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-bolditalic-webfont.eot.xhtml?ln=primefaces-sentinel#iefix")
+		format('embedded-opentype'),
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-bolditalic-webfont.woff.xhtml?ln=primefaces-sentinel")
+		format('woff'),
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-bolditalic-webfont.ttf.xhtml?ln=primefaces-sentinel")
+		format('truetype'),
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-bolditalic-webfont.svg.xhtml?ln=primefaces-sentinel#titillium_webbold_italic")
+		format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'titillium_websemibold_italic';
+	src:
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-semibolditalic-webfont.eot.xhtml?ln=primefaces-sentinel");
+	src:
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-semibolditalic-webfont.eot.xhtml?ln=primefaces-sentinel#iefix")
+		format('embedded-opentype'),
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-semibolditalic-webfont.woff.xhtml?ln=primefaces-sentinel")
+		format('woff'),
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-semibolditalic-webfont.ttf.xhtml?ln=primefaces-sentinel")
+		format('truetype'),
+		url("/gesmo/javax.faces.resource/fonts/titilliumweb-semibolditalic-webfont.svg.xhtml?ln=primefaces-sentinel#titillium_websemibold_italic")
+		format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+/* Component containers
+----------------------------------*/
+.ui-widget {
+	/*-moz-transition: all 0.5s ease;
+-ms-transition: all 0.5s ease;
+-o-transition: all 0.5s ease;
+transition: all 0.5s ease;
+font-family: 'titillium_webregular' !important;
+*/
+
+}
+
+.ui-widget .ui-widget {
+	/* font-size: 1em; */
+	/*-moz-transition: all 0.5s ease;
+-ms-transition: all 0.5s ease;
+-o-transition: all 0.5s ease;
+transition: all 0.5s ease;
+	font-family: 'titillium_webregular' !important;*/
+
+}
+
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button
+	{
+	/* font-size: 1em; */
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+}
+
+.row-notificated {
+	animation: parpadeo 2s;
+	-webkit-animation: parpadeo 2s;
+	-moz-animation: parpadeo 2s;
+	animation-iteration-count: infinite;
+	-webkit-animation-iteration-count: infinite;
+	-moz-animation-iteration-count: infinite;
+}
+
+
+
+
+/* Interaction states
+----------------------------------*/
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default {
+	/* border:0px;
+	color:#ffffff; */
+
+}
+
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited
+	{
+	color: #ffffff;
+	text-decoration: none;
+}
+
+.ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus
+	{
+
+}
+
+.ui-state-hover {
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+}
+
+.ui-state-hover a, .ui-state-hover a:hover, .ui-state-hover a:link,
+	.ui-state-hover a:visited, .ui-state-focus a, .ui-state-focus a:hover,
+	.ui-state-focus a:link, .ui-state-focus a:visited {
+	color: #ffffff;
+	text-decoration: none;
+}
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active
+	{
+
+}
+
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited
+	{
+	color: #ffffff;
+	text-decoration: none;
+}
+
+/* Interaction Cues
+----------------------------------*/
+.ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight
+	{
+	/* background-color:#FBFCFD !important; */
+	/*color: #363636;*/
+
+}
+
+.ui-state-highlight a, .ui-widget-content .ui-state-highlight a,
+	.ui-widget-header .ui-state-highlight a {
+	color: #363636;
+}
+
+input[type="text"].ui-state-error, input[type="password"].ui-state-error,
+	.ui-widget-content .ui-state-error, .ui-widget-header .ui-state-error {
+	border: 1px solid #F03369 !important;
+	color: #F03369;
+}
+
+.ui-widget-content label.ui-state-error {
+	border: 0px !important;
+	border: none;
+	box-shadow: none;
+	-webkit-box-shadow: none;
+}
+
+.ui-state-focus {
+
+}
+
+label.ui-state-error {
+	color: #F03369 !important;
+}
+
+.ui-state-error a, .ui-widget-content .ui-state-error a,
+	.ui-widget-header .ui-state-error a {
+	color: #2b2b2b;
+}
+
+.ui-state-error-text, .ui-widget-content .ui-state-error-text,
+	.ui-widget-header .ui-state-error-text {
+	color: #2b2b2b;
+}
+
+.ui-priority-primary, .ui-widget-content .ui-priority-primary,
+	.ui-widget-header .ui-priority-primary {
+	font-weight: bold;
+}
+
+.ui-priority-secondary, .ui-widget-content .ui-priority-secondary,
+	.ui-widget-header .ui-priority-secondary {
+	opacity: .7;
+	filter: Alpha(Opacity = 70);
+	font-weight: normal;
+}
+
+
+
+.ui-state-disabled .ui-icon {
+	filter: Alpha(Opacity = 35); /* For IE8 - See #6059 */
+}
+
+/* Icons
+----------------------------------*/
+
+/* states and images */
+.ui-icon {
+	width: 16px;
+	height: 16px;
+}
+
+.ui-icon, .ui-widget-content .ui-icon {
+
+}
+
+.ui-widget-header .ui-icon {
+	/*background-image: url("images/ui-icons_ffffff_256x240.png");*/
+
+}
+
+.ui-state-default .ui-icon {
+
+}
+
+.ui-state-hover .ui-icon, .ui-state-focus .ui-icon {
+
+}
+
+.ui-state-active .ui-icon {
+
+}
+
+.ui-state-highlight .ui-icon {
+
+}
+
+.ui-state-error .ui-icon, .ui-state-error-text .ui-icon {
+
+}
+
+/* positioning */
+.ui-icon-default {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/default.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center;
+	background-size: 100%;
+}
+
+
+
+.ui-icon-blank {
+	background-position: 16px 16px;
+}
+
+.ui-icon-carat-1-n {
+	background-position: 0 0;
+}
+
+.ui-icon-carat-1-ne {
+	background-position: -16px 0;
+}
+
+.ui-icon-carat-1-e {
+	background-position: -32px 0;
+}
+
+.ui-icon-carat-1-se {
+	background-position: -48px 0;
+}
+
+.ui-icon-carat-1-s {
+	background-position: -64px 0;
+}
+
+.ui-icon-carat-1-sw {
+	background-position: -80px 0;
+}
+
+.ui-icon-carat-1-w {
+	background-position: -96px 0;
+}
+
+.ui-icon-carat-1-nw {
+	background-position: -112px 0;
+}
+
+.ui-icon-carat-2-n-s {
+	background-position: -128px 0;
+}
+
+.ui-icon-carat-2-e-w {
+	background-position: -144px 0;
+}
+
+.ui-icon-triangle-1-n {
+	background-position: 0 -16px;
+}
+
+.ui-icon-triangle-1-ne {
+	background-position: -16px -16px;
+}
+
+.ui-icon-triangle-1-e {
+	background-position: -32px -16px;
+}
+
+.ui-icon-triangle-1-se {
+	background-position: -48px -16px;
+}
+
+.ui-icon-triangle-1-s {
+	background-position: -64px -16px;
+}
+
+.ui-icon-triangle-1-sw {
+	background-position: -80px -16px;
+}
+
+.ui-icon-triangle-1-w {
+	background-position: -96px -16px;
+}
+
+.ui-icon-triangle-1-nw {
+	background-position: -112px -16px;
+}
+
+.ui-icon-triangle-2-n-s {
+	background-position: -128px -16px;
+}
+
+.ui-icon-triangle-2-e-w {
+	background-position: -144px -16px;
+}
+
+.ui-icon-arrow-1-n {
+	background-position: 0 -32px;
+}
+
+.ui-icon-arrow-1-ne {
+	background-position: -16px -32px;
+}
+
+.ui-icon-arrow-1-e {
+	background-position: -32px -32px;
+}
+
+.ui-icon-arrow-1-se {
+	background-position: -48px -32px;
+}
+
+.ui-icon-arrow-1-s {
+	background-position: -64px -32px;
+}
+
+.ui-icon-arrow-1-sw {
+	background-position: -80px -32px;
+}
+
+.ui-icon-arrow-1-w {
+	background-position: -96px -32px;
+}
+
+.ui-icon-arrow-1-nw {
+	background-position: -112px -32px;
+}
+
+.ui-icon-arrow-2-n-s {
+	background-position: -128px -32px;
+}
+
+.ui-icon-arrow-2-ne-sw {
+	background-position: -144px -32px;
+}
+
+.ui-icon-arrow-2-e-w {
+	background-position: -160px -32px;
+}
+
+.ui-icon-arrow-2-se-nw {
+	background-position: -176px -32px;
+}
+
+.ui-icon-arrowstop-1-n {
+	background-position: -192px -32px;
+}
+
+.ui-icon-arrowstop-1-e {
+	background-position: -208px -32px;
+}
+
+.ui-icon-arrowstop-1-s {
+	background-position: -224px -32px;
+}
+
+.ui-icon-arrowstop-1-w {
+	background-position: -240px -32px;
+}
+
+.ui-icon-arrowthick-1-n {
+	background-position: 0 -48px;
+}
+
+.ui-icon-arrowthick-1-ne {
+	background-position: -16px -48px;
+}
+
+.ui-icon-arrowthick-1-e {
+	background-position: -32px -48px;
+}
+
+.ui-icon-arrowthick-1-se {
+	background-position: -48px -48px;
+}
+
+.ui-icon-arrowthick-1-s {
+	background-position: -64px -48px;
+}
+
+.ui-icon-arrowthick-1-sw {
+	background-position: -80px -48px;
+}
+
+.ui-icon-arrowthick-1-w {
+	background-position: -96px -48px;
+}
+
+.ui-icon-arrowthick-1-nw {
+	background-position: -112px -48px;
+}
+
+.ui-icon-arrowthick-2-n-s {
+	background-position: -128px -48px;
+}
+
+.ui-icon-arrowthick-2-ne-sw {
+	background-position: -144px -48px;
+}
+
+.ui-icon-arrowthick-2-e-w {
+	background-position: -160px -48px;
+}
+
+.ui-icon-arrowthick-2-se-nw {
+	background-position: -176px -48px;
+}
+
+.ui-icon-arrowthickstop-1-n {
+	background-position: -192px -48px;
+}
+
+.ui-icon-arrowthickstop-1-e {
+	background-position: -208px -48px;
+}
+
+.ui-icon-arrowthickstop-1-s {
+	background-position: -224px -48px;
+}
+
+.ui-icon-arrowthickstop-1-w {
+	background-position: -240px -48px;
+}
+
+.ui-icon-arrowreturnthick-1-w {
+	background-position: 0 -64px;
+}
+
+.ui-icon-arrowreturnthick-1-n {
+	background-position: -16px -64px;
+}
+
+.ui-icon-arrowreturnthick-1-e {
+	background-position: -32px -64px;
+}
+
+.ui-icon-arrowreturnthick-1-s {
+	background-position: -48px -64px;
+}
+
+.ui-icon-arrowreturn-1-w {
+	background-position: -64px -64px;
+}
+
+.ui-icon-arrowreturn-1-n {
+	background-position: -80px -64px;
+}
+
+.ui-icon-arrowreturn-1-e {
+	background-position: -96px -64px;
+}
+
+.ui-icon-arrowreturn-1-s {
+	background-position: -112px -64px;
+}
+
+.ui-icon-arrowrefresh-1-w {
+	background-position: -128px -64px;
+}
+
+.ui-icon-arrowrefresh-1-n {
+	background-position: -144px -64px;
+}
+
+.ui-icon-arrowrefresh-1-e {
+	background-position: -160px -64px;
+}
+
+.ui-icon-arrowrefresh-1-s {
+	background-position: -176px -64px;
+}
+
+.ui-icon-arrow-4 {
+	background-position: 0 -80px;
+}
+
+.ui-icon-arrow-4-diag {
+	background-position: -16px -80px;
+}
+
+.ui-icon-extlink {
+	background-position: -32px -80px;
+}
+
+.ui-icon-newwin {
+	background-position: -48px -80px;
+}
+
+.ui-icon-refresh {
+	background-position: -64px -80px;
+}
+
+.ui-icon-shuffle {
+	background-position: -80px -80px;
+}
+
+.ui-icon-transfer-e-w {
+	background-position: -96px -80px;
+}
+
+.ui-icon-transferthick-e-w {
+	background-position: -112px -80px;
+}
+
+.ui-icon-folder-collapsed {
+	background-position: 0 -96px;
+}
+
+.ui-icon-folder-open {
+	background-position: -16px -96px;
+}
+
+.ui-icon-document {
+	background-position: -32px -96px;
+}
+
+.ui-icon-document-b {
+	background-position: -48px -96px;
+}
+
+.ui-icon-note {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/note.svg.xhtml?ln=primefaces-sentinel");
+	background-position: center;
+	background-size: 100%;
+}
+
+.ui-icon-mail-closed {
+	background-position: -80px -96px;
+}
+
+.ui-icon-mail-open {
+	background-position: -96px -96px;
+}
+
+.ui-icon-suitcase {
+	background-position: -112px -96px;
+}
+
+.ui-icon-comment {
+	background-position: -128px -96px;
+}
+
+.ui-icon-person {
+	background-position: -144px -96px;
+}
+
+.ui-icon-print {
+	background-position: -160px -96px;
+}
+
+.ui-icon-trash {
+	background-position: -176px -96px;
+}
+
+.ui-icon-locked {
+	background-position: -192px -96px;
+}
+
+.ui-icon-unlocked {
+	background-position: -208px -96px;
+}
+
+.ui-icon-bookmark {
+	background-position: -224px -96px;
+}
+
+.ui-icon-tag {
+	background-position: -240px -96px;
+}
+
+.ui-icon-home {
+	background-position: 0 -112px;
+}
+
+.ui-icon-flag {
+	background-position: -16px -112px;
+}
+
+.ui-icon-calendar {
+	background-position: -32px -112px;
+}
+
+.ui-icon-cart {
+	background-position: -48px -112px;
+}
+
+.ui-icon-pencil {
+	background-position: -64px -112px;
+}
+
+.ui-icon-clock {
+	background-position: -80px -112px;
+}
+
+.ui-icon-disk {
+	background-position: -96px -112px;
+}
+
+.ui-icon-calculator {
+	background-position: -112px -112px;
+}
+
+.ui-icon-zoomin {
+	background-position: -128px -112px;
+}
+
+.ui-icon-zoomout {
+	background-position: -144px -112px;
+}
+
+.ui-icon-search {
+	background-position: -160px -112px;
+}
+
+.ui-icon-wrench {
+	background-position: -176px -112px;
+}
+
+.ui-icon-gear {
+	background-position: -192px -112px;
+}
+
+.ui-icon-heart {
+	background-position: -208px -112px;
+}
+
+.ui-icon-star {
+	background-position: -224px -112px;
+}
+
+.ui-icon-link {
+	background-position: -240px -112px;
+}
+
+.ui-icon-cancel {
+	background-position: 0 -128px;
+}
+
+.ui-icon-plus {
+	background-position: -16px -128px;
+}
+
+.ui-icon-plusthick {
+	background-position: -32px -128px;
+}
+
+.ui-icon-minus {
+	background-position: -48px -128px;
+}
+
+.ui-icon-minusthick {
+	background-position: -64px -128px;
+}
+
+.ui-icon-close {
+	background-position: -80px -128px;
+}
+
+.ui-icon-closethick {
+	background-position: -96px -128px;
+}
+
+.ui-icon-key {
+	background-position: -112px -128px;
+}
+
+.ui-icon-lightbulb {
+	background-position: -128px -128px;
+}
+
+.ui-icon-scissors {
+	background-position: -144px -128px;
+}
+
+.ui-icon-clipboard {
+	background-position: -160px -128px;
+}
+
+.ui-icon-copy {
+	background-position: -176px -128px;
+}
+
+.ui-icon-contact {
+	background-position: -192px -128px;
+}
+
+.ui-icon-image {
+	background-position: -208px -128px;
+}
+
+.ui-icon-video {
+	background-position: -224px -128px;
+}
+
+.ui-icon-script {
+	background-position: -240px -128px;
+}
+
+.ui-icon-alert {
+	background-position: 0 -144px;
+}
+
+.ui-icon-info {
+	background-position: -16px -144px;
+}
+
+.ui-icon-notice {
+	background-position: -32px -144px;
+}
+
+.ui-icon-help {
+	background-position: -48px -144px;
+}
+
+.ui-icon-check {
+	background-position: -64px -144px;
+}
+
+.ui-icon-bullet {
+	background-position: -80px -144px;
+}
+
+.ui-icon-radio-on {
+	background-position: -96px -144px;
+}
+
+.ui-icon-radio-off {
+	background-position: -112px -144px;
+}
+
+.ui-icon-pin-w {
+	background-position: -128px -144px;
+}
+
+.ui-icon-pin-s {
+	background-position: -144px -144px;
+}
+
+.ui-icon-play {
+	background-position: 0 -160px;
+}
+
+.ui-icon-pause {
+	background-position: -16px -160px;
+}
+
+.ui-icon-seek-next {
+	background-position: -32px -160px;
+}
+
+.ui-icon-seek-prev {
+	background-position: -48px -160px;
+}
+
+.ui-icon-seek-end {
+	background-position: -64px -160px;
+}
+
+.ui-icon-seek-start {
+	background-position: -80px -160px;
+}
+/* ui-icon-seek-first is deprecated, use ui-icon-seek-start instead */
+.ui-icon-seek-first {
+	background-position: -80px -160px;
+}
+
+.ui-icon-stop {
+	background-position: -96px -160px;
+}
+
+.ui-icon-eject {
+	background-position: -112px -160px;
+}
+
+.ui-icon-volume-off {
+	background-position: -128px -160px;
+}
+
+.ui-icon-volume-on {
+	background-position: -144px -160px;
+}
+
+.ui-icon-power {
+	background-position: 0 -176px;
+}
+
+.ui-icon-signal-diag {
+	background-position: -16px -176px;
+}
+
+.ui-icon-signal {
+	background-position: -32px -176px;
+}
+
+.ui-icon-battery-0 {
+	background-position: -48px -176px;
+}
+
+.ui-icon-battery-1 {
+	background-position: -64px -176px;
+}
+
+.ui-icon-battery-2 {
+	background-position: -80px -176px;
+}
+
+.ui-icon-battery-3 {
+	background-position: -96px -176px;
+}
+
+.ui-icon-circle-plus {
+	background-position: 0 -192px;
+}
+
+.ui-icon-circle-minus {
+	background-position: -16px -192px;
+}
+
+.ui-icon-circle-close {
+	background-position: -32px -192px;
+}
+
+.ui-icon-circle-triangle-e {
+	background-position: -48px -192px;
+}
+
+.ui-icon-circle-triangle-s {
+	background-position: -64px -192px;
+}
+
+.ui-icon-circle-triangle-w {
+	background-position: -80px -192px;
+}
+
+.ui-icon-circle-triangle-n {
+	background-position: -96px -192px;
+}
+
+.ui-icon-circle-arrow-e {
+	background-position: -112px -192px;
+}
+
+.ui-icon-circle-arrow-s {
+	background-position: -128px -192px;
+}
+
+.ui-icon-circle-arrow-w {
+	background-position: -144px -192px;
+}
+
+.ui-icon-circle-arrow-n {
+	background-position: -160px -192px;
+}
+
+.ui-icon-circle-zoomin {
+	background-position: -176px -192px;
+}
+
+.ui-icon-circle-zoomout {
+	background-position: -192px -192px;
+}
+
+.ui-icon-circle-check {
+	background-position: -208px -192px;
+}
+
+.ui-icon-circlesmall-plus {
+	background-position: 0 -208px;
+}
+
+.ui-icon-circlesmall-minus {
+	background-position: -16px -208px;
+}
+
+.ui-icon-circlesmall-close {
+	background-position: -32px -208px;
+}
+
+.ui-icon-squaresmall-plus {
+	background-position: -48px -208px;
+}
+
+.ui-icon-squaresmall-minus {
+	background-position: -64px -208px;
+}
+
+.ui-icon-squaresmall-close {
+	background-position: -80px -208px;
+}
+
+.ui-icon-grip-dotted-vertical {
+	background-position: 0 -224px;
+}
+
+.ui-icon-grip-dotted-horizontal {
+	background-position: -16px -224px;
+}
+
+.ui-icon-grip-solid-vertical {
+	background-position: -32px -224px;
+}
+
+.ui-icon-grip-solid-horizontal {
+	background-position: -48px -224px;
+}
+
+.ui-icon-gripsmall-diagonal-se {
+	background-position: -64px -224px;
+}
+
+.ui-icon-grip-diagonal-se {
+	background-position: -80px -224px;
+}
+
+/* Misc visuals
+----------------------------------*/
+
+/* Corner radius */
+.ui-corner-all, .ui-corner-top, .ui-corner-left, .ui-corner-tl {
+	border-top-left-radius: 5px;
+}
+
+.ui-corner-all, .ui-corner-top, .ui-corner-right, .ui-corner-tr {
+	border-top-right-radius: 5px;
+}
+
+.ui-corner-all, .ui-corner-bottom, .ui-corner-left, .ui-corner-bl {
+	border-bottom-left-radius: 5px;
+}
+
+.ui-corner-all, .ui-corner-bottom, .ui-corner-right, .ui-corner-br {
+	border-bottom-right-radius: 5px;
+}
+
+/* Overlays */
+.ui-widget-overlay {
+	background: #444444;
+	opacity: .3;
+	filter: Alpha(Opacity = 30);
+}
+
+.ui-widget-shadow {
+	margin: 4px 0 0 4px;
+	padding: 0px;
+	background: #aaaaaa;
+	opacity: .3;
+	filter: Alpha(Opacity = 30);
+	border-radius: 4px;
+}
+
+
+/*==============================================================================================================================================================*/
+/*==============================================================================================================================================================*/
+/*=========================================================== STYLES FOR SENTINEL BLUE THEME ===================================================================*/
+/*==============================================================================================================================================================*/
+/*==============================================================================================================================================================*/
+.ui-shadow {
+	-webkit-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.3) !important;
+	-moz-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.3) !important;
+	box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.3) !important;
+}
+
+/*Style For UI Carousel --------------------------------------------------------------------------------------*/
+.ui-carousel {
+	border: solid 1px #d1d3d4;
+	padding: 2px 1px !important;
+	background-color: #FBFCFD;
+	color: #000001;
+}
+
+.ui-carousel:hover, .ui-carousel:focus {
+	border: solid 1px #27aae1;
+}
+
+.ui-carousel .ui-carousel-header {
+	border: solid 1px #175787 !important;
+	height: auto !important;
+	padding: 2px 10px !important;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	background: #1578c9;
+	background: -moz-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #1578c9),
+		color-stop(100%, #0b66b1));
+	background: -webkit-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -o-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -ms-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: linear-gradient(to bottom, #1578c9 0%, #0b66b1 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1578c9',
+		endColorstr='#0b66b1', GradientType=0);
+}
+
+.ui-carousel .ui-carousel-header .ui-carousel-header-title {
+	width: 40% !important;
+}
+
+.ui-carousel .ui-carousel-header .ui-carousel-next-button {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/right-arrow.svg.xhtml?ln=primefaces-sentinel");
+	background-position: center !important;
+	background-repeat: no-repeat;
+	background-size: 90%;
+	width: 20px;
+	height: 20px;
+	margin-top: 3px;
+	padding: 2px;
+}
+
+.ui-carousel .ui-carousel-header .ui-carousel-prev-button {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/left-arrow.svg.xhtml?ln=primefaces-sentinel");
+	background-position: center !important;
+	background-repeat: no-repeat;
+	background-size: 90%;
+	width: 20px;
+	height: 20px;
+	margin-top: 3px;
+	padding: 2px;
+}
+
+.ui-carousel .ui-carousel-header .ui-carousel-next-button:hover,
+	.ui-carousel .ui-carousel-header .ui-carousel-prev-button:hover {
+	background-color: #175787;
+	border-radius: 3px !important;
+	-webkit-border-radius: 3px !important;
+	-moz-border-radius: 3px !important;
+}
+
+.ui-carousel .ui-carousel-header .ui-carousel-page-links {
+	margin-top: 7px;
+}
+
+.ui-carousel .ui-carousel-header .ui-carousel-page-links .ui-carousel-page-link
+	{
+	background-image:
+		url("/gesmo/javax.faces.resource/images/blank.svg.xhtml?ln=primefaces-sentinel");
+	background-position: center !important;
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+.ui-carousel .ui-carousel-item {
+	border: 1px solid transparent
+}
+
+.ui-carousel .ui-carousel-header .ui-carousel-page-links .ui-icon-radio-on
+	{
+	background-image:
+		url("/gesmo/javax.faces.resource/images/blank-active.svg.xhtml?ln=primefaces-sentinel");
+}
+
+.ui-carousel-viewport ul .ui-carousel-item table tbody tr td {
+	border: solid 1px #e5ebf0;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+	font-size: 14px;
+}
+
+.ui-carousel-viewport ul .ui-carousel-item table tbody tr:hover td {
+	/*border:solid 1px #27AAE1; color:#27AAE1;*/
+
+}
+
+.ui-carousel .ui-carousel-footer {
+	height: auto !important;
+	background-color: #F3F5F7;
+	margin: 0px;
+	padding: 10px 10px !important;
+	border-top: solid 1px #E8EDF2 !important;
+	margin: 3px -1px -2px -1px !important;
+	font-size: 14px;
+	color: #C7D1D7;
+	border-top-left-radius: 0px !important;
+	border-top-right-radius: 0px !important;
+	-webkit-border-top-left-radius: 0px !important;
+	-webkit-border-top-right-radius: 0px !important;
+	-moz-border-top-left-radius: 0px !important;
+	-moz-border-top-right-radius: 0px !important;
+}
+
+/*Style For Schedule --------------------------------------------------------------------------------------*/
+.fc {
+	border: solid 1px #d1d3d4;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+	background-color: #FBFCFD;
+	color: #000001;
+}
+
+.fc:hover, .fc:focus {
+	border: solid 1px #27AAE1;
+}
+
+.fc-header {
+	border-bottom: solid 1px #E8EDF2;
+	background-color: #F3F5F7;
+	border-top-left-radius: 4px !important;
+	border-top-right-radius: 4px !important;
+	-webkit-border-top-left-radius: 4px !important;
+	-webkit-border-top-right-radius: 4px !important;
+	-moz-border-top-left-radius: 4px !important;
+	-moz-border-top-right-radius: 4px !important;
+}
+
+.fc-header-left {
+	width: 30%;
+}
+
+.fc-header-right {
+	width: 30%;
+}
+
+.fc-header tbody tr td {
+	vertical-align: middle;
+	padding: 1.5%;
+}
+
+.fc-header tbody tr td .fc-button {
+	margin: 0px 2px !important;
+	font-size: 14px;
+	overflow: hidden;
+	height: auto !important;
+	color: #b9cdd5;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	font-weight: bold;
+	border: solid 1px #b9cdd5;
+}
+
+.fc-header tbody tr td .ui-state-hover, .fc-header tbody tr td .ui-state-active
+	{
+	color: #27AAE1;
+	background-repeat: no-repeat;
+	border: solid 1px #27aae1;
+}
+
+.fc-header tbody tr td .fc-button .fc-icon-wrap .ui-icon {
+	margin: 5px;
+}
+
+.fc-header tbody tr td .fc-button-next .fc-icon-wrap .ui-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/right-one-arrow-for-data.svg.xhtml?ln=primefaces-sentinel");
+	background-position: center !important;
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+.fc-header tbody tr td .fc-button-prev .fc-icon-wrap .ui-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/left-one-arrow-for-data.svg.xhtml?ln=primefaces-sentinel");
+	background-position: center !important;
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+.fc-header tbody tr td span h2 {
+	font-size: 18px;
+	margin: 0px;
+	color: #27AAE1;
+}
+
+.fc-content {
+	padding: 10px;
+}
+
+.fc-content .fc-event {
+	background-color: #F686A6;
+	border: solid 1px #F686A6;
+}
+
+.fc-content .fc-event .fc-event-inner {
+	margin: 3px;
+}
+
+.fc-content .fc-view-month table {
+	border-collapse: inherit;
+	border-spacing: 2px;
+}
+
+.fc-content table thead tr th {
+	background-color: #eff3f5;
+	color: #9fadb5;
+	border-collapse: separate;
+	padding: 5px;
+	border-radius: 3px !important;
+	-webkit-border-radius: 3px !important;
+	-moz-border-radius: 3px !important;
+}
+
+.fc-content table thead tr .fc-sun, .fc-content table thead tr .fc-sat {
+	background-color: #dae8ef;
+}
+
+.fc-content table tbody tr td {
+	border: solid 1px #e5ebf0;
+	color: #9fadb5;
+	border-collapse: separate;
+	padding: 5px;
+	border-radius: 3px !important;
+	-webkit-border-radius: 3px !important;
+	-moz-border-radius: 3px !important;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+	border-top-width: 1px !important;
+}
+
+.fc-content .fc-view-month table tbody tr td:hover {
+	border-color: #27AAE1;
+	color: #27AAE1;
+}
+
+.fc-content .ui-state-highlight {
+	border-color: #f686a6;
+	color: #f686a6;
+}
+
+.fc-agenda-slots tbody tr .ui-widget-header, .fc-agenda-allday tbody tr .ui-widget-header
+	{
+	color: #000001 !important;
+}
+
+/*Style For Schedule (V. 5.1.12) --------------------------------------------------------------------------------------*/
+.fc {
+	border: solid 1px #d1d3d4;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+	background-color: #FBFCFD;
+	color: #000001;
+}
+
+.fc:hover, .fc:focus {
+	border: solid 1px #27AAE1;
+}
+
+.fc-toolbar {
+	border-bottom: solid 1px #E8EDF2;
+	background-color: #F3F5F7;
+	padding: 1.5%;
+	margin: 0px !important;
+	border-top-left-radius: 4px !important;
+	border-top-right-radius: 4px !important;
+	-webkit-border-top-left-radius: 4px !important;
+	-webkit-border-top-right-radius: 4px !important;
+	-moz-border-top-left-radius: 4px !important;
+	-moz-border-top-right-radius: 4px !important;
+}
+
+.fc-toolbar button {
+	border: solid 1px #b9cdd6;
+	background-color: #f3f5f7;
+	color: #b9cdd6;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	font-size: 14px;
+}
+
+.fc-toolbar .fc-prev-button .ui-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/left-one-arrow-for-data.svg.xhtml?ln=primefaces-sentinel");
+	background-position: center !important;
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+.fc-toolbar .fc-next-button .ui-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/right-one-arrow-for-data.svg.xhtml?ln=primefaces-sentinel");
+	background-position: center !important;
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+.fc-toolbar .fc-button-group button {
+	margin: 0px 1px;
+}
+
+.fc-toolbar .ui-state-active, .fc-toolbar .ui-state-hover {
+	border: solid 1px #27AAE1;
+	color: #27aee1;
+}
+
+.fc-left {
+
+}
+
+.fc-right {
+
+}
+
+.fc-center {
+	color: #27aae1;
+	font-size: 12px;
+}
+
+.fc-basic-view td.fc-week-number span, .fc-basic-view td.fc-day-number {
+	padding-right: 10px;
+	padding-top: 5px !important;
+}
+
+.fc-day-grid .fc-week {
+	border-right: solid 1px transparent !important;
+}
+
+.fc-view-container {
+	padding: 10px;
+}
+
+.fc-view-container .fc-event {
+	background-color: #F686A6;
+	border: solid 1px #F686A6;
+}
+
+.fc-view-container .fc-event .fc-event-inner {
+	margin: 3px;
+}
+
+.fc-view-container .fc-month-view table {
+	border-collapse: inherit;
+	border-spacing: 1px;
+}
+
+.fc-view-container table thead tr th {
+	background-color: #eff3f5;
+	color: #9fadb5;
+	border-collapse: separate;
+	padding: 5px;
+	border-radius: 3px !important;
+	-webkit-border-radius: 3px !important;
+	-moz-border-radius: 3px !important;
+	border: 0px;
+}
+
+.fc-view-container table thead tr .fc-sun, .fc-view-container table thead tr .fc-sat
+	{
+	background-color: #dae8ef;
+}
+
+.fc-view-container .fc-content-skeleton table thead tr .fc-sun,
+	.fc-view-container .fc-content-skeleton table thead tr .fc-sat {
+	background-color: transparent;
+}
+
+.fc-view-container table tbody tr .fc-day {
+	border: solid 1px #e5ebf0 !important;
+	color: #9fadb5;
+	border-collapse: separate;
+	padding: 5px;
+	border-radius: 3px !important;
+	-webkit-border-radius: 3px !important;
+	-moz-border-radius: 3px !important;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+	border-top-width: 1px !important;
+}
+
+.fc-view-container .fc-month-view table tbody tr .fc-day:hover {
+	border-color: #27AAE1 !important;
+	color: #27AAE1;
+}
+
+.fc-view-container .fc-month-view .fc-bg table tbody tr .fc-today {
+	border-color: #f686a6 !important;
+	color: #f686a6;
+}
+
+.fc-view-container .fc-agendaWeek-view .fc-bg table tbody tr .fc-today {
+	background-color: #EFF3F5;
+	color: #f686a6;
+}
+
+.fc-view-container  table  tbody  tr>.ui-widget-content {
+	border-width: 0px;
+}
+
+.fc-slats table tbody tr td {
+	border-width: 1px !important;
+	border-color: #e5ebf0;
+}
+
+.fc-agenda-slots tbody tr .ui-widget-header, .fc-agenda-allday tbody tr .ui-widget-header
+	{
+	color: #000001 !important;
+}
+
+.fc-daygrid .fc-row {
+	border-right: 0px !important;
+}
+
+hr.ui-widget-header {
+	background-color: #E5EBF0;
+	border-width: 0px;
+}
+
+.fc-more-cell .fc-more {
+	color: #27aae1;
+	text-decoration: underline;
+}
+
+.fc-popover {
+	border: solid 1px #D1D3D4;
+	background-color: #FBFCFD;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+}
+
+.fc-popover .fc-header {
+	padding: 5px 7px !important;
+	color: #000001;
+}
+
+.fc-popover .fc-header .fc-close {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/delete-gray.svg.xhtml?ln=primefaces-sentinel");
+	background-position: center !important;
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+
+/*Style For UI PanelGrid --------------------------------------------------------------------------------------*/
+.ui-panelgrid {
+	border: solid 1px #d1d3d4;
+	background-color: #FBFCFD;
+	font-size: 14px;
+}
+
+.ui-panelgrid thead tr td, .ui-panelgrid tfoot tr td {
+	color: #27AAE1;
+	background-color: #eff3f5;
+	border: solid 1px #D1D3D4 !important;
+}
+
+.ui-panelgrid tbody tr td {
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+
+}
+
+.ui-panelgrid tbody tr td:hover {
+
+}
+
+@media ( max-width : 35em) {
+	.ui-panelgrid .ui-grid-responsive .ui-grid-row {
+		border-color: #D1D3D4 !important;
+	}
+}
+
+/*Style For UI ScrollPanel --------------------------------------------------------------------------------------*/
+.ui-scrollpanel {
+	border: solid 1px #d1d3d4;
+	padding: 5px !important;
+	color: #000001;
+	background-color: #FBFCFD;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+}
+
+.ui-scrollpanel:hover {
+	border: solid 1px #27AAE1;
+}
+
+.ui-scrollpanel .ui-scrollpanel-vbar {
+	width: 10px;
+	background-color: #eff3f5;
+	border: solid 1px #fbfcfd;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+}
+
+.ui-scrollpanel .ui-scrollpanel-vbar .ui-scrollpanel-track .ui-scrollpanel-drag
+	{
+	background-color: #9FADB5;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+}
+
+/*Style For UI ToolBar --------------------------------------------------------------------------------------*/
+.ui-toolbar {
+	border: solid 1px #d1d3d4;
+	background-color: #eff3f5;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	padding: 4px !important;
+}
+
+.ui-toolbar:hover {
+	border: solid 1px #27AAE1;
+}
+
+/*Style For UI NotificationBar --------------------------------------------------------------------------------------*/
+.ui-notificationbar {
+	z-index: 99999999999999;
+	background-color: #A02121;
+	color: #ffffff;
+	height: 50px !important;
+}
+
+/*Style For UI Dasboard------------------------------------------------------------------------------------- */
+.ui-dashboard {
+	border: solid 1px #d1d3d4;
+	display: table;
+	padding: 5px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+}
+
+.ui-dashboard:hover {
+	border: solid 0px #27AAE1;
+}
+
+
+
+
+
+.ui-lightbox {
+	color: #000001;
+	background-color: #FBFCFD;
+	padding: 10px;
+	border: solid 1px transparent;
+}
+
+.ui-lightbox .ui-lightbox-content-wrapper {
+
+}
+
+.ui-lightbox .ui-lightbox-content-wrapper .ui-lightbox-nav-left {
+	left: 5px;
+}
+
+.ui-lightbox .ui-lightbox-content-wrapper .ui-lightbox-nav-right {
+	right: 5px;
+}
+
+.ui-lightbox .ui-lightbox-content-wrapper .ui-lightbox-nav-left .ui-icon
+	{
+	background-image:
+		url("/gesmo/javax.faces.resource/images/left-arrow.svg.xhtml?ln=primefaces-sentinel");
+	background-position: center !important;
+	background-repeat: no-repeat;
+	background-size: 130%;
+	width: 40px;
+	height: 40px;
+	opacity: 0.6;
+	filter: alpha(opacity = 60);
+}
+
+.ui-lightbox .ui-lightbox-content-wrapper .ui-lightbox-nav-left .ui-icon:hover
+	{
+	opacity: 1;
+	filter: alpha(opacity = 100);
+}
+
+.ui-lightbox .ui-lightbox-content-wrapper .ui-lightbox-nav-right .ui-icon
+	{
+	background-image:
+		url("/gesmo/javax.faces.resource/images/right-arrow.svg.xhtml?ln=primefaces-sentinel");
+	background-position: center !important;
+	background-repeat: no-repeat;
+	background-size: 130%;
+	width: 40px;
+	height: 40px;
+	opacity: 0.6;
+	filter: alpha(opacity = 60);
+}
+
+.ui-lightbox .ui-lightbox-content-wrapper .ui-lightbox-nav-right .ui-icon:hover
+	{
+	opacity: 1;
+	filter: alpha(opacity = 100);
+}
+
+.ui-lightbox .ui-lightbox-content-wrapper .ui-lightbox-content {
+
+}
+
+.ui-lightbox .ui-lightbox-caption {
+	padding: 5px 20px 10px 20px !important;
+	border-top: solid 1px #E8EDF2 !important;
+	background-color: #F3F5F7;
+	margin: 10px -10px -10px -10px !important;
+	color: #000001;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+.ui-lightbox .ui-lightbox-caption .ui-lightbox-close {
+	padding: 0px;
+	margin-top: 8px;
+}
+
+.ui-lightbox .ui-lightbox-caption .ui-lightbox-close .ui-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/delete-gray.svg.xhtml?ln=primefaces-sentinel");
+	background-position: center !important;
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+.ui-dialog-docking-zone {
+	z-index: 999999999999999;
+}
+
+.ui-dialog-maximized {
+	z-index: 999999999999999 !important;
+}
+
+/*Style For UI Fieldset------------------------------------------------------------------------------------- */
+.ui-fieldset {
+	border: solid 1px #d1d3d4;
+	background-color: #FBFCFD;
+}
+
+.ui-fieldset:hover {
+	border: solid 1px #27AAE1;
+}
+
+.ui-fieldset-legend {
+	border: solid 1px #175787;
+	color: #ffffff;
+	font-size: 14px;
+	line-height: 14px;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+	background: #1578c9;
+	background: -moz-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #1578c9),
+		color-stop(100%, #0b66b1));
+	background: -webkit-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -o-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -ms-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: linear-gradient(to bottom, #1578c9 0%, #0b66b1 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1578c9',
+		endColorstr='#0b66b1', GradientType=0);
+}
+
+.ui-fieldset .ui-state-hover {
+	background: #0b66b1;
+	background: -moz-linear-gradient(top, #0b66b1 0%, #1578c9 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #0b66b1),
+		color-stop(100%, #1578c9));
+	background: -webkit-linear-gradient(top, #0b66b1 0%, #1578c9 100%);
+	background: -o-linear-gradient(top, #0b66b1 0%, #1578c9 100%);
+	background: -ms-linear-gradient(top, #0b66b1 0%, #1578c9 100%);
+	background: linear-gradient(to bottom, #0b66b1 0%, #1578c9 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0b66b1',
+		endColorstr='#1578c9', GradientType=0);
+}
+
+.ui-fieldset-legend .ui-icon-plusthick {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/plus-sign.svg.xhtml?ln=primefaces-sentinel");
+	background-position: center !important;
+	background-repeat: no-repeat;
+	background-size: 90%;
+	margin-right: 5px;
+}
+
+.ui-fieldset-legend .ui-icon-minusthick {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/minus-sign.svg.xhtml?ln=primefaces-sentinel");
+	background-position: center !important;
+	background-repeat: no-repeat;
+	background-size: 90%;
+	margin-right: 5px;
+}
+
+.ui-fieldset-content {
+	font-size: 14px;
+	color: #000001;
+}
+
+/*Style For UI Messages ------------------------------------------------------------------------------------- */
+.ui-messages-error, .ui-message-error {
+	color: #F03369 !important;
+	background-color: #FBFCFD !important;
+	border-color: #F4BACB !important;
+	font-size: 14px;
+	font-weight: normal;
+	padding: 6px !important;
+}
+
+.ui-messages-info, .ui-message-info {
+	color: #63BCE2 !important;
+	background-color: #FBFCFD !important;
+	border-color: #CEE4F5 !important;
+	font-size: 14px;
+	font-weight: normal;
+	padding: 6px !important;
+}
+
+.ui-messages-info .ui-icon-close, .ui-messages-warn .ui-icon-close,
+	.ui-messages-error .ui-icon-close, .ui-messages-fatal .ui-icon-close {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/delete-pink.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-size: 110%;
+	background-position: center;
+}
+
+.ui-messages-warn, ui-message-warn {
+	color: #F9BF08 !important;
+	background-color: #FBFCFD !important;
+	border-color: #F7E3A4 !important;
+	font-size: 14px;
+	font-weight: normal;
+	padding: 6px !important;
+}
+
+.ui-messages-fatal, ui-message-fatal {
+	color: #F55151 !important;
+	background-color: #FBFCFD !important;
+	border-color: #F5B1B1 !important;
+	font-size: 14px;
+	font-weight: normal;
+	padding: 6px !important;
+}
+
+.ui-messages-info-icon, .ui-messages-warn-icon, .ui-messages-error-icon,
+	.ui-message-error-icon, .ui-messages-fatal-icon {
+	margin: 0px !important;
+	background-repeat: no-repeat !important;
+	background: none;
+	background-position: center !important;
+	background-size: 70% !important;
+}
+
+.ui-message-error-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/warn-pink.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: top !important;
+	background-size: 120% !important;
+}
+
+.ui-messages-error-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/warn-pink.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: top !important;
+	background-size: 90% !important;
+}
+
+.ui-messages-info-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/warn-blue.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: top !important;
+	background-size: 90% !important;
+}
+
+.ui-messages-warn-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/warn-hardal.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: top !important;
+	background-size: 90% !important;
+}
+
+.ui-messages-fatal-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/warn-red.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: top !important;
+	background-size: 90% !important;
+}
+
+/*Style For UI Panel -------------------------------------------------------------------------------------
+
+.ui-panel{border: 1px solid #C8D9E2; padding:2px !important;}
+    .ui-panel .ui-panel-titlebar{padding: 4px 10px 5px 10px !important; font-size: 14px; border:solid 1px #175787; color:#ffffff; text-shadow: 0 -1px 0 #0A385E; z-index:100;
+                                    border-radius:3px !important; -webkit-border-radius:3px !important; -moz-border-radius:3px !important;
+                                    background: #1578c9;
+                                    background: -moz-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+                                    background: -webkit-gradient(left top, left bottom, color-stop(0%, #1578c9), color-stop(100%, #0b66b1));
+                                    background: -webkit-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+                                    background: -o-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+                                    background: -ms-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+                                    background: linear-gradient(to bottom, #1578c9 0%, #0b66b1 100%);
+                                    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1578c9', endColorstr='#0b66b1', GradientType=0 ); font-family: 'titillium_webregular' !important;}
+        .ui-panel .ui-panel-titlebar .ui-panel-titlebar-icon,
+        .ui-panel .ui-panel-titlebar .ui-panel-titlebar-icon:hover,
+        .ui-panel .ui-panel-titlebar .ui-panel-titlebar-icon:focus{margin-top:0px;}
+             .ui-panel .ui-panel-titlebar .ui-icon-closethick{background-image:url("/gesmo/javax.faces.resource/images/delete.svg.xhtml?ln=primefaces-sentinel") !important; background-position: center !important;
+                                background-size: 110% !important;}
+             .ui-panel .ui-panel-titlebar .ui-icon-minusthick{background-image:url("/gesmo/javax.faces.resource/images/minus-sign.svg.xhtml?ln=primefaces-sentinel") !important; background-position: center !important;
+                                background-size: 110% !important;}
+             .ui-panel .ui-panel-titlebar .ui-icon-plusthick{background-image:url("/gesmo/javax.faces.resource/images/plus-sign.svg.xhtml?ln=primefaces-sentinel") !important; background-position: center !important;
+                                background-size: 110% !important;}
+             .ui-panel .ui-panel-titlebar .ui-icon-gear{background-image:url("/gesmo/javax.faces.resource/images/gear.svg.xhtml?ln=primefaces-sentinel") !important; background-position: center !important;
+                                background-size: 110% !important;}
+    .ui-panel .ui-panel-content{padding:5px !important; overflow:hidden; font-size: 14px;}
+    .ui-panel .ui-panel-footer{border-top: solid 1px #E8EDF2 !important; background-color: #F3F5F7; margin: 0px -2px -2px -2px !important; font-size: 14px;
+                    border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;}
+
+	*/
+
+
+
+/*Style For UI Log ------------------------------------------------------------------------------------- */
+.ui-log {
+	border: solid 1px #D1D3D4;
+	padding: 2px !important;
+	background-color: #FBFCFD !important;
+	-webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2) !important;
+	-moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2) !important;
+	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2) !important;
+	color: #000001;
+	color: #000001;
+}
+
+.ui-log:hover, .ui-log:focus {
+	border: solid 1px #27AAE1;
+}
+
+.ui-log-header {
+	padding: 10px !important;
+	font-size: 16px !important;
+	font-size: 16px;
+	border: solid 1px #175787;
+	color: #ffffff;
+	text-shadow: 0 -1px 0 #0A385E;
+	position: relative;
+	z-index: 100;
+	border-radius: 3px !important;
+	-webkit-border-radius: 3px !important;
+	-moz-border-radius: 3px !important;
+	background: #1578c9;
+	background: -moz-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #1578c9),
+		color-stop(100%, #0b66b1));
+	background: -webkit-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -o-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -ms-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: linear-gradient(to bottom, #1578c9 0%, #0b66b1 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1578c9',
+		endColorstr='#0b66b1', GradientType=0);
+	font-family: 'titillium_webregular' !important;
+}
+
+.ui-log-header .ui-log-clear .ui-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/clear.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 140%;
+}
+
+.ui-log-header .ui-log-all .ui-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/all-doc.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 140%;
+}
+
+.ui-log-header .ui-log-info .ui-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/info.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 140%;
+}
+
+.ui-log-item-info .ui-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/info-gray.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 140%;
+	width: 20px;
+	height: 20px;
+}
+
+.ui-log-header .ui-log-warn .ui-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/warn.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 140%;
+}
+
+.ui-log-item-warn .ui-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/warn-gray.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 140%;
+	width: 20px;
+	height: 20px;
+}
+
+.ui-log-header .ui-log-debug .ui-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/debug.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 140%;
+}
+
+.ui-log-item-debug .ui-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/debug-gray.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 140%;
+	width: 20px;
+	height: 20px;
+}
+
+.ui-log-header .ui-log-error .ui-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/error.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 140%;
+}
+
+.ui-log-item-error .ui-icon {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/error-gray.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 140%;
+	width: 20px;
+	height: 20px;
+}
+
+.ui-log-button {
+	top: initial !important;
+	left: initial !important;
+	position: relative !important;
+	display: inline-block !important;
+	padding: 0px !important;
+	margin-right: 5px;
+}
+
+.ui-log-content {
+	height: 250px !important;
+	color: #000001;
+	margin: 5px;
+}
+
+.ui-log-items {
+	font-size: 14px;
+	color: #000001;
+}
+
+/*Style For Checkbox --------------------------------------------------------------------------------------
+
+.ui-selectmanycheckbox label{margin:-2px 15px 0px 0px !important; color:#000001;}
+.ui-chkbox .ui-chkbox-box{ background:none; box-shadow: none; margin-right: 5px; margin-top: 2px; color:#A9A9A9; border: solid 1px #D1D3D4; cursor:pointer;}
+        .ui-chkbox .ui-state-hover, .ui-chkbox .ui-state-focus{border:solid 1px #00AEEF;}
+            .ui-chkbox-box .ui-icon-blank{ background: none;}
+            .ui-chkbox-box .ui-icon-check{border-radius: 0px; background-image:url("/gesmo/javax.faces.resource/images/check.svg.xhtml?ln=primefaces-sentinel") !important; background-size: 100%; background-position: center;}
+            .ui-chkbox .ui-chkbox-label{margin:0px 15px 0px 5px !important;}
+*/
+
+/*Style For Radio Button --------------------------------------------------------------------------------------*/
+.ui-selectoneradio label {
+	margin: 0px 15px 0px 0px !important;
+	color: #000001;
+}
+
+.ui-radiobutton {
+	margin: 5px 5px 0px 0px !important;
+	cursor: pointer;
+}
+
+.ui-radiobutton .ui-radiobutton-box {
+	background: none;
+	box-shadow: none;
+	color: #A9A9A9;
+	border: solid 1px #D1D3D4;
+}
+
+.ui-radiobutton .ui-state-hover, .ui-radiobutton .ui-state-focus {
+	border: solid 1px #00AEEF;
+}
+
+.ui-radiobutton .ui-state-active .ui-icon-bullet, .ui-radiobutton .ui-state-focus .ui-icon-bullet
+	{
+	background-image:
+		url("/gesmo/javax.faces.resource/images/radio-on.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-size: 100%;
+	background-position: center;
+	margin: 0px;
+}
+
+/*Style For Seperator --------------------------------------------------------------------------------------*/
+.ui-separator {
+	border: 0px;
+	border-bottom: solid 1px #a5a5a5;
+}
+
+/*Style For Keypad --------------------------------------------------------------------------------------*/
+#keypad-div {
+	background-color: #F1F4F7;
+	padding: 5px !important;
+	border: solid 1px #27AAE1;
+}
+
+#keypad-div .keypad-row button {
+	font-family: 'titillium_webregular';
+	font-size: 12px;
+	padding: 1px 3px;
+	border: solid 1px #9FADB5;
+	color: #9EADB5;
+}
+
+#keypad-div .keypad-row button.ui-state-hover {
+	background-color: #FBFCFD;
+	color: #27AAE1;
+}
+
+#keypad-div .keypad-row button.keypad-close {
+	background-color: #DB5B5B;
+	color: #FFF;
+	border: solid 1px #DB5B5B;
+}
+
+#keypad-div .keypad-row button.keypad-back {
+	background-color: #82ACCF;
+	color: #FFF;
+	border: solid 1px #82ACCF;
+}
+
+#keypad-div .keypad-row button.keypad-clear {
+	background-color: #D2B26E;
+	color: #FFF;
+	border: solid 1px #D2B26E;
+}
+
+#keypad-div .keypad-row button.keypad-shift {
+	background-color: #7EB5B5;
+	color: #FFF;
+	border: solid 1px #7EB5B5;
+}
+
+/*Style For Password Panel --------------------------------------------------------------------------------------*/
+.ui-password-panel {
+	font-size: 14px;
+	color: #000001;
+	border: solid 1px #27AAE1;
+	padding: 10px !important;
+	background-color: #FBFCFD !important;
+}
+
+
+/*Style For SelectOneListBox --------------------------------------------------------------------------------------*/
+.ui-selectonelistbox {
+	background-color: #FBFCFD;
+	color: #000001;
+}
+
+.ui-selectonelistbox:hover {
+	border: solid 1px #27AAE1;
+}
+
+.ui-selectonelistbox .ui-selectlistbox-item {
+	padding: 3px 5px;
+}
+
+.ui-selectonelistbox .ui-state-hover {
+	color: #27AAE1;
+}
+
+
+
+.ui-selectonelistbox .ui-selectlistbox-filter-container .ui-icon-search
+	{
+	width: 30px;
+	height: 30px;
+	background-size: 100%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image:
+		url("/gesmo/javax.faces.resource/images/search-icon.svg.xhtml?ln=primefaces-sentinel");
+	left: 0px;
+	top: 2px;
+}
+
+.ui-selectonelistbox .ui-selectlistbox-filter-container .ui-inputfield {
+	padding-left: 30px !important;
+	width: 75%;
+}
+
+/*Style For SelectManyMenu --------------------------------------------------------------------------------------*/
+.ui-selectmanymenu {
+	background-color: #FBFCFD;
+	color: #000001;
+}
+
+.ui-selectmanymenu:hover {
+	border: solid 1px #27AAE1;
+}
+
+.ui-selectmanymenu .ui-selectlistbox-filter-container .ui-icon-search {
+	width: 30px;
+	height: 30px;
+	background-size: 100%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image:
+		url("/gesmo/javax.faces.resource/images/search-icon.svg.xhtml?ln=primefaces-sentinel");
+	left: 0px;
+	top: 2px;
+}
+
+.ui-selectmanymenu .ui-selectlistbox-filter-container .ui-inputfield {
+	width: 70%;
+	padding-left: 30px !important;
+}
+
+.ui-selectmanymenu .ui-selectlistbox-item {
+	padding: 3px 5px 6px 5px;
+}
+
+.ui-selectmanymenu .ui-selectlistbox-item .ui-chkbox {
+	float: left;
+}
+
+.ui-selectmanymenu .ui-state-hover {
+	color: #27AAE1;
+}
+
+.ui-selectmanymenu .ui-state-highlight {
+	background-color: #F1F4F7 !important;
+	color: #27AAE1;
+}
+
+/*Style For SelectManyMenu --------------------------------------------------------------------------------------*/
+.ui-slider {
+	background-color: #D5DFE4;
+	color: #000001;
+}
+
+.ui-slider-horizontal {
+	margin: 2px 11px;
+}
+
+.ui-slider-vertical {
+	margin: 11px 5px;
+}
+
+.ui-slider-range {
+	background-color: #27AAE1;
+}
+
+.ui-slider-handle {
+	width: 21px !important;
+	height: 21px !important;
+	cursor: move !important;
+	border: solid 1px #175787 !important;
+	-webkit-box-shadow: inset 0 0 0 1px #26A3DB;
+	-moz-box-shadow: inset 0 0 0 1px #26A3DB;
+	box-shadow: inset 0 0 0 1px #26A3DB;
+	background: #1578c9;
+	background: -moz-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #1578c9),
+		color-stop(100%, #0b66b1));
+	background: -webkit-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -o-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -ms-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: linear-gradient(to bottom, #1578c9 0%, #0b66b1 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1578c9',
+		endColorstr='#0b66b1', GradientType=0);
+}
+
+.ui-slider-vertical .ui-slider-handle {
+	left: -6px !important;
+}
+
+.ui-slider-horizontal .ui-slider-handle {
+	top: -6px !important;
+}
+
+/*Style For SelectManyMenu --------------------------------------------------------------------------------------*/
+.ui-rating-cancel a {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/dislike.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 100% !important;
+	margin-right: 3px;
+	width: 16px !important;
+	height: 16px !important;
+	color: #000001;
+}
+
+.ui-rating-cancel-hover a {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/dislike-on.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 100% !important;
+}
+
+.ui-rating-star a {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/star.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 100% !important;
+	margin: 0px 1px;
+}
+
+.ui-rating-star-on a {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/star-on.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 100% !important;
+}
+
+
+/*Style For UI Tooltip --------------------------------------------------------------------------------------*/
+.ui-tooltip {
+
+	color: #27AAE1;
+	border-top-left-radius: 0px;
+	opacity: 0.8;
+}
+
+
+
+/*Style For UI Link --------------------------------------------------------------------------------------*/
+.ui-link {
+	color: #27AAE1 !important;
+	text-decoration: underline;
+
+}
+
+/*Style For UI Editor --------------------------------------------------------------------------------------*/
+.ui-editor {
+	border: solid 1px #D1D3D4;
+	border-radius: 5px !important;
+	-webkit-border-radius: 5px !important;
+	-moz-border-radius: 5px !important;
+	overflow: hidden;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+	padding: 5px;
+	font-family: 'titillium_webregular';
+}
+
+.ui-editor:hover, .ui-editor:focus {
+	border: solid 1px #27AAE1;
+}
+
+.ui-editor-toolbar {
+	background-image: none !important;
+	background-color: #D5DFE4 !important;
+	border: solid 1px #ADBAC0;
+	border-radius: 3px !important;
+	-webkit-border-radius: 3px !important;
+	-moz-border-radius: 3px !important;
+}
+
+
+
+
+/*Style For UI Galleria --------------------------------------------------------------------------------------*/
+.ui-galleria {
+	border: solid 1px #D1D3D4;
+	border-radius: 5px !important;
+	-webkit-border-radius: 5px !important;
+	-moz-border-radius: 5px !important;
+	background-color: #FBFCFD;
+	color: #000001;
+}
+
+.ui-galleria-filmstrip-wrapper {
+	border-top: solid 1px #E8EDF2 !important;
+	background-color: #F3F5F7;
+}
+
+.ui-galleria-nav-prev, .ui-galleria-nav-next {
+	padding: 2px;
+	bottom: 14px !important;
+}
+
+.ui-galleria-nav-prev:hover, .ui-galleria-nav-next:hover {
+
+}
+
+.ui-galleria-nav-prev {
+	left: 2px !important;
+	background-image:
+		url("/gesmo/javax.faces.resource/images/leftarrow-gray.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 100% !important;
+}
+
+.ui-galleria-nav-next {
+	right: 2px !important;
+	background-image:
+		url("/gesmo/javax.faces.resource/images/rightarrow-gray.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 120% !important;
+}
+
+
+/*Style For UI ProgressBar --------------------------------------------------------------------------------------*/
+.ui-clock {
+	color: #e90c45;
+}
+
+.ui-clock2 {
+	border: solid 1px #175787 !important;
+	padding: 3px;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	background: #1578c9;
+	background: -moz-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #1578c9),
+		color-stop(100%, #0b66b1));
+	background: -webkit-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -o-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -ms-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: linear-gradient(to bottom, #1578c9 0%, #0b66b1 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1578c9',
+		endColorstr='#0b66b1', GradientType=0);
+}
+
+
+/* Style For UI MultiSelectListbox --------------------------------------------------------------------------------------*/
+.ui-multiselectlistbox .ui-multiselectlistbox-listcontainer .ui-multiselectlistbox-header
+	{
+	border: solid 1px #d1d3d4;
+	background-color: #F3F5F7;
+	color: #A1AFB6;
+	padding: 4px 0px !important;
+	margin: 4px 0px 0px 0px;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+}
+
+.ui-multiselectlistbox .ui-multiselectlistbox-listcontainer .ui-multiselectlistbox-list
+	{
+	border: solid 1px #d1d3d4;
+	background-color: #FBFCFD;
+	border-top: 0px;
+}
+
+.ui-multiselectlistbox .ui-multiselectlistbox-listcontainer .ui-multiselectlistbox-list .ui-multiselectlistbox-item
+	{
+	font-size: 14px;
+	padding: 1px 5px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+}
+
+.ui-multiselectlistbox .ui-multiselectlistbox-listcontainer .ui-multiselectlistbox-list .ui-state-hover
+	{
+	color: #27AAE1;
+	background-color: #F1F4F7 !important;
+}
+
+.ui-multiselectlistbox .ui-multiselectlistbox-listcontainer .ui-multiselectlistbox-list .ui-state-highlight
+	{
+	color: #27AAE1;
+	background-color: #F1F4F7 !important;
+}
+
+/* Style For UI Terminal --------------------------------------------------------------------------------------*/
+.ui-terminal {
+	background-color: #F3F5F7;
+	border: solid 1px #d1d3d4;
+	padding: 10px;
+	color: #000001;
+}
+
+/* Style For UI MenuButton --------------------------------------------------------------------------------------*/
+.ui-menubutton .ui-icon-triangle-1-s {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/downarrow.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 120% !important;
+}
+
+/* Style For Toolbar Seperator --------------------------------------------------------------------------------------*/
+.ui-toolbar .ui-separator {
+	padding: 0px 5px;
+}
+
+/*Style For Jqplot Charts --------------------------------------------------------------------------------------*/
+.jqplot-target {
+
+}
+
+.jqplot-axis {
+
+}
+
+.jqplot-xaxis {
+
+}
+
+.jqplot-yaxis {
+
+}
+
+.jqplot-x2axis, .jqplot-x3axis {
+
+} /* ... Styles applied to the 2nd, 3rd, etc. x axis only. */
+.jqplot-y2axis, .jqplot-y3axis {
+
+} /* ... Styles applied to the 2nd, 3rd, etc. y axis only. */
+.jqplot-axis-tick {
+
+}
+
+.jqplot-xaxis-tick {
+
+}
+
+.jqplot-x2axis-tick {
+
+}
+
+.jqplot-yaxis-tick {
+
+}
+
+.jqplot-y2axis-tick {
+
+}
+
+table.jqplot-table-legend {
+
+}
+
+.jqplot-title {
+
+}
+
+.jqplot-cursor-tooltip {
+
+}
+
+.jqplot-highlighter-tooltip {
+
+}
+
+div.jqplot-table-legend-swatch
+	/*Style For UI Outline --------------------------------------------------------------------------------------*/
+
+
+.ui-tabs-outline {
+	outline: none !important;
+}
+
+.ui-tabs-top .ui-tabs-nav .ui-tabs-outline, .ui-tabs-bottom .ui-tabs-nav .ui-tabs-outline,
+	.ui-tabs-left .ui-tabs-nav .ui-tabs-outline, .ui-tabs-right .ui-tabs-nav .ui-tabs-outline
+	{
+	outline: none !important;
+	border: dotted 1px #fff !important;
+	background-color: transparent !important;
+}
+
+.ui-accordion .ui-tabs-outline {
+	outline: none !important;
+	/*-webkit-box-shadow: 0px 0px 0px 3px rgba(224, 40, 50, 0.4);
+	-moz-box-shadow: 0px 0px 0px 3px rgba(224, 40, 50, 0.4);
+	box-shadow: 0px 0px 0px 3px rgba(224, 40, 50, 0.4);*/
+}
+
+/*Style For UploadButton --------------------------------------------------------------------------------------*/
+.ui-fileupload-choose input[type="file"], .ui-fileupload-simple input[type="file"]
+	{
+	z-index: 999;
+}
+
+.ui-fileupload-choose .ui-icon-plusthick, .ui-fileupload-simple .ui-icon-plusthick
+	{
+	background-image:
+		url("/gesmo/javax.faces.resource/images/plus-sign.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 100% !important;
+}
+
+.ui-fileupload-upload .ui-icon-arrowreturnthick-1-n {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/upload.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 100% !important;
+}
+
+.ui-fileupload-cancel .ui-icon-cancel {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/delete.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 100% !important;
+}
+
+.ui-fileupload-content .ui-fileupload-cancel .ui-icon-close {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/delete.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 100% !important;
+}
+
+.ui-fileupload-content .ui-messages-error .ui-icon-close {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/delete-pink.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 100% !important;
+}
+
+/*Style For UI Steps --------------------------------------------------------------------------------------*/
+.ui-steps {
+	min-height: 50px;
+	margin-top: 50px;
+}
+
+.ui-steps .ui-steps-item {
+	background-color: #D5DFE4;
+	width: 24%;
+	margin-right: 1px;
+}
+
+.ui-steps .ui-steps-item .ui-menuitem-link {
+	height: 10px;
+	padding: 0px 10px !important;
+}
+
+.ui-steps .ui-steps-item .ui-steps-number {
+	border: solid 1px #175787 !important;
+	display: inline-block;
+	margin-top: -30px;
+	height: auto !important;
+	padding: 1px 7px !important;
+	font-size: 20px;
+	color: #fff;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	background: #1578c9;
+	background: -moz-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #1578c9),
+		color-stop(100%, #0b66b1));
+	background: -webkit-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -o-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -ms-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: linear-gradient(to bottom, #1578c9 0%, #0b66b1 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1578c9',
+		endColorstr='#0b66b1', GradientType=0);
+}
+
+.ui-steps .ui-steps-title {
+	color: #000001;
+	margin: 0px 10px;
+}
+
+/*Style For UI TagCloud --------------------------------------------------------------------------------------*/
+.ui-tagcloud {
+	border: solid 1px #d1d3d4;
+}
+
+.ui-tagcloud li a {
+	color: #000001;
+	padding: 3px;
+	margin: 3px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+}
+
+.ui-tagcloud li a.ui-state-hover {
+	color: #fff;
+	background: #1578c9;
+	background: -moz-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #1578c9),
+		color-stop(100%, #0b66b1));
+	background: -webkit-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -o-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -ms-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: linear-gradient(to bottom, #1578c9 0%, #0b66b1 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1578c9',
+		endColorstr='#0b66b1', GradientType=0);
+}
+
+/*Style For UI Inplace --------------------------------------------------------------------------------------*/
+.ui-inplace .ui-inplace-editor .ui-button .ui-icon-check {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/check-white.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 110% !important;
+}
+
+.ui-inplace .ui-inplace-editor .ui-button .ui-icon-close {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/delete.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 110% !important;
+}
+
+.ui-inplace .ui-inplace-display.ui-state-highlight {
+	background-color: #F3F5F7;
+	padding: 3px;
+	border: solid 1px #D1D3D4 !important;
+	border-radius: 3px;
+}
+
+/*Style For UI DataScroller --------------------------------------------------------------------------------------*/
+.ui-datascroller {
+	border: solid 1px #d1d3d4;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	background-color: #FBFCFD;
+}
+
+.ui-datascroller .ui-datascroller-header {
+	background: #1578c9;
+	background: -moz-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #1578c9),
+		color-stop(100%, #0b66b1));
+	background: -webkit-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -o-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -ms-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: linear-gradient(to bottom, #1578c9 0%, #0b66b1 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1578c9',
+		endColorstr='#0b66b1', GradientType=0);
+}
+
+.ui-datascroller .ui-datascroller-item {
+	border-bottom: solid 1px #d1d3d4 !important;
+}
+
+/*Style For UI LayoutContainer --------------------------------------------------------------------------------------*/
+.ui-layout-container .ui-layout-unit {
+	border: solid 1px #d1d3d4;
+	background-color: #FBFCFD;
+	color: #000001;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+}
+
+/*Style For UI LayoutUnit --------------------------------------------------------------------------------------*/
+.ui-layout-unit .ui-layout-unit-header {
+	color: #fff;
+	padding: 6px 6px 8px 10px !important;
+	border: solid 1px #175787;
+	font-size: 14px;
+	background: #1578c9;
+	background: -moz-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #1578c9),
+		color-stop(100%, #0b66b1));
+	background: -webkit-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -o-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -ms-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: linear-gradient(to bottom, #1578c9 0%, #0b66b1 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1578c9',
+		endColorstr='#0b66b1', GradientType=0);
+}
+
+.ui-layout-unit .ui-layout-unit-header .ui-layout-unit-header-icon .ui-icon-close
+	{
+	background-image:
+		url("/gesmo/javax.faces.resource/images/delete.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 110% !important;
+	margin-top: 4px;
+}
+
+.ui-layout-unit .ui-layout-unit-header .ui-layout-unit-header-icon .ui-icon-triangle-1-n
+	{
+	background-image:
+		url("/gesmo/javax.faces.resource/images/uparrow.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 120% !important;
+	margin-top: 4px;
+}
+
+.ui-layout-unit .ui-layout-unit-header .ui-layout-unit-header-icon .ui-icon-triangle-1-w
+	{
+	background-image:
+		url("/gesmo/javax.faces.resource/images/left-arrow.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 100% !important;
+	margin-top: 4px;
+}
+
+.ui-layout-unit .ui-layout-unit-header .ui-layout-unit-header-icon .ui-icon-triangle-1-e
+	{
+	background-image:
+		url("/gesmo/javax.faces.resource/images/right-arrow.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 100% !important;
+	margin-top: 4px;
+}
+
+.ui-layout-unit .ui-layout-unit-header .ui-layout-unit-header-icon .ui-icon-triangle-1-s
+	{
+	background-image:
+		url("/gesmo/javax.faces.resource/images/downarrow.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 120% !important;
+	margin-top: 4px;
+}
+
+.ui-layout-resizer .ui-layout-toggler .ui-icon-arrow-4-diag {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/expand-gray.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 110% !important;
+}
+
+/*Style For UI Wizard --------------------------------------------------------------------------------------*/
+.ui-wizard {
+
+}
+
+.ui-wizard .ui-wizard-step-titles li {
+	padding: 6px 20px !important;
+	font-size: 14px;
+	border: solid 1px #175787;
+	color: #ffffff;
+	text-shadow: 0 -1px 0 #0A385E;
+	border-radius: 5px !important;
+	-webkit-border-radius: 5px !important;
+	-moz-border-radius: 5px !important;
+	background: #1578c9;
+	background: -moz-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #1578c9),
+		color-stop(100%, #0b66b1));
+	background: -webkit-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -o-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -ms-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: linear-gradient(to bottom, #1578c9 0%, #0b66b1 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1578c9',
+		endColorstr='#0b66b1', GradientType=0);
+}
+
+.ui-wizard .ui-wizard-step-titles li.ui-state-highlight {
+	background: #0b66b1;
+	background: -moz-linear-gradient(top, #0b66b1 0%, #1578c9 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #0b66b1),
+		color-stop(100%, #1578c9));
+	background: -webkit-linear-gradient(top, #0b66b1 0%, #1578c9 100%);
+	background: -o-linear-gradient(top, #0b66b1 0%, #1578c9 100%);
+	background: -ms-linear-gradient(top, #0b66b1 0%, #1578c9 100%);
+	background: linear-gradient(to bottom, #0b66b1 0%, #1578c9 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0b66b1',
+		endColorstr='#1578c9', GradientType=0);
+	-webkit-box-shadow: inset 0px 0px 10px 0px rgba(255, 255, 255, 0.8)
+		!important;
+	-moz-box-shadow: inset 0px 0px 10px 0px rgba(255, 255, 255, 0.8)
+		!important;
+	box-shadow: inset 0px 0px 10px 0px rgba(255, 255, 255, 0.8) !important;
+}
+
+.ui-wizard .ui-wizard-nav-back .ui-icon-arrowthick-1-w {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/left-arrow.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 110% !important;
+}
+
+.ui-wizard .ui-wizard-nav-next .ui-icon-arrowthick-1-e {
+	background-image:
+		url("/gesmo/javax.faces.resource/images/right-arrow.svg.xhtml?ln=primefaces-sentinel")
+		!important;
+	background-position: center !important;
+	background-size: 110% !important;
+}
+
+/*Style For UI State Focus --------------------------------------------------------------------------------------*/
+.ui-button.ui-state-focus .ui-button-text, .ui-inputswitch-handle.ui-state-focus,
+	.ui-slider-handle.ui-state-focus {
+	-webkit-box-shadow: inset 0px 0px 0px 0px rgba(255, 255, 255, 0.8)
+		!important;
+	-moz-box-shadow: inset 0px 0px 0px 0px rgba(255, 255, 255, 0.8)
+		!important;
+	box-shadow: inset 0px 0px 0px 0px rgba(255, 255, 255, 0.8) !important;
+}
+
+.ui-selectonemenu.ui-state-focus, .ui-selectcheckboxmenu.ui-state-focus,
+	.ui-paginator-page.ui-state-focus, .ui-paginator-next.ui-state-focus,
+	.ui-paginator-prev.ui-state-focus, .ui-paginator-last.ui-state-focus,
+	.ui-paginator-first.ui-state-focus, .ui-paginator-rpp-options.ui-state-focus
+	{
+	border: solid 1px #27AAE1 !important;
+}
+
+
+/* button colors */
+.RedButton .ui-button-text {
+	box-shadow: inset 0 0 0 1px #F23030;
+	border: solid 1px #871717;
+	text-shadow: 0 -1px 0 #670606;
+	background: #c91515;
+	background: -moz-linear-gradient(top, #c91515 0%, #b10b0b 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #c91515),
+		color-stop(100%, #b10b0b));
+	background: -webkit-linear-gradient(top, #c91515 0%, #b10b0b 100%);
+	background: -o-linear-gradient(top, #c91515 0%, #b10b0b 100%);
+	background: -ms-linear-gradient(top, #c91515 0%, #b10b0b 100%);
+	background: linear-gradient(to bottom, #c91515 0%, #b10b0b 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c91515',
+		endColorstr='#b10b0b', GradientType=0);
+}
+
+.RedButton:hover .ui-button-text, .RedButton:focus .ui-button-text {
+	color: #ffffff !important;
+	background: #b10b0b;
+	background: -moz-linear-gradient(top, #b10b0b 0%, #c91515 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #b10b0b),
+		color-stop(100%, #c91515));
+	background: -webkit-linear-gradient(top, #b10b0b 0%, #c91515 100%);
+	background: -o-linear-gradient(top, #b10b0b 0%, #c91515 100%);
+	background: -ms-linear-gradient(top, #b10b0b 0%, #c91515 100%);
+	background: linear-gradient(to bottom, #b10b0b 0%, #c91515 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b10b0b',
+		endColorstr='#c91515', GradientType=0);
+}
+/*
+.GreenButton .ui-button-text {
+	box-shadow: inset 0 0 0 1px #54DB26;
+	border: solid 1px #2B8717;
+	text-shadow: 0 -1px 0 #18840B;
+	background: #2dc915;
+	background: -moz-linear-gradient(top, #2dc915 0%, #0bb113 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #2dc915),
+		color-stop(100%, #0bb113));
+	background: -webkit-linear-gradient(top, #2dc915 0%, #0bb113 100%);
+	background: -o-linear-gradient(top, #2dc915 0%, #0bb113 100%);
+	background: -ms-linear-gradient(top, #2dc915 0%, #0bb113 100%);
+	background: linear-gradient(to bottom, #2dc915 0%, #0bb113 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2dc915',
+		endColorstr='#0bb113', GradientType=0);
+}
+
+.GreenButton:hover .ui-button-text, .GreenButton:focus .ui-button-text {
+	color: #ffffff !important;
+	background: #0bb113;
+	background: -moz-linear-gradient(top, #0bb113 0%, #2dc915 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #0bb113),
+		color-stop(100%, #2dc915));
+	background: -webkit-linear-gradient(top, #0bb113 0%, #2dc915 100%);
+	background: -o-linear-gradient(top, #0bb113 0%, #2dc915 100%);
+	background: -ms-linear-gradient(top, #0bb113 0%, #2dc915 100%);
+	background: linear-gradient(to bottom, #0bb113 0%, #2dc915 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0bb113',
+		endColorstr='#2dc915', GradientType=0);
+}
+*/
+.OrangeButton .ui-button-text {
+	box-shadow: inset 0 0 0 1px #DBB626;
+	border: solid 1px #876C17;
+	text-shadow: 0 -1px 0 #7B6308;
+	background: #c99f15;
+	background: -moz-linear-gradient(top, #c99f15 0%, #b1900b 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #c99f15),
+		color-stop(100%, #b1900b));
+	background: -webkit-linear-gradient(top, #c99f15 0%, #b1900b 100%);
+	background: -o-linear-gradient(top, #c99f15 0%, #b1900b 100%);
+	background: -ms-linear-gradient(top, #c99f15 0%, #b1900b 100%);
+	background: linear-gradient(to bottom, #c99f15 0%, #b1900b 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c99f15',
+		endColorstr='#b1900b', GradientType=0);
+}
+
+.OrangeButton:hover .ui-button-text, .OrangeButton:focus .ui-button-text
+	{
+	color: #ffffff !important;
+	background: #b1900b;
+	background: -moz-linear-gradient(top, #b1900b 0%, #c99f15 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #b1900b),
+		color-stop(100%, #c99f15));
+	background: -webkit-linear-gradient(top, #b1900b 0%, #c99f15 100%);
+	background: -o-linear-gradient(top, #b1900b 0%, #c99f15 100%);
+	background: -ms-linear-gradient(top, #b1900b 0%, #c99f15 100%);
+	background: linear-gradient(to bottom, #b1900b 0%, #c99f15 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b1900b',
+		endColorstr='#c99f15', GradientType=0);
+}
+
+/* shadow for elements*/
+.shadows {
+	-webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
+	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
+}
+
+/* font colors */
+.gray {
+	color: #5A5A5A;
+}
+
+.softgray {
+	color: #CDCDCD;
+}
+
+.yellow {
+	color: #FFD100;
+}
+
+.white {
+	color: #ffffff;
+}
+
+.red {
+	color: #e90c45;
+}
+
+.green {
+	color: #66CC66;
+}
+
+.orange {
+	color: #F15A29;
+}
+
+.softblue {
+	color: #C1E1F4;
+}
+
+.hardblue {
+	color: #27AAE1;
+}
+
+.leaden {
+	color: #000001;
+}
+
+/* fonts */
+.fontRegular {
+	font-family: 'titillium_webregular' !important;
+}
+
+.fontItalic {
+	font-style: italic;
+}
+
+.FontStyleNormal {
+	font-style: normal;
+}
+
+.fontSemibold {
+	font-family: 'titillium_websemibold';
+}
+
+.fontSemiboldItalic {
+	font-family: 'titillium_websemibold_italic';
+}
+
+.fontBold {
+	font-family: 'titillium_webbold';
+}
+
+.fontBoldItalic {
+	font-family: 'titillium_webbold_italic';
+}
+
+.hide-border {
+	border: none !important;
+	border-style: none !important;
+}
+
+.tablelistado .hide-column-names {
+	border: solid 1px #d1d3d4;
+    border-radius: 5px !important;
+    -webkit-border-radius: 5px !important;
+    -moz-border-radius: 5px !important;
+    background-color: #FBFCFD;
+
+}
+.tablelistado .hide-column-names.ui-datatable table tbody tr td {
+			color: #546e7a;
+
+	}
+
+.hide-column-names table td {
+	border: none !important;
+	border-style: none !important;
+}
+
+.hide-column-names table thead tr {
+	display: none;
+	border: none !important;
+	border-style: none !important;
+}
+
+.hide-column-names tbody {
+	border: none !important;
+	border-style: none !important;
+}
+
+.hide-column-names tbody tr {
+	border: none !important;
+	border-style: none !important;
+}
+.tablelistado .hide-column-names.ui-datatable table tbody tr td{
+	padding-left:4px !important;
+}
+
+.hide-column-names .ui-datatable tbody, .hide-column-names .ui-datatable tbody tr,
+	.hide-column-names .ui-datatable  tbody td {
+	border: none !important;
+	border-style: none !important;
+}
+.tablelistado .hide-column-names.ui-datatable .ui-datatable-tablewrapper table tr td:last-child {
+    padding-left: 27px !important;
+}
+
+.custom-expanded-row {
+	background-color: #EFF3F5;
+	margin: 0px;
+	border: none !important;
+	border-style: none !important;
+}
+
+
+.linkPanel, .linkPanel i {
+	font-style: normal;
+	text-decoration: none;
+	color: #4c4c4c;
+}
+
+.linkPanel:hover, .linkPanel i:hover {
+	font-style: normal;
+	text-decoration: none;
+	color: #27AAE1;
+}
+
+.ui-custom-ribbon-panels {
+	border-width: 0;
+	background: none;
+}
+
+.ui-custom-ribbon-tabs-top {
+	background-color: #FBFCFD;
+	border-radius: 6px;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	padding: 0px !important;
+}
+
+.ui-custom-ribbon-group {
+	float: left;
+	background: none;
+	border: none;
+	border-right: solid 1px #BCC7CF;
+	box-shadow: none;
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	padding: 0.2em;
+}
+
+.ui-custom-ribbon-content {
+	background: none;
+	border: none;
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	border-width: 0;
+	padding: 0.2em 0.2em 0;
+}
+
+.ui-custom-ribbon-label {
+	text-align: center;
+	font-weight: 400;
+	white-space: nowrap;
+	margin-top: -1px;
+	border-width: 1px 0 0;
+}
+
+input[text] {
+	color: #3D3D3D !important;
+}
+
+select {
+	color: #3D3D3D !important;
+}
+
+select option {
+	color: #3D3D3D !important;
+}
+
+select option:first-child {
+	color: #3D3D3D !important;
+}
+
+.customWrapper {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -100px;
+	/* the bottom margin is the negative value of the footer's height */
+}
+
+.footer, .push {
+	height: 100px; /* .push must be the same height as .footer */
+}
+
+.disable-scroll .ui-dialog-content {
+	overflow: hidden !important;
+}
+
+.menu-info-right {
+	margin: 0px;
+	padding: 0px;
+	right: 10px;
+}
+
+.ui-state-default .linea-add {
+	width: 240px !important;
+}
+
+.linea-ref .ui-state-default {
+	width: 24px !important;
+}
+
+
+
+.linkCustom, .linkCustom i {
+	font-style: normal;
+	text-decoration: none;
+}
+
+.linkCustom:hover, .linkCustom i:hover {
+	font-style: normal;
+	text-decoration: none;
+	color: #27AAE1;
+}
+
+.ui-fluid .ui-button {
+	width: 100%;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
