@@ -95,6 +95,15 @@ function tenant(PDO $pdo): array
     return $company;
 }
 
+function dateParam(string $name, string $default): string
+{
+    $value = trim((string) ($_GET[$name] ?? ''));
+    if ($value === '') return $default;
+    $date = DateTime::createFromFormat('!Y-m-d', $value);
+    if (!$date || $date->format('Y-m-d') !== $value) fail('Fecha inválida en "' . $name . '". Usa AAAA-MM-DD.', 422);
+    return $value;
+}
+
 function route(): string
 {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '';
@@ -187,8 +196,9 @@ try {
 
     if ($method === 'GET' && $path === '/payments') {
         $company = tenant($pdo);
-        $from = (string) ($_GET['from'] ?? date('Y-m-d', strtotime('-6 months')));
-        $to = (string) ($_GET['to'] ?? date('Y-m-d'));
+        $from = dateParam('from', date('Y-m-d', strtotime('-6 months')));
+        $to = dateParam('to', date('Y-m-d'));
+        if ($from > $to) fail('La fecha inicial no puede ser posterior a la final.', 422);
         $limit = min(max((int) ($_GET['limit'] ?? 50), 1), 500);
         $statement = $pdo->prepare('SELECT p.id, p.amount, p.paid_at, p.created_at, p.reference, d.id AS document_id, d.number AS document_number, c.name AS customer_name, pm.name AS payment_method FROM payments p JOIN documents d ON d.id = p.document_id LEFT JOIN customers c ON c.id = d.customer_id JOIN payment_methods pm ON pm.id = p.payment_method_id WHERE p.company_id = ? AND DATE(p.paid_at) BETWEEN ? AND ? ORDER BY p.paid_at DESC, p.id DESC LIMIT ' . $limit);
         $statement->execute([(int) $company['id'], $from, $to]);
