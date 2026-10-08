@@ -104,6 +104,41 @@ function dateParam(string $name, string $default): string
     return $value;
 }
 
+function validRut(string $rut): bool
+{
+    $clean = strtoupper(preg_replace('/[^0-9kK]/', '', $rut) ?? '');
+    if (strlen($clean) < 2) return false;
+    $body = substr($clean, 0, -1);
+    $digit = substr($clean, -1);
+    if (!ctype_digit($body)) return false;
+    $sum = 0; $factor = 2;
+    for ($i = strlen($body) - 1; $i >= 0; $i--) {
+        $sum += (int) $body[$i] * $factor;
+        $factor = $factor === 7 ? 2 : $factor + 1;
+    }
+    $expected = 11 - ($sum % 11);
+    $expectedDigit = $expected === 11 ? '0' : ($expected === 10 ? 'K' : (string) $expected);
+    return $digit === $expectedDigit;
+}
+
+function customerInput(array $input): array
+{
+    $name = trim((string) ($input['name'] ?? ''));
+    if ($name === '') fail('El nombre es obligatorio.', 422);
+    $taxId = trim((string) ($input['taxId'] ?? ''));
+    if ($taxId !== '' && !validRut($taxId)) fail('El RUT no es válido.', 422);
+    $email = trim((string) ($input['email'] ?? ''));
+    if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) fail('El correo no es válido.', 422);
+    return [
+        'name' => mb_substr($name, 0, 180),
+        'tax_id' => $taxId !== '' ? $taxId : null,
+        'email' => $email !== '' ? $email : null,
+        'phone' => trim((string) ($input['phone'] ?? '')) ?: null,
+        'address' => trim((string) ($input['address'] ?? '')) ?: null,
+        'active' => array_key_exists('active', $input) ? ((bool) $input['active'] ? 1 : 0) : 1,
+    ];
+}
+
 function route(): string
 {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '';
@@ -142,6 +177,29 @@ try {
         $statement = $pdo->prepare('SELECT id, code, name, tax_id, email, phone, address ' . $where . ' ORDER BY name LIMIT ' . $limit . ' OFFSET ' . $offset);
         $statement->execute($params);
         respond(['ok' => true, 'items' => $statement->fetchAll(), 'total' => (int) $countStatement->fetchColumn()]);
+    }
+
+    if ($method === 'POST' && $path === '/customers') {
+        $company = tenant($pdo);
+        $data = customerInput(body());
+        $nextStatement = $pdo->prepare('SELECT COALESCE(MAX(CAST(code AS UNSIGNED)), 10000000000) + 1 FROM customers WHERE company_id = ? AND code REGEXP "^[0-9]+$"');
+        $nextStatement->execute([(int) $company['id']]);
+        $code = (string) $nextStatement->fetchColumn();
+        $pdo->prepare('INSERT INTO customers (company_id, code, name, tax_id, email, phone, address, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+            ->execute([(int) $company['id'], $code, $data['name'], $data['tax_id'], $data['email'], $data['phone'], $data['address'], $data['active']]);
+        respond(['ok' => true, 'customer' => ['id' => (int) $pdo->lastInsertId(), 'code' => $code] + $data], 201);
+    }
+
+    if ($method === 'PUT' && preg_match('#^/customers/(\d+)$#', $path, $match)) {
+        $company = tenant($pdo);
+        $customerId = (int) $match[1];
+        $data = customerInput(body());
+        $existsStatement = $pdo->prepare('SELECT id FROM customers WHERE id = ? AND company_id = ?');
+        $existsStatement->execute([$customerId, (int) $company['id']]);
+        if (!$existsStatement->fetchColumn()) fail('Cliente no encontrado.', 404);
+        $pdo->prepare('UPDATE customers SET name = ?, tax_id = ?, email = ?, phone = ?, address = ?, active = ? WHERE id = ? AND company_id = ?')
+            ->execute([$data['name'], $data['tax_id'], $data['email'], $data['phone'], $data['address'], $data['active'], $customerId, (int) $company['id']]);
+        respond(['ok' => true, 'customer' => ['id' => $customerId] + $data]);
     }
 
     if ($method === 'POST' && $path === '/documents/draft') {
