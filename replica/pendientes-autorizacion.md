@@ -7,4 +7,5 @@ Cosas que el clasificador de permisos bloqueó o que requieren una decisión. No
 3. **`replica/features.csv` en la rama `claude/ciclo-venta-estructura`.** Su escritura fue bloqueada varias veces.
 4. **Comparación de Cobros y Cierres en `replica/recon.md`.** Está en un stash local (`git stash list`, "recon comparacion cobros y cierres") de la rama `claude/ciclo-venta-estructura`; su commit fue bloqueado.
 5. **Fusionar `claude/cobros-cierres-api` a `main` y desplegar.** No se hizo: requiere tu revisión. Antes de desplegar, probar el PHP en un entorno con PHP (aquí no hay intérprete).
-6. **Proveedores como tabla propia.** Hoy `documents.supplier_name` es texto. Crear una tabla `suppliers` cambia el esquema de la base de producción; necesita tu visto bueno.
+6. **Proveedores como tabla propia.** Hoy `documents.supplier_name` es texto. La edición de `database/schema.sql` que agregaba la tabla `suppliers` fue bloqueada ("Modify Shared Resources"). Sin esa tabla no se hicieron la API ni la pantalla de Proveedores (lista, crear y editar).
+7. **Facturas recibidas, Traspasos e Inventarios.** Dependen de cambios de esquema (proveedores, estado de traspaso, tabla de inventarios) o del listado de documentos bloqueado en el punto 1. No se implementaron.
