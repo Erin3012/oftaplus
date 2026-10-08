@@ -461,18 +461,16 @@ try {
         $company = tenant($pdo);
         $filter = (string) ($_GET['filter'] ?? '');
         if (!in_array($filter, ['', 'available', 'zero'], true)) fail('Filtro no válido.', 422);
-        $sql = 'SELECT * FROM (SELECT p.id, p.sku, p.name, p.description, p.cost_amount, COALESCE((SELECT amount FROM product_prices pp WHERE pp.product_id = p.id ORDER BY pp.valid_from DESC, pp.id DESC LIMIT 1), 0) AS price_amount, COALESCE(SUM(CASE sm.movement_type WHEN "out" THEN -ABS(sm.quantity) ELSE sm.quantity END), 0) AS quantity, MAX(CASE WHEN sm.movement_type = "in" THEN sm.occurred_at END) AS last_entry FROM products p LEFT JOIN stock_movements sm ON sm.product_id = p.id AND sm.company_id = p.company_id WHERE p.company_id = ? AND p.active = 1 GROUP BY p.id) stock';
-        if ($filter === 'available') $sql .= ' WHERE quantity > 0';
-        if ($filter === 'zero') $sql .= ' WHERE quantity = 0';
+        $inner = 'SELECT p.id, p.sku, p.name, p.description, p.cost_amount, COALESCE((SELECT amount FROM product_prices pp WHERE pp.product_id = p.id ORDER BY pp.valid_from DESC, pp.id DESC LIMIT 1), 0) AS price_amount, COALESCE(SUM(CASE sm.movement_type WHEN "out" THEN -ABS(sm.quantity) ELSE sm.quantity END), 0) AS quantity, MAX(CASE WHEN sm.movement_type = "in" THEN sm.occurred_at END) AS last_entry FROM products p LEFT JOIN stock_movements sm ON sm.product_id = p.id AND sm.company_id = p.company_id WHERE p.company_id = ? AND p.active = 1 GROUP BY p.id';
+        $where = $filter === 'available' ? ' WHERE quantity > 0' : ($filter === 'zero' ? ' WHERE quantity = 0' : '');
+        $sql = 'SELECT * FROM (' . $inner . ') stock' . $where;
+        $summaryStatement = $pdo->prepare('SELECT COALESCE(SUM(GREATEST(quantity, 0)), 0) AS units, COALESCE(SUM(GREATEST(quantity, 0) * cost_amount), 0) AS cost_value, COALESCE(SUM(GREATEST(quantity, 0) * price_amount), 0) AS price_value, COUNT(*) AS total FROM (' . $inner . ') stock' . $where);
+        $summaryStatement->execute([(int) $company['id']]);
+        $summary = $summaryStatement->fetch();
         $statement = $pdo->prepare($sql . ' ORDER BY name LIMIT 500');
         $statement->execute([(int) $company['id']]);
         $items = $statement->fetchAll();
-        $units = 0.0; $costValue = 0.0; $priceValue = 0.0;
-        foreach ($items as $item) {
-            $quantity = max((float) $item['quantity'], 0);
-            $units += $quantity; $costValue += $quantity * (float) $item['cost_amount']; $priceValue += $quantity * (float) $item['price_amount'];
-        }
-        respond(['ok' => true, 'items' => $items, 'summary' => ['units' => $units, 'costValue' => round($costValue, 2), 'priceValue' => round($priceValue, 2)]]);
+        respond(['ok' => true, 'items' => $items, 'total' => (int) $summary['total'], 'summary' => ['units' => (float) $summary['units'], 'costValue' => round((float) $summary['cost_value'], 2), 'priceValue' => round((float) $summary['price_value'], 2)]]);
     }
 
     if ($method === 'GET' && $path === '/documents') {
