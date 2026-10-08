@@ -1,0 +1,30 @@
+feature,area,priority,original,clone,notes
+Barra superior con sucursal activa y acceso a nuevo documento,shell,must,yes,partial,solo visual
+Menú lateral General / Ingresos / Gastos / CRM / Análisis,shell,must,yes,yes,
+Login y sesión por usuario,auth,must,yes,no,no hay auth en la API
+Multiempresa y sucursal activa,shell,must,yes,partial,tenant() crea una empresa por defecto
+Crear boleta con líneas cliente y totales,ventas,must,yes,partial,guarda borrador vía POST /documents/draft; falta emitir
+Listado de boletas con filtros estado y período,ventas,must,yes,partial,lista con datos de ejemplo
+Emitir boleta (folio y estado emitido),ventas,must,yes,no,
+Registrar cobro de un documento,ventas,must,yes,no,pantalla Cobros solo visual
+Clientes: listado y búsqueda,clientes,must,yes,partial,GET /customers real
+Clientes: crear y editar,clientes,must,yes,no,
+Catálogo de productos con precio e impuesto,almacén,must,yes,partial,GET /products real; sin pantalla de gestión
+Movimiento de stock al emitir venta,almacén,should,yes,no,tabla stock_movements existe
+Guías emitidas: nueva guía y facturar,ventas,should,yes,partial,solo visual
+Facturas emitidas y nota de crédito,ventas,should,yes,partial,solo visual
+Presupuestos y proformas con paso a pedido,ventas,should,yes,partial,solo visual
+Pedidos de clientes: entregar y facturar,ventas,should,yes,partial,solo visual
+Vales de descuento,ventas,could,yes,partial,solo visual
+Resumen diario,caja,should,yes,partial,solo visual
+Cierres de caja,caja,must,yes,partial,solo visual; tablas cash_registers y cash_closures existen
+Informes de ventas en PDF y Excel,informes,should,yes,partial,solo visual
+Exportar tablas,general,should,yes,no,
+Guías recibidas y recepción rápida,compras,should,yes,partial,solo visual
+Pagos a proveedores,compras,should,yes,partial,solo visual
+CRM: envío por pasos,crm,could,yes,partial,solo visual
+CRM: plantillas SMS,crm,could,yes,partial,solo visual
+CRM: dashboard de campañas,crm,could,yes,partial,solo visual
+CRM: recargas SMS,crm,could,yes,skip,depende del proveedor de SMS de Gesvision; usar proveedor propio
+Biblioteca de análisis con favoritos y duplicar,análisis,could,yes,partial,solo visual
+Ficha clínica del cliente,clientes,could,yes,no,estructura desactivada hasta definir permisos
