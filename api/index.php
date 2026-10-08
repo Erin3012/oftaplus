@@ -139,6 +139,28 @@ function customerInput(array $input): array
     ];
 }
 
+function productInput(array $input): array
+{
+    $sku = trim((string) ($input['sku'] ?? ''));
+    if ($sku === '') fail('El código es obligatorio.', 422);
+    $name = trim((string) ($input['name'] ?? ''));
+    if ($name === '') fail('El nombre es obligatorio.', 422);
+    $taxRate = (float) ($input['taxRate'] ?? 19);
+    if ($taxRate < 0 || $taxRate > 100) fail('El IVA debe estar entre 0 y 100.', 422);
+    $cost = round((float) ($input['costAmount'] ?? 0), 2);
+    $price = round((float) ($input['priceAmount'] ?? 0), 2);
+    if ($cost < 0 || $price < 0) fail('Los montos no pueden ser negativos.', 422);
+    return [
+        'sku' => mb_substr($sku, 0, 80),
+        'name' => mb_substr($name, 0, 180),
+        'description' => trim((string) ($input['description'] ?? '')) ?: null,
+        'tax_rate' => $taxRate,
+        'cost_amount' => $cost,
+        'price_amount' => $price,
+        'active' => array_key_exists('active', $input) ? ((bool) $input['active'] ? 1 : 0) : 1,
+    ];
+}
+
 function route(): string
 {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '';
@@ -525,6 +547,40 @@ try {
             if ($pdo->inTransaction()) $pdo->rollBack();
             throw $error;
         }
+    }
+
+    if ($method === 'POST' && $path === '/products') {
+        $company = tenant($pdo);
+        $data = productInput(body());
+        $pdo->beginTransaction();
+        try {
+            $skuStatement = $pdo->prepare('SELECT COUNT(*) FROM products WHERE company_id = ? AND sku = ?');
+            $skuStatement->execute([(int) $company['id'], $data['sku']]);
+            if ((int) $skuStatement->fetchColumn() > 0) fail('Ya existe un producto con ese código.', 409);
+            $pdo->prepare('INSERT INTO products (company_id, sku, name, description, tax_rate, cost_amount, active) VALUES (?, ?, ?, ?, ?, ?, ?)')
+                ->execute([(int) $company['id'], $data['sku'], $data['name'], $data['description'], $data['tax_rate'], $data['cost_amount'], $data['active']]);
+            $productId = (int) $pdo->lastInsertId();
+            if ($data['price_amount'] > 0) {
+                $pdo->prepare('INSERT INTO product_prices (product_id, amount, valid_from) VALUES (?, ?, CURRENT_DATE)')->execute([$productId, $data['price_amount']]);
+            }
+            $pdo->commit();
+            respond(['ok' => true, 'product' => ['id' => $productId] + $data], 201);
+        } catch (Throwable $error) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $error;
+        }
+    }
+
+    if ($method === 'PUT' && preg_match('#^/products/(\d+)$#', $path, $match)) {
+        $company = tenant($pdo);
+        $productId = (int) $match[1];
+        $data = productInput(body());
+        $existsStatement = $pdo->prepare('SELECT id FROM products WHERE id = ? AND company_id = ?');
+        $existsStatement->execute([$productId, (int) $company['id']]);
+        if (!$existsStatement->fetchColumn()) fail('Producto no encontrado.', 404);
+        $pdo->prepare('UPDATE products SET sku = ?, name = ?, description = ?, tax_rate = ?, cost_amount = ?, active = ? WHERE id = ? AND company_id = ?')
+            ->execute([$data['sku'], $data['name'], $data['description'], $data['tax_rate'], $data['cost_amount'], $data['active'], $productId, (int) $company['id']]);
+        respond(['ok' => true, 'product' => ['id' => $productId] + $data]);
     }
 
     if ($method === 'GET' && $path === '/payment-methods') {
