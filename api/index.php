@@ -178,6 +178,103 @@ try {
         }
     }
 
+    if ($method === 'GET' && $path === '/payment-methods') {
+        $company = tenant($pdo);
+        $statement = $pdo->prepare('SELECT id, name, code FROM payment_methods WHERE company_id = ? AND active = 1 ORDER BY name');
+        $statement->execute([(int) $company['id']]);
+        respond(['ok' => true, 'items' => $statement->fetchAll()]);
+    }
+
+    if ($method === 'GET' && $path === '/payments') {
+        $company = tenant($pdo);
+        $from = (string) ($_GET['from'] ?? date('Y-m-d', strtotime('-6 months')));
+        $to = (string) ($_GET['to'] ?? date('Y-m-d'));
+        $limit = min(max((int) ($_GET['limit'] ?? 50), 1), 500);
+        $statement = $pdo->prepare('SELECT p.id, p.amount, p.paid_at, p.created_at, p.reference, d.id AS document_id, d.number AS document_number, c.name AS customer_name, pm.name AS payment_method FROM payments p JOIN documents d ON d.id = p.document_id LEFT JOIN customers c ON c.id = d.customer_id JOIN payment_methods pm ON pm.id = p.payment_method_id WHERE p.company_id = ? AND DATE(p.paid_at) BETWEEN ? AND ? ORDER BY p.paid_at DESC, p.id DESC LIMIT ' . $limit);
+        $statement->execute([(int) $company['id'], $from, $to]);
+        respond(['ok' => true, 'items' => $statement->fetchAll()]);
+    }
+
+    if ($method === 'POST' && $path === '/payments') {
+        $input = body();
+        $company = tenant($pdo);
+        $documentId = (int) ($input['documentId'] ?? 0);
+        $methodId = (int) ($input['paymentMethodId'] ?? 0);
+        $amount = round((float) ($input['amount'] ?? 0), 2);
+        if ($amount <= 0) fail('El importe debe ser mayor que cero.', 422);
+        $pdo->beginTransaction();
+        try {
+            $documentStatement = $pdo->prepare('SELECT id, status, total, paid_total FROM documents WHERE id = ? AND company_id = ? FOR UPDATE');
+            $documentStatement->execute([$documentId, (int) $company['id']]);
+            $document = $documentStatement->fetch();
+            if (!$document) fail('Documento no encontrado.', 404);
+            if ($document['status'] === 'cancelled') fail('No se puede cobrar un documento anulado.', 422);
+            $pending = round((float) $document['total'] - (float) $document['paid_total'], 2);
+            if ($amount > $pending) fail('El importe supera lo pendiente de pago.', 422);
+            $methodStatement = $pdo->prepare('SELECT id FROM payment_methods WHERE id = ? AND company_id = ? AND active = 1');
+            $methodStatement->execute([$methodId, (int) $company['id']]);
+            if (!$methodStatement->fetchColumn()) fail('Forma de pago no válida.', 422);
+            $pdo->prepare('INSERT INTO payments (company_id, document_id, payment_method_id, amount, paid_at, reference, notes) VALUES (?, ?, ?, ?, NOW(), ?, ?)')
+                ->execute([(int) $company['id'], $documentId, $methodId, $amount, $input['reference'] ?? null, $input['notes'] ?? null]);
+            $paymentId = (int) $pdo->lastInsertId();
+            $paidTotal = round((float) $document['paid_total'] + $amount, 2);
+            $status = $paidTotal >= (float) $document['total'] ? 'paid' : 'partially_paid';
+            $pdo->prepare('UPDATE documents SET paid_total = ?, status = ? WHERE id = ?')->execute([$paidTotal, $status, $documentId]);
+            $pdo->commit();
+            respond(['ok' => true, 'payment' => ['id' => $paymentId, 'documentId' => $documentId, 'amount' => $amount], 'document' => ['paidTotal' => $paidTotal, 'pending' => round((float) $document['total'] - $paidTotal, 2), 'status' => $status]], 201);
+        } catch (Throwable $error) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $error;
+        }
+    }
+
+    if ($method === 'GET' && $path === '/cash-closures') {
+        $company = tenant($pdo);
+        $status = (string) ($_GET['status'] ?? '');
+        $sql = 'SELECT cc.id, cr.name AS cash_register, b.name AS branch, cc.opened_at, cc.closed_at, cc.opening_amount, cc.closing_amount, cc.status, (SELECT COALESCE(SUM(p.amount), 0) FROM payments p WHERE p.company_id = cr.company_id AND p.paid_at >= cc.opened_at AND p.paid_at <= COALESCE(cc.closed_at, NOW())) AS calculated_amount FROM cash_closures cc JOIN cash_registers cr ON cr.id = cc.cash_register_id LEFT JOIN branches b ON b.id = cr.branch_id WHERE cr.company_id = ?';
+        $params = [(int) $company['id']];
+        if (in_array($status, ['open', 'closed'], true)) { $sql .= ' AND cc.status = ?'; $params[] = $status; }
+        $statement = $pdo->prepare($sql . ' ORDER BY cc.opened_at DESC LIMIT 100');
+        $statement->execute($params);
+        respond(['ok' => true, 'items' => $statement->fetchAll()]);
+    }
+
+    if ($method === 'POST' && $path === '/cash-closures/close') {
+        $input = body();
+        $company = tenant($pdo);
+        $counted = round((float) ($input['countedAmount'] ?? -1), 2);
+        if ($counted < 0) fail('Indica el importe del recuento.', 422);
+        $pdo->beginTransaction();
+        try {
+            $registerStatement = $pdo->prepare('SELECT id FROM cash_registers WHERE company_id = ? AND active = 1 ORDER BY id LIMIT 1');
+            $registerStatement->execute([(int) $company['id']]);
+            $registerId = (int) $registerStatement->fetchColumn();
+            if (!$registerId) {
+                $pdo->prepare('INSERT INTO cash_registers (company_id, name) VALUES (?, ?)')->execute([(int) $company['id'], 'Caja principal']);
+                $registerId = (int) $pdo->lastInsertId();
+            }
+            $openStatement = $pdo->prepare('SELECT id, opened_at FROM cash_closures WHERE cash_register_id = ? AND status = "open" ORDER BY opened_at LIMIT 1 FOR UPDATE');
+            $openStatement->execute([$registerId]);
+            $closure = $openStatement->fetch();
+            if (!$closure) {
+                $lastStatement = $pdo->prepare('SELECT MAX(closed_at) FROM cash_closures WHERE cash_register_id = ?');
+                $lastStatement->execute([$registerId]);
+                $openedAt = $lastStatement->fetchColumn() ?: date('Y-m-d 00:00:00');
+                $pdo->prepare('INSERT INTO cash_closures (cash_register_id, opened_at) VALUES (?, ?)')->execute([$registerId, $openedAt]);
+                $closure = ['id' => (int) $pdo->lastInsertId(), 'opened_at' => $openedAt];
+            }
+            $sumStatement = $pdo->prepare('SELECT COALESCE(SUM(amount), 0) FROM payments WHERE company_id = ? AND paid_at >= ? AND paid_at <= NOW()');
+            $sumStatement->execute([(int) $company['id'], $closure['opened_at']]);
+            $calculated = round((float) $sumStatement->fetchColumn(), 2);
+            $pdo->prepare('UPDATE cash_closures SET closed_at = NOW(), closing_amount = ?, status = "closed" WHERE id = ?')->execute([$counted, (int) $closure['id']]);
+            $pdo->commit();
+            respond(['ok' => true, 'closure' => ['id' => (int) $closure['id'], 'openedAt' => $closure['opened_at'], 'calculatedAmount' => $calculated, 'countedAmount' => $counted, 'difference' => round($counted - $calculated, 2), 'status' => 'closed']], 201);
+        } catch (Throwable $error) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $error;
+        }
+    }
+
     fail('Ruta no encontrada.', 404);
 } catch (PDOException $error) {
     fail('Error de base de datos.', 500);
