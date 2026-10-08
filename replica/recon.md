@@ -1,6 +1,6 @@
 # Recon: Gesvision (gesmo) → Oftaplus
 
-Fuente: `reference-assets/module-map.md` (recorrido de la cuenta propia) y el estado actual del código. No se pudo abrir la web desde el entorno cloud: la política de red bloquea `app.gesvision.com`.
+Fuente: `reference-assets/module-map.md` (recorrido de la cuenta propia) y el estado actual del código. Estado de acceso (2026-10-08): `https://app.gesvision.com/gesmo/login` responde HTTP 200 desde esta sesión. Las rutas protegidas (p. ej. `/gesmo/ventas/tickets`) responden 302 a `/gesmo/login`, así que el recorrido autenticado requiere credenciales. No hay variables de entorno de Gesvision configuradas en esta sesión; el recorrido queda pendiente de ellas.
 
 ## Alcance
 
