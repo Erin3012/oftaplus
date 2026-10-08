@@ -134,12 +134,13 @@ try {
         $q = trim((string) ($_GET['q'] ?? ''));
         $limit = min(max((int) ($_GET['limit'] ?? 20), 1), 50);
         $offset = min(max((int) ($_GET['offset'] ?? 0), 0), 1000000);
-        $where = 'FROM customers WHERE active = 1 AND (name LIKE ? OR code LIKE ? OR email LIKE ?)';
+        $where = 'FROM customers WHERE active = 1 AND (name LIKE ? OR code LIKE ? OR email LIKE ? OR tax_id LIKE ? OR phone LIKE ?)';
         $like = '%' . $q . '%';
+        $params = [$like, $like, $like, $like, $like];
         $countStatement = $pdo->prepare('SELECT COUNT(*) ' . $where);
-        $countStatement->execute([$like, $like, $like]);
-        $statement = $pdo->prepare('SELECT id, code, name, email, phone ' . $where . ' ORDER BY name LIMIT ' . $limit . ' OFFSET ' . $offset);
-        $statement->execute([$like, $like, $like]);
+        $countStatement->execute($params);
+        $statement = $pdo->prepare('SELECT id, code, name, tax_id, email, phone, address ' . $where . ' ORDER BY name LIMIT ' . $limit . ' OFFSET ' . $offset);
+        $statement->execute($params);
         respond(['ok' => true, 'items' => $statement->fetchAll(), 'total' => (int) $countStatement->fetchColumn()]);
     }
 
