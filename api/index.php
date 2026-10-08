@@ -178,6 +178,36 @@ try {
         }
     }
 
+    if ($method === 'GET' && $path === '/payments') {
+        $company = tenant($pdo);
+        $q = trim((string) ($_GET['q'] ?? ''));
+        $limit = min(max((int) ($_GET['limit'] ?? 20), 1), 50);
+        $offset = min(max((int) ($_GET['offset'] ?? 0), 0), 1000000);
+        $where = 'FROM payments p JOIN documents d ON d.id = p.document_id LEFT JOIN customers c ON c.id = d.customer_id JOIN payment_methods pm ON pm.id = p.payment_method_id WHERE p.company_id = ? AND (d.id LIKE ? OR c.name LIKE ? OR pm.name LIKE ?)';
+        $like = '%' . $q . '%';
+        $params = [(int) $company['id'], $like, $like, $like];
+        $countStatement = $pdo->prepare('SELECT COUNT(*) ' . $where);
+        $countStatement->execute($params);
+        $statement = $pdo->prepare('SELECT p.id, d.id AS document_id, c.name AS customer_name, pm.name AS payment_method, p.amount, p.paid_at, p.reference ' . $where . ' ORDER BY p.paid_at DESC, p.id DESC LIMIT ' . $limit . ' OFFSET ' . $offset);
+        $statement->execute($params);
+        respond(['ok' => true, 'items' => $statement->fetchAll(), 'total' => (int) $countStatement->fetchColumn()]);
+    }
+
+    if ($method === 'GET' && $path === '/cash-closures') {
+        $company = tenant($pdo);
+        $limit = min(max((int) ($_GET['limit'] ?? 20), 1), 50);
+        $offset = min(max((int) ($_GET['offset'] ?? 0), 0), 1000000);
+        $status = (string) ($_GET['status'] ?? '');
+        $statusSql = in_array($status, ['open', 'closed'], true) ? ' AND cc.status = ?' : '';
+        $where = 'FROM cash_closures cc JOIN cash_registers cr ON cr.id = cc.cash_register_id WHERE cr.company_id = ?' . $statusSql;
+        $params = $statusSql ? [(int) $company['id'], $status] : [(int) $company['id']];
+        $countStatement = $pdo->prepare('SELECT COUNT(*) ' . $where);
+        $countStatement->execute($params);
+        $statement = $pdo->prepare('SELECT cc.id, cr.name AS register_name, cc.opened_at, cc.closed_at, cc.opening_amount, cc.closing_amount, cc.status ' . $where . ' ORDER BY cc.opened_at DESC, cc.id DESC LIMIT ' . $limit . ' OFFSET ' . $offset);
+        $statement->execute($params);
+        respond(['ok' => true, 'items' => $statement->fetchAll(), 'total' => (int) $countStatement->fetchColumn()]);
+    }
+
     fail('Ruta no encontrada.', 404);
 } catch (PDOException $error) {
     fail('Error de base de datos.', 500);
