@@ -453,6 +453,80 @@ try {
         respond(['ok' => true, 'items' => $items, 'summary' => ['units' => $units, 'costValue' => round($costValue, 2), 'priceValue' => round($priceValue, 2)]]);
     }
 
+    if ($method === 'GET' && $path === '/documents') {
+        $company = tenant($pdo);
+        $from = dateParam('from', date('Y-m-d', strtotime('-6 months')));
+        $to = dateParam('to', date('Y-m-d'));
+        if ($from > $to) fail('La fecha inicial no puede ser posterior a la final.', 422);
+        $typeCode = strtoupper((string) ($_GET['type'] ?? 'BOL'));
+        $limit = min(max((int) ($_GET['limit'] ?? 50), 1), 500);
+        $sql = 'SELECT d.id, d.number, s.prefix, d.status, d.issue_date, d.created_at, d.discount_total, d.total, d.paid_total, (d.total - d.paid_total) AS pending_total, c.name AS customer_name, b.name AS branch FROM documents d JOIN document_types t ON t.id = d.document_type_id LEFT JOIN document_series s ON s.id = d.series_id LEFT JOIN customers c ON c.id = d.customer_id LEFT JOIN branches b ON b.id = d.branch_id WHERE d.company_id = ? AND t.code = ? AND d.issue_date BETWEEN ? AND ?';
+        $params = [(int) $company['id'], $typeCode, $from, $to];
+        $status = (string) ($_GET['status'] ?? '');
+        if ($status !== '') {
+            if (!in_array($status, ['draft', 'issued', 'partially_paid', 'paid', 'delivered', 'cancelled'], true)) fail('Estado no válido.', 422);
+            $sql .= ' AND d.status = ?';
+            $params[] = $status;
+        }
+        $statement = $pdo->prepare($sql . ' ORDER BY d.created_at DESC, d.id DESC LIMIT ' . $limit);
+        $statement->execute($params);
+        respond(['ok' => true, 'items' => $statement->fetchAll()]);
+    }
+
+    if ($method === 'POST' && preg_match('#^/documents/(\d+)/issue$#', $path, $match)) {
+        $company = tenant($pdo);
+        $documentId = (int) $match[1];
+        $pdo->beginTransaction();
+        try {
+            $documentStatement = $pdo->prepare('SELECT id, status, document_type_id FROM documents WHERE id = ? AND company_id = ? FOR UPDATE');
+            $documentStatement->execute([$documentId, (int) $company['id']]);
+            $document = $documentStatement->fetch();
+            if (!$document) fail('Documento no encontrado.', 404);
+            if ($document['status'] !== 'draft') fail('Solo se puede emitir un borrador.', 409);
+            $linesStatement = $pdo->prepare('SELECT COUNT(*) FROM document_lines WHERE document_id = ?');
+            $linesStatement->execute([$documentId]);
+            if ((int) $linesStatement->fetchColumn() === 0) fail('El documento no tiene líneas.', 422);
+            $prefix = date('Y');
+            $seriesStatement = $pdo->prepare('SELECT id, next_number FROM document_series WHERE company_id = ? AND document_type_id = ? AND prefix = ? AND active = 1 ORDER BY id LIMIT 1 FOR UPDATE');
+            $seriesStatement->execute([(int) $company['id'], (int) $document['document_type_id'], $prefix]);
+            $series = $seriesStatement->fetch();
+            if (!$series) {
+                $pdo->prepare('INSERT INTO document_series (company_id, document_type_id, prefix, next_number) VALUES (?, ?, ?, 1)')
+                    ->execute([(int) $company['id'], (int) $document['document_type_id'], $prefix]);
+                $series = ['id' => (int) $pdo->lastInsertId(), 'next_number' => 1];
+            }
+            $number = (int) $series['next_number'];
+            $pdo->prepare('UPDATE document_series SET next_number = next_number + 1 WHERE id = ?')->execute([(int) $series['id']]);
+            $pdo->prepare('UPDATE documents SET status = "issued", series_id = ?, number = ?, issue_date = CURRENT_DATE WHERE id = ?')
+                ->execute([(int) $series['id'], $number, $documentId]);
+            $pdo->commit();
+            respond(['ok' => true, 'document' => ['id' => $documentId, 'status' => 'issued', 'folio' => sprintf('%s/%06d', $prefix, $number)]]);
+        } catch (Throwable $error) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $error;
+        }
+    }
+
+    if ($method === 'POST' && preg_match('#^/documents/(\d+)/cancel$#', $path, $match)) {
+        $company = tenant($pdo);
+        $documentId = (int) $match[1];
+        $pdo->beginTransaction();
+        try {
+            $documentStatement = $pdo->prepare('SELECT id, status, paid_total FROM documents WHERE id = ? AND company_id = ? FOR UPDATE');
+            $documentStatement->execute([$documentId, (int) $company['id']]);
+            $document = $documentStatement->fetch();
+            if (!$document) fail('Documento no encontrado.', 404);
+            if ($document['status'] === 'cancelled') fail('El documento ya está anulado.', 409);
+            if ((float) $document['paid_total'] > 0) fail('No se puede anular un documento con cobros registrados.', 409);
+            $pdo->prepare('UPDATE documents SET status = "cancelled" WHERE id = ?')->execute([$documentId]);
+            $pdo->commit();
+            respond(['ok' => true, 'document' => ['id' => $documentId, 'status' => 'cancelled']]);
+        } catch (Throwable $error) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $error;
+        }
+    }
+
     if ($method === 'GET' && $path === '/payment-methods') {
         $company = tenant($pdo);
         $statement = $pdo->prepare('SELECT id, name, code FROM payment_methods WHERE company_id = ? AND active = 1 ORDER BY name');
