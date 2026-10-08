@@ -178,6 +178,121 @@ try {
         }
     }
 
+    if ($method === 'GET' && $path === '/inventory-counts') {
+        $company = tenant($pdo);
+        $status = isset($_GET['status']) ? (string) $_GET['status'] : null;
+        $limit = min(max((int) ($_GET['limit'] ?? 50), 1), 100);
+        $offset = min(max((int) ($_GET['offset'] ?? 0), 0), 1000000);
+        $where = 'WHERE ic.company_id = ?';
+        $params = [(int) $company['id']];
+        if ($status) {
+            $where .= ' AND ic.status = ?';
+            $params[] = $status;
+        }
+        $countStatement = $pdo->prepare('SELECT COUNT(*) FROM inventory_counts ic ' . $where);
+        $countStatement->execute($params);
+        $statement = $pdo->prepare('SELECT ic.id, ic.status, ic.count_date, ic.started_at, ic.completed_at, ic.closed_at, ic.location_id, COUNT(icl.id) AS line_count, SUM(CASE WHEN icl.quantity_counted IS NOT NULL THEN 1 ELSE 0 END) AS lines_counted FROM inventory_counts ic LEFT JOIN inventory_count_lines icl ON ic.id = icl.count_id ' . $where . ' GROUP BY ic.id ORDER BY ic.count_date DESC, ic.id DESC LIMIT ' . $limit . ' OFFSET ' . $offset);
+        $statement->execute($params);
+        respond(['ok' => true, 'items' => $statement->fetchAll(), 'total' => (int) $countStatement->fetchColumn()]);
+    }
+
+    if ($method === 'POST' && $path === '/inventory-counts') {
+        $input = body();
+        $company = tenant($pdo);
+        $countDate = (string) ($input['count_date'] ?? date('Y-m-d'));
+        $locationId = !empty($input['location_id']) ? (int) $input['location_id'] : null;
+        $pdo->beginTransaction();
+        try {
+            $statement = $pdo->prepare('INSERT INTO inventory_counts (company_id, location_id, status, count_date, notes) VALUES (?, ?, ?, ?, ?)');
+            $statement->execute([(int) $company['id'], $locationId, 'draft', $countDate, (string) ($input['notes'] ?? '')]);
+            $countId = (int) $pdo->lastInsertId();
+            $productStatement = $pdo->prepare('SELECT DISTINCT p.id FROM products p LEFT JOIN stock_movements sm ON p.id = sm.product_id WHERE p.company_id = ? AND p.active = 1');
+            $productStatement->execute([(int) $company['id']]);
+            $products = $productStatement->fetchAll();
+            $lineStatement = $pdo->prepare('INSERT INTO inventory_count_lines (count_id, product_id, quantity_expected) VALUES (?, ?, (SELECT COALESCE(SUM(CASE WHEN movement_type IN ("in", "adjustment") THEN quantity WHEN movement_type IN ("out", "transfer") THEN -quantity ELSE 0 END), 0) FROM stock_movements WHERE product_id = ? AND location_id = ? AND company_id = ?))');
+            foreach ($products as $product) {
+                $lineStatement->execute([$countId, (int) $product['id'], (int) $product['id'], $locationId, (int) $company['id']]);
+            }
+            $pdo->commit();
+            respond(['ok' => true, 'count' => ['id' => $countId, 'status' => 'draft', 'count_date' => $countDate]], 201);
+        } catch (Throwable $error) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $error;
+        }
+    }
+
+    if ($method === 'POST' && preg_match('#^/inventory-count-lines$#', $path)) {
+        $input = body();
+        $countId = !empty($input['count_id']) ? (int) $input['count_id'] : null;
+        $productId = !empty($input['product_id']) ? (int) $input['product_id'] : null;
+        $quantityCounted = !empty($input['quantity_counted']) ? (float) $input['quantity_counted'] : null;
+        if (!$countId || !$productId) fail('count_id y product_id son requeridos.', 422);
+        $statement = $pdo->prepare('UPDATE inventory_count_lines SET quantity_counted = ?, status = ? WHERE count_id = ? AND product_id = ?');
+        $statement->execute([$quantityCounted, 'counted', $countId, $productId]);
+        if ($statement->rowCount() === 0) {
+            $insertStatement = $pdo->prepare('INSERT INTO inventory_count_lines (count_id, product_id, quantity_expected, quantity_counted, status) VALUES (?, ?, 0, ?, ?)');
+            $insertStatement->execute([$countId, $productId, $quantityCounted, 'counted']);
+        }
+        respond(['ok' => true, 'message' => 'Línea de recuento actualizada.']);
+    }
+
+    if ($method === 'GET' && preg_match('#^/inventory-counts/(\d+)/lines$#', $path, $matches)) {
+        $countId = (int) $matches[1];
+        $company = tenant($pdo);
+        $statement = $pdo->prepare('SELECT icl.id, icl.product_id, icl.quantity_expected, icl.quantity_counted, icl.quantity_difference, icl.status, p.sku, p.name FROM inventory_count_lines icl JOIN inventory_counts ic ON icl.count_id = ic.id JOIN products p ON icl.product_id = p.id WHERE ic.company_id = ? AND icl.count_id = ? ORDER BY p.name');
+        $statement->execute([(int) $company['id'], $countId]);
+        respond(['ok' => true, 'items' => $statement->fetchAll()]);
+    }
+
+    if ($method === 'POST' && preg_match('#^/inventory-counts/(\d+)/complete$#', $path, $matches)) {
+        $countId = (int) $matches[1];
+        $company = tenant($pdo);
+        $input = body();
+        $userId = !empty($input['user_id']) ? (int) $input['user_id'] : null;
+        $pdo->beginTransaction();
+        try {
+            $countStatement = $pdo->prepare('SELECT id, location_id FROM inventory_counts WHERE id = ? AND company_id = ?');
+            $countStatement->execute([$countId, (int) $company['id']]);
+            $count = $countStatement->fetch();
+            if (!$count) fail('Recuento no encontrado.', 404);
+            $updateStatement = $pdo->prepare('UPDATE inventory_counts SET status = ?, completed_at = NOW(), completed_by = ? WHERE id = ?');
+            $updateStatement->execute(['completed', $userId, $countId]);
+            $pdo->commit();
+            respond(['ok' => true, 'message' => 'Recuento completado.']);
+        } catch (Throwable $error) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $error;
+        }
+    }
+
+    if ($method === 'POST' && preg_match('#^/inventory-counts/(\d+)/close$#', $path, $matches)) {
+        $countId = (int) $matches[1];
+        $company = tenant($pdo);
+        $input = body();
+        $userId = !empty($input['user_id']) ? (int) $input['user_id'] : null;
+        $pdo->beginTransaction();
+        try {
+            $countStatement = $pdo->prepare('SELECT id, location_id FROM inventory_counts WHERE id = ? AND company_id = ?');
+            $countStatement->execute([$countId, (int) $company['id']]);
+            $count = $countStatement->fetch();
+            if (!$count) fail('Recuento no encontrado.', 404);
+            $lineStatement = $pdo->prepare('SELECT icl.id, icl.product_id, icl.quantity_difference FROM inventory_count_lines icl WHERE count_id = ? AND icl.quantity_counted IS NOT NULL AND icl.quantity_difference != 0');
+            $lineStatement->execute([$countId]);
+            $differences = $lineStatement->fetchAll();
+            $adjustmentStatement = $pdo->prepare('INSERT INTO inventory_adjustments (company_id, count_id, product_id, location_id, adjustment_quantity, reason, status) VALUES (?, ?, ?, ?, ?, ?, ?)');
+            foreach ($differences as $diff) {
+                $adjustmentStatement->execute([(int) $company['id'], $countId, (int) $diff['product_id'], (int) $count['location_id'], (float) $diff['quantity_difference'], 'Ajuste por recuento de inventario', 'pending']);
+            }
+            $updateStatement = $pdo->prepare('UPDATE inventory_counts SET status = ?, closed_at = NOW(), closed_by = ? WHERE id = ?');
+            $updateStatement->execute(['closed', $userId, $countId]);
+            $pdo->commit();
+            respond(['ok' => true, 'message' => 'Recuento cerrado. Ajustes generados.', 'adjustments_count' => count($differences)]);
+        } catch (Throwable $error) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $error;
+        }
+    }
+
     fail('Ruta no encontrada.', 404);
 } catch (PDOException $error) {
     fail('Error de base de datos.', 500);

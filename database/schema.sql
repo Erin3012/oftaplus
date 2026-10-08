@@ -370,3 +370,61 @@ CREATE TABLE IF NOT EXISTS audit_logs (
   CONSTRAINT fk_audit_logs_company FOREIGN KEY (company_id) REFERENCES companies(id),
   CONSTRAINT fk_audit_logs_user FOREIGN KEY (user_id) REFERENCES users(id)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS inventory_counts (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  company_id BIGINT UNSIGNED NOT NULL,
+  location_id BIGINT UNSIGNED NULL,
+  status ENUM('draft','in_progress','completed','closed') NOT NULL DEFAULT 'draft',
+  count_date DATE NOT NULL,
+  started_at DATETIME NULL,
+  completed_at DATETIME NULL,
+  closed_at DATETIME NULL,
+  started_by BIGINT UNSIGNED NULL,
+  completed_by BIGINT UNSIGNED NULL,
+  closed_by BIGINT UNSIGNED NULL,
+  notes TEXT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY idx_inventory_counts_status (company_id, status, count_date),
+  CONSTRAINT fk_inventory_counts_company FOREIGN KEY (company_id) REFERENCES companies(id),
+  CONSTRAINT fk_inventory_counts_location FOREIGN KEY (location_id) REFERENCES stock_locations(id),
+  CONSTRAINT fk_inventory_counts_started_by FOREIGN KEY (started_by) REFERENCES users(id),
+  CONSTRAINT fk_inventory_counts_completed_by FOREIGN KEY (completed_by) REFERENCES users(id),
+  CONSTRAINT fk_inventory_counts_closed_by FOREIGN KEY (closed_by) REFERENCES users(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS inventory_count_lines (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  count_id BIGINT UNSIGNED NOT NULL,
+  product_id BIGINT UNSIGNED NOT NULL,
+  quantity_expected DECIMAL(12,3) NOT NULL DEFAULT 0,
+  quantity_counted DECIMAL(12,3) NULL,
+  quantity_difference DECIMAL(12,3) GENERATED ALWAYS AS (quantity_counted - quantity_expected) STORED,
+  status ENUM('pending','counted','reviewed') NOT NULL DEFAULT 'pending',
+  notes TEXT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY idx_inventory_count_lines_product (count_id, product_id),
+  CONSTRAINT fk_inventory_count_lines_count FOREIGN KEY (count_id) REFERENCES inventory_counts(id) ON DELETE CASCADE,
+  CONSTRAINT fk_inventory_count_lines_product FOREIGN KEY (product_id) REFERENCES products(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS inventory_adjustments (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  company_id BIGINT UNSIGNED NOT NULL,
+  count_id BIGINT UNSIGNED NOT NULL,
+  product_id BIGINT UNSIGNED NOT NULL,
+  location_id BIGINT UNSIGNED NOT NULL,
+  adjustment_quantity DECIMAL(12,3) NOT NULL,
+  reason VARCHAR(100) NOT NULL,
+  status ENUM('pending','applied','cancelled') NOT NULL DEFAULT 'pending',
+  applied_at DATETIME NULL,
+  applied_by BIGINT UNSIGNED NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_inventory_adjustments_company FOREIGN KEY (company_id) REFERENCES companies(id),
+  CONSTRAINT fk_inventory_adjustments_count FOREIGN KEY (count_id) REFERENCES inventory_counts(id),
+  CONSTRAINT fk_inventory_adjustments_product FOREIGN KEY (product_id) REFERENCES products(id),
+  CONSTRAINT fk_inventory_adjustments_location FOREIGN KEY (location_id) REFERENCES stock_locations(id),
+  CONSTRAINT fk_inventory_adjustments_user FOREIGN KEY (applied_by) REFERENCES users(id)
+) ENGINE=InnoDB;
