@@ -202,6 +202,37 @@ try {
         respond(['ok' => true, 'customer' => ['id' => $customerId] + $data]);
     }
 
+    if ($method === 'GET' && $path === '/suppliers') {
+        $company = tenant($pdo);
+        $like = '%' . trim((string) ($_GET['q'] ?? '')) . '%';
+        $statement = $pdo->prepare('SELECT id, code, name, tax_id, email, phone, address, active FROM suppliers WHERE company_id = ? AND (name LIKE ? OR code LIKE ? OR tax_id LIKE ?) ORDER BY name LIMIT 200');
+        $statement->execute([(int) $company['id'], $like, $like, $like]);
+        respond(['ok' => true, 'items' => $statement->fetchAll()]);
+    }
+
+    if ($method === 'POST' && $path === '/suppliers') {
+        $company = tenant($pdo);
+        $data = customerInput(body());
+        $nextStatement = $pdo->prepare('SELECT COALESCE(MAX(CAST(code AS UNSIGNED)), 4000000) + 1 FROM suppliers WHERE company_id = ? AND code REGEXP "^[0-9]+$"');
+        $nextStatement->execute([(int) $company['id']]);
+        $code = (string) $nextStatement->fetchColumn();
+        $pdo->prepare('INSERT INTO suppliers (company_id, code, name, tax_id, email, phone, address, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+            ->execute([(int) $company['id'], $code, $data['name'], $data['tax_id'], $data['email'], $data['phone'], $data['address'], $data['active']]);
+        respond(['ok' => true, 'supplier' => ['id' => (int) $pdo->lastInsertId(), 'code' => $code] + $data], 201);
+    }
+
+    if ($method === 'PUT' && preg_match('#^/suppliers/(\d+)$#', $path, $match)) {
+        $company = tenant($pdo);
+        $supplierId = (int) $match[1];
+        $data = customerInput(body());
+        $existsStatement = $pdo->prepare('SELECT id FROM suppliers WHERE id = ? AND company_id = ?');
+        $existsStatement->execute([$supplierId, (int) $company['id']]);
+        if (!$existsStatement->fetchColumn()) fail('Proveedor no encontrado.', 404);
+        $pdo->prepare('UPDATE suppliers SET name = ?, tax_id = ?, email = ?, phone = ?, address = ?, active = ? WHERE id = ? AND company_id = ?')
+            ->execute([$data['name'], $data['tax_id'], $data['email'], $data['phone'], $data['address'], $data['active'], $supplierId, (int) $company['id']]);
+        respond(['ok' => true, 'supplier' => ['id' => $supplierId] + $data]);
+    }
+
     if ($method === 'POST' && $path === '/documents/draft') {
         $input = body();
         $company = tenant($pdo);
