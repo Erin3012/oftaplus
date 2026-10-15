@@ -49,6 +49,7 @@ function config(): array
         'name' => getenv('DB_DATABASE') ?: ($values['DB_NAME'] ?? ''),
         'user' => getenv('DB_USERNAME') ?: ($values['DB_USER'] ?? ''),
         'pass' => getenv('DB_PASSWORD') ?: ($values['DB_PASS'] ?? ''),
+        'setup_token' => getenv('OFTAPLUS_SETUP_TOKEN') ?: ($values['SETUP_TOKEN'] ?? ''),
     ];
 }
 
@@ -222,6 +223,24 @@ function authSetupRequired(PDO $pdo): bool
     return (int) $pdo->query('SELECT COUNT(*) FROM users WHERE password_hash IS NOT NULL AND password_hash <> ""')->fetchColumn() === 0;
 }
 
+// Intentos de login por IP guardados fuera de la sesión, para que borrar la cookie no sirva para saltarse el límite.
+function loginLimitFile(): string
+{
+    return sys_get_temp_dir() . '/oftaplus-login-' . hash('sha256', (string) ($_SERVER['REMOTE_ADDR'] ?? 'local')) . '.json';
+}
+
+function loginLimitState(): array
+{
+    $raw = @file_get_contents(loginLimitFile());
+    $state = $raw ? json_decode($raw, true) : null;
+    return is_array($state) ? $state : ['attempts' => 0, 'blocked_until' => 0];
+}
+
+function saveLoginLimitState(array $state): void
+{
+    @file_put_contents(loginLimitFile(), json_encode($state), LOCK_EX);
+}
+
 function assertSameOrigin(): void
 {
     $origin = (string) ($_SERVER['HTTP_ORIGIN'] ?? '');
@@ -294,7 +313,8 @@ try {
     if ($method === 'POST' && $path === '/auth/login') {
         assertSameOrigin();
         $now = time();
-        if ((int) ($_SESSION['login_blocked_until'] ?? 0) > $now) fail('Demasiados intentos. Espera un minuto e inténtalo otra vez.', 429);
+        $limit = loginLimitState();
+        if ((int) $limit['blocked_until'] > $now) fail('Demasiados intentos. Espera un minuto e inténtalo otra vez.', 429);
         $input = body();
         $email = mb_strtolower(trim((string) ($input['email'] ?? '')));
         $password = (string) ($input['password'] ?? '');
@@ -304,13 +324,15 @@ try {
         $user = null;
         foreach ($statement->fetchAll() as $candidate) if (password_verify($password, (string) $candidate['password_hash'])) { $user = $candidate; break; }
         if (!$user) {
-            $attempts = (int) ($_SESSION['login_attempts'] ?? 0) + 1;
-            $_SESSION['login_attempts'] = $attempts >= 7 ? 0 : $attempts;
-            if ($attempts >= 7) $_SESSION['login_blocked_until'] = $now + 60;
+            $limit['attempts'] = (int) $limit['attempts'] + 1;
+            if ($limit['attempts'] >= 7) {
+                $limit = ['attempts' => 0, 'blocked_until' => $now + 60];
+            }
+            saveLoginLimitState($limit);
             fail('Correo o contraseña incorrectos.', 401);
         }
+        @unlink(loginLimitFile());
         session_regenerate_id(true);
-        unset($_SESSION['login_attempts'], $_SESSION['login_blocked_until']);
         $_SESSION['user_id'] = (int) $user['id'];
         $_SESSION['company_id'] = (int) $user['company_id'];
         unset($user['password_hash']);
@@ -321,6 +343,9 @@ try {
         assertSameOrigin();
         if (!authSetupRequired($pdo)) fail('El acceso inicial ya fue configurado. Inicia sesión.', 409);
         $input = body();
+        $setupToken = config()['setup_token'];
+        if ($setupToken === '') fail('El acceso inicial no está habilitado en el servidor. Define OFTAPLUS_SETUP_TOKEN.', 403);
+        if (!hash_equals($setupToken, (string) ($input['setupToken'] ?? ''))) fail('Token de instalación incorrecto.', 403);
         $name = trim((string) ($input['name'] ?? ''));
         $email = mb_strtolower(trim((string) ($input['email'] ?? '')));
         $password = (string) ($input['password'] ?? '');
@@ -376,8 +401,7 @@ try {
     }
 
     if ($method === 'GET' && $path === '/health') {
-        $tables = (int) $pdo->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE()")->fetchColumn();
-        respond(['ok' => true, 'database' => true, 'tables' => $tables]);
+        respond(['ok' => true, 'database' => true]);
     }
 
     if ($method === 'GET' && $path === '/reports/summary') {
