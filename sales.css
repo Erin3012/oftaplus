@@ -1,0 +1,15 @@
+.sale-electronic-note{margin:0 18px 12px;padding:10px 12px;border:1px solid #eedca7;border-radius:6px;background:#fff8e4;color:#715b24;font-size:11px;line-height:1.5}
+.ticket-section-title [data-add-sale-line]{white-space:nowrap}
+.remove-line-button{width:27px;height:27px;border:0;border-radius:5px;background:#fff0ee;color:#b54236;font-size:18px;cursor:pointer}
+.remove-line-button:hover,.remove-line-button:focus-visible{outline:2px solid #d57a71;background:#ffe4e0}
+.ticket-lines tr.sale-stock-short [data-line-stock]{color:#b42318;font-weight:700}
+.ticket-lines tr.sale-stock-short [data-line-qty]{border-color:#d92d20;background:#fff2f0}
+.sale-payment-entries{display:grid;gap:10px}
+.sale-payment-entry{display:grid;grid-template-columns:minmax(170px,1fr) minmax(130px,.7fr) 34px;gap:10px;align-items:end;padding:10px;border:1px solid #e1e6ec;border-radius:7px;background:#f8fafc}
+.sale-payment-entry label{display:grid;gap:6px;color:#41495a;font-size:12px;font-weight:600}
+.sale-payment-entry input,.sale-payment-entry select{width:100%;min-height:38px;padding:7px 9px;border:1px solid #dfe4ec;border-radius:6px;background:#fff;color:#293142;font:inherit}
+.term-add-button{align-self:start;margin-top:5px;padding:4px 0;border:0;background:transparent;color:#2677a8;font:inherit;font-size:10px;text-align:left;cursor:pointer}
+.compact-action{min-height:29px;padding:4px 8px;margin:2px;font-size:10px;white-space:nowrap}
+.sale-list-actions{min-width:150px;white-space:nowrap}
+@media(max-width:650px){.sale-payment-entry{grid-template-columns:1fr 1fr 30px;gap:7px}.sale-payment-entry label{font-size:11px}.sale-electronic-note{margin-right:10px;margin-left:10px}}
+@media print{.sale-electronic-note,[data-add-sale-line],.ticket-footer,.ticket-tabs{display:none!important}}

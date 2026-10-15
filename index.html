@@ -3,15 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Réplica visual estática de Oftaplus" />
+    <meta name="description" content="Gestión comercial para ópticas · Oftaplus" />
     <title>Oftaplus · Dashboard</title>
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./sales.css?v=1" />
+    <link rel="stylesheet" href="./operations.css?v=2" />
   </head>
-  <body>
+  <body class="auth-locked">
+    <div id="auth-root" aria-live="polite"></div>
     <div class="app-shell">
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand"><a class="brand" href="#dashboard" aria-label="Oftaplus inicio"><span class="brand-mark" aria-hidden="true"><i></i><b></b><em></em></span><span class="brand-name">Oftaplus</span></a><button class="icon-button sidebar-close" id="sidebar-close" aria-label="Cerrar menú">×</button></div>
-        <div class="workspace-switcher"><span class="workspace-dot"></span><span><strong>Oftaplus</strong><small>Empresa activa</small></span><span class="chevron">⌄</span></div>
+        <div class="workspace-switcher"><span class="workspace-dot"></span><span><strong data-auth-company>Oftaplus</strong><small>Empresa activa</small></span><span class="chevron">⌄</span></div>
         <nav class="main-nav" aria-label="Navegación principal">
           <a class="nav-item is-active" href="#dashboard" data-route="dashboard"><span class="nav-icon">⌂</span>General</a>
           <button class="nav-group is-open" type="button" data-group="Ingresos"><span class="nav-icon">↗</span><span>Ingresos</span><span class="group-chevron">⌃</span></button>
@@ -27,11 +30,13 @@
         <div class="sidebar-footer"><a href="#ayuda"><span>?</span> Centro de ayuda</a><a href="#soporte"><span>◌</span> Soporte</a><small>Oftaplus 6.3.244</small></div>
       </aside>
       <div class="app-main">
-        <header class="topbar"><button class="icon-button menu-toggle" id="menu-toggle" aria-label="Abrir menú">☰</button><div class="topbar-context"><span class="eyebrow">Empresa activa</span><strong>Oftaplus</strong></div><div class="topbar-actions"><button class="top-action js-notify" type="button" data-message="Nuevo documento disponible en la siguiente fase"><span>＋</span> Nuevo documento</button><button class="icon-button" type="button" aria-label="Configuración">⚙</button><button class="icon-button" type="button" aria-label="Notificaciones">♧<sup>2</sup></button><button class="user-menu" type="button"><span class="avatar">ER</span><span class="user-copy"><strong>Eric Roca Fernandez</strong><small>Administrador</small></span><span>⌄</span></button></div></header>
+        <header class="topbar"><button class="icon-button menu-toggle" id="menu-toggle" aria-label="Abrir menú">☰</button><div class="topbar-context"><span class="eyebrow">Empresa activa</span><strong data-auth-company>Oftaplus</strong></div><div class="topbar-actions"><button class="top-action js-notify" type="button" data-message="Nuevo documento disponible en la siguiente fase"><span>＋</span> Nuevo documento</button><button class="icon-button" type="button" aria-label="Configuración">⚙</button><button class="icon-button" type="button" aria-label="Notificaciones">♧<sup>2</sup></button><div class="auth-user-wrap"><button class="user-menu" type="button" data-user-menu aria-expanded="false"><span class="avatar" data-auth-initials>OP</span><span class="user-copy"><strong data-auth-user>Usuario</strong><small data-auth-role>Cuenta</small></span><span>⌄</span></button><div class="auth-user-dropdown" data-user-dropdown hidden><span data-auth-email></span><button type="button" data-logout>Cerrar sesión</button></div></div></div></header>
         <main class="content" id="app-content" tabindex="-1"></main>
       </div>
     </div>
     <div class="scrim" id="scrim"></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="./app-loader.php?v=08015a9"></script>
+    <script src="./sales.js?v=1"></script>
+    <script src="./operations.js?v=2"></script>
   </body>
 </html>

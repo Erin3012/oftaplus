@@ -143,6 +143,17 @@ CREATE TABLE IF NOT EXISTS customer_clinical_data (
   CONSTRAINT fk_customer_clinical_customer FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS brands (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  company_id BIGINT UNSIGNED NOT NULL,
+  name VARCHAR(120) NOT NULL,
+  description VARCHAR(255) NULL,
+  active TINYINT(1) NOT NULL DEFAULT 1,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_brands_company_name (company_id, name),
+  CONSTRAINT fk_brands_company FOREIGN KEY (company_id) REFERENCES companies(id)
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS products (
   id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   company_id BIGINT UNSIGNED NOT NULL,
@@ -150,6 +161,8 @@ CREATE TABLE IF NOT EXISTS products (
   name VARCHAR(180) NOT NULL,
   description TEXT NULL,
   product_type ENUM('product','service','kit','model') NOT NULL DEFAULT 'product',
+  brand_id BIGINT UNSIGNED NULL,
+  category VARCHAR(100) NULL,
   unit VARCHAR(30) NOT NULL DEFAULT 'unidad',
   tax_rate DECIMAL(5,2) NOT NULL DEFAULT 19.00,
   cost_amount DECIMAL(14,2) NOT NULL DEFAULT 0,
@@ -159,7 +172,8 @@ CREATE TABLE IF NOT EXISTS products (
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uq_products_sku (company_id, sku),
   KEY idx_products_search (company_id, name, sku),
-  CONSTRAINT fk_products_company FOREIGN KEY (company_id) REFERENCES companies(id)
+  CONSTRAINT fk_products_company FOREIGN KEY (company_id) REFERENCES companies(id),
+  CONSTRAINT fk_products_brand FOREIGN KEY (brand_id) REFERENCES brands(id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS product_prices (
@@ -253,6 +267,7 @@ CREATE TABLE IF NOT EXISTS payments (
   notes VARCHAR(255) NULL,
   created_by BIGINT UNSIGNED NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_payments_company_paid (company_id, paid_at),
   CONSTRAINT fk_payments_company FOREIGN KEY (company_id) REFERENCES companies(id),
   CONSTRAINT fk_payments_document FOREIGN KEY (document_id) REFERENCES documents(id),
   CONSTRAINT fk_payments_method FOREIGN KEY (payment_method_id) REFERENCES payment_methods(id),
@@ -303,6 +318,7 @@ CREATE TABLE IF NOT EXISTS cash_closures (
   closing_amount DECIMAL(14,2) NULL,
   status ENUM('open','closed') NOT NULL DEFAULT 'open',
   closed_by BIGINT UNSIGNED NULL,
+  KEY idx_cash_closures_register_status (cash_register_id, status, opened_at),
   CONSTRAINT fk_cash_closures_register FOREIGN KEY (cash_register_id) REFERENCES cash_registers(id),
   CONSTRAINT fk_cash_closures_user FOREIGN KEY (closed_by) REFERENCES users(id)
 ) ENGINE=InnoDB;

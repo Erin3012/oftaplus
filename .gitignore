@@ -1,1 +1,9 @@
 .env
+.env.*
+*.env
+replica/datos/
+replica/datos/catalogo-stock.sql
+*.sql
+!database/schema.sql
+!database/migrations/*.sql
+.claude/settings.local.json
