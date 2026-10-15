@@ -31,3 +31,9 @@ Los documentos relacionados se conectan con `document_relations` para permitir p
 4. Configurar las credenciales solo en variables de entorno del backend; nunca en `app.js` ni en el repositorio.
 
 La interfaz actual seguirá usando mocks hasta conectar una API. Esta migración no modifica cPanel por sí sola.
+
+## Reportes y sugerencias
+
+Tabla `feedback_reports`, creada por `database/migrations/2026-10-15-reportes-sugerencias.sql`. Guarda fecha y hora (`created_at`), usuario, tipo (`report` o `suggestion`), texto, estado (`new`, `in_review`, `resolved`) y metadatos del adjunto.
+
+Los adjuntos (JPG, PNG, WebP o PDF, máximo 5 MB) se guardan en `../oftaplus-storage/reports` junto a la carpeta del proyecto, fuera de la raíz pública. Para cambiar la ruta, define `OFTAPLUS_UPLOAD_DIR`. El nombre del archivo es aleatorio y el tipo se detecta por contenido, no por el nombre enviado. Los cambios de estado quedan en `audit_logs`.

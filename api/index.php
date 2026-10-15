@@ -12,6 +12,8 @@ session_name('oftaplus_session');
 session_set_cookie_params(['lifetime' => 0, 'path' => '/', 'httponly' => true, 'secure' => $requestIsHttps, 'samesite' => 'Strict']);
 session_start();
 
+require_once __DIR__ . '/reports.php';
+
 function respond(array $data, int $status = 200): never
 {
     http_response_code($status);
@@ -1460,6 +1462,94 @@ try {
             if ($pdo->inTransaction()) $pdo->rollBack();
             throw $error;
         }
+    }
+
+    if ($method === 'POST' && $path === '/reports') {
+        $user = currentUser($pdo);
+        if (!$_POST && !$_FILES && str_starts_with((string) ($_SERVER['CONTENT_TYPE'] ?? ''), 'multipart/form-data')) fail('El adjunto supera el límite del servidor.', 413);
+        $type = (string) ($_POST['type'] ?? '');
+        $description = trim((string) ($_POST['description'] ?? ''));
+        $error = reportInputError($type, $description);
+        if ($error !== null) fail($error, 422);
+        $attachment = null;
+        $file = $_FILES['attachment'] ?? null;
+        if (is_array($file) && (int) $file['error'] !== UPLOAD_ERR_NO_FILE) {
+            $error = reportAttachmentError((int) $file['error'], (int) $file['size']);
+            if ($error !== null) fail($error, 422);
+            if (!is_uploaded_file((string) $file['tmp_name'])) fail('No se pudo subir el adjunto. Inténtalo otra vez.', 422);
+            $mime = reportAttachmentMime((string) $file['tmp_name']);
+            if ($mime === null) fail('El adjunto debe ser una imagen JPG, PNG o WebP, o un PDF.', 422);
+            $dir = reportStorageDir();
+            $storedName = reportStoredName($mime);
+            if (!is_dir($dir) && !mkdir($dir, 0750, true) && !is_dir($dir)) fail('No se pudo guardar el adjunto.', 500);
+            if (!move_uploaded_file((string) $file['tmp_name'], $dir . '/' . $storedName)) fail('No se pudo guardar el adjunto.', 500);
+            $attachment = ['path' => $storedName, 'name' => reportSafeFilename((string) $file['name']), 'mime' => $mime, 'size' => (int) $file['size']];
+        }
+        try {
+            $statement = $pdo->prepare('INSERT INTO feedback_reports (company_id, user_id, type, description, status, attachment_path, attachment_name, attachment_mime, attachment_size) VALUES (?, ?, ?, ?, "new", ?, ?, ?, ?)');
+            $statement->execute([(int) $user['company_id'], (int) $user['id'], $type, $description, $attachment['path'] ?? null, $attachment['name'] ?? null, $attachment['mime'] ?? null, $attachment['size'] ?? null]);
+            $reportId = (int) $pdo->lastInsertId();
+        } catch (Throwable $error) {
+            if ($attachment !== null) @unlink($dir . '/' . $attachment['path']);
+            throw $error;
+        }
+        $report = $pdo->prepare('SELECT r.id, r.type, r.description, r.status, u.display_name AS reporter_name, (r.attachment_path IS NOT NULL) AS has_attachment, r.attachment_name, r.attachment_size, r.created_at, r.status_changed_at FROM feedback_reports r LEFT JOIN users u ON u.id = r.user_id WHERE r.id = ?');
+        $report->execute([$reportId]);
+        respond(['ok' => true, 'report' => $report->fetch()], 201);
+    }
+
+    if ($method === 'GET' && $path === '/reports') {
+        $user = requireRole($pdo, ['owner', 'admin']);
+        $status = (string) ($_GET['status'] ?? '');
+        if ($status !== '' && !in_array($status, REPORT_STATUSES, true)) fail('Estado no válido.', 422);
+        $sql = 'SELECT r.id, r.type, r.description, r.status, u.display_name AS reporter_name, (r.attachment_path IS NOT NULL) AS has_attachment, r.attachment_name, r.attachment_size, r.created_at, r.status_changed_at FROM feedback_reports r LEFT JOIN users u ON u.id = r.user_id WHERE r.company_id = ?';
+        $params = [(int) $user['company_id']];
+        if ($status !== '') {
+            $sql .= ' AND r.status = ?';
+            $params[] = $status;
+        }
+        $sql .= ' ORDER BY r.created_at DESC, r.id DESC LIMIT 200';
+        $statement = $pdo->prepare($sql);
+        $statement->execute($params);
+        respond(['ok' => true, 'items' => $statement->fetchAll()]);
+    }
+
+    if ($method === 'PUT' && preg_match('#^/reports/(\d+)/status$#', $path, $match)) {
+        $user = requireRole($pdo, ['owner', 'admin']);
+        $input = body();
+        $status = (string) ($input['status'] ?? '');
+        if (!in_array($status, REPORT_STATUSES, true)) fail('Estado no válido.', 422);
+        $reportId = (int) $match[1];
+        $pdo->beginTransaction();
+        try {
+            $lock = $pdo->prepare('SELECT id, status FROM feedback_reports WHERE id = ? AND company_id = ? FOR UPDATE');
+            $lock->execute([$reportId, (int) $user['company_id']]);
+            $report = $lock->fetch();
+            if (!$report) fail('Reporte no encontrado.', 404);
+            $pdo->prepare('UPDATE feedback_reports SET status = ?, status_changed_at = NOW(), status_changed_by = ? WHERE id = ?')->execute([$status, (int) $user['id'], $reportId]);
+            $pdo->prepare('INSERT INTO audit_logs (company_id, user_id, entity_type, entity_id, action, changes_json) VALUES (?, ?, "feedback_reports", ?, "status", ?)')->execute([(int) $user['company_id'], (int) $user['id'], $reportId, json_encode(['from' => $report['status'], 'to' => $status], JSON_UNESCAPED_UNICODE)]);
+            $pdo->commit();
+        } catch (Throwable $error) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $error;
+        }
+        respond(['ok' => true, 'report' => ['id' => $reportId, 'status' => $status]]);
+    }
+
+    if ($method === 'GET' && preg_match('#^/reports/(\d+)/attachment$#', $path, $match)) {
+        $user = requireRole($pdo, ['owner', 'admin']);
+        $statement = $pdo->prepare('SELECT attachment_path, attachment_name, attachment_mime, attachment_size FROM feedback_reports WHERE id = ? AND company_id = ?');
+        $statement->execute([(int) $match[1], (int) $user['company_id']]);
+        $report = $statement->fetch();
+        $file = $report && $report['attachment_path'] ? reportStorageDir() . '/' . basename((string) $report['attachment_path']) : '';
+        if ($file === '' || !is_file($file)) fail('Adjunto no encontrado.', 404);
+        // El tipo sale de la lista permitida al guardar, nunca del nombre del archivo; se descarga como attachment para que no se ejecute en el navegador.
+        header('Content-Type: ' . $report['attachment_mime']);
+        header('Content-Disposition: attachment; filename*=UTF-8\'\'' . rawurlencode((string) $report['attachment_name']));
+        header('Content-Length: ' . filesize($file));
+        header('X-Content-Type-Options: nosniff');
+        readfile($file);
+        exit;
     }
 
     fail('Ruta no encontrada.', 404);
