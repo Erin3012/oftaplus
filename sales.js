@@ -32,7 +32,7 @@ function newBoleta() {
     <section class="ticket-lower-grid"><div class="ticket-card payments-card"><div class="ticket-section-title"><strong>Cobros</strong></div><table class="payments-table"><thead><tr><th>Fecha</th><th>Forma de pago</th><th>Importe</th></tr></thead><tbody><tr><td colspan="3">Los cobros se registran al confirmar la venta.</td></tr></tbody></table><strong class="pending-payment" data-total-pending>Pendiente: $ 0</strong></div><div class="ticket-card ticket-summary"><div><span>Base</span><strong data-total-base>$ 0</strong></div><div><span>Cuota IVA</span><strong data-total-tax>$ 0</strong></div><div class="summary-total"><span>Total</span><strong data-total-amount data-amount="0">$ 0</strong></div></div></section>
     <section class="ticket-card ticket-observations"><div class="ticket-section-title"><strong>Observaciones</strong></div><div class="observations-body"><textarea rows="3" maxlength="1000" placeholder="Escribe observaciones del documento" aria-label="Observaciones" data-sale-observations></textarea></div></section>
     <div class="ticket-tabs"><button class="is-active" type="button">Cobros</button><button type="button" data-sale-tool="documents">Doc. asociados</button><button type="button" data-sale-tool="stock">Stock</button><button type="button" data-sale-tool="approvals">Vistos buenos</button><button type="button" data-sale-tool="optical">Óptica</button></div>
-    <div class="ticket-footer"><div class="footer-tools"></div><a class="secondary-button" href="#${typeCfg.route}">Cerrar</a><button class="secondary-button" type="button" data-save-draft>Guardar borrador</button><button class="primary-button" type="button" data-open-charge>▣ Continuar al cobro</button></div>
+    <div class="ticket-footer"><div class="footer-tools"><button class="secondary-button compact-action" type="button" data-sale-price-lists>Tarifas</button></div><a class="secondary-button" href="#${typeCfg.route}">Cerrar</a><button class="secondary-button" type="button" data-save-draft>Guardar borrador</button><button class="primary-button" type="button" data-open-charge>▣ Continuar al cobro</button></div>
     ${modal('client-selector','Seleccionar cliente',`<div class="modal-search"><div class="search-box"><span>⌕</span><input placeholder="Buscar por nombre, RUT o correo" aria-label="Buscar cliente" /></div></div><div class="selector-list"><div class="product-lookup-status">Cargando clientes…</div></div>`)}</div>`;
 }
 
@@ -252,6 +252,16 @@ async function submitCharge(form) {
   }
 }
 
+function ensurePriceListsModal() {
+  if (document.querySelector('[data-modal-layer="price-lists"]')) return;
+  document.body.insertAdjacentHTML('beforeend', modal('price-lists','Tarifas de venta activas','<div class="price-lists-body" data-price-lists-body></div><div class="modal-actions"><button class="primary-button modal-close" type="button">Cerrar</button></div>'));
+}
+function openPriceListsModal() {
+  ensurePriceListsModal();
+  const rows = saleOptions.priceLists.map(item => `<tr><td>${escapeHtml(item.name)}</td><td>${Number(item.products || 0).toLocaleString('es-CL')}</td></tr>`).join('');
+  document.querySelector('[data-price-lists-body]').innerHTML = rows ? `<table class="price-lists-table"><thead><tr><th>Tarifa</th><th>Productos con precio</th></tr></thead><tbody>${rows}</tbody></table>` : '<p>No hay tarifas activas.</p>';
+  openModal('price-lists');
+}
 function ensureLaterPaymentModal() {
   if (document.querySelector('[data-modal-layer="later-payment"]')) return;
   document.body.insertAdjacentHTML('beforeend', modal('later-payment','Registrar abono','<form data-later-payment-form class="charge-form"><input type="hidden" name="documentId" /><label>Forma de pago<select name="paymentMethodId" required data-later-method></select></label><label>Importe<input type="number" name="amount" min="1" step="1" required /></label><label>Referencia<input name="reference" maxlength="120" /></label><label>Observación<input name="notes" maxlength="255" /></label><p class="form-error" data-later-error hidden></p><div class="modal-actions"><button class="secondary-button modal-close" type="button">Cancelar</button><button class="primary-button" type="submit">Registrar abono</button></div></form>'));
@@ -340,6 +350,7 @@ document.addEventListener('click', event => {
   const remove = event.target.closest('[data-remove-sale-line]');
   if (remove) { const rows = document.querySelectorAll('[data-sale-line]'); if (rows.length === 1) updateSaleLine(remove.closest('tr'), null, false); else remove.closest('tr').remove(); recalcTicket(); return; }
   const unlink = event.target.closest('[data-unlink-relation]'); if (unlink) { unlinkSaleRelation(unlink.dataset.unlinkRelation).catch(error=>notify(error.message)); return; }
+  if (event.target.closest('[data-sale-price-lists]')) { openPriceListsModal(); return; }
   const tool = event.target.closest('[data-sale-tool]'); if (tool) { if(tool.dataset.saleTool==='stock')openSaleStock();else if(tool.dataset.saleTool==='optical')openOpticalExam().catch(error=>notify(error.message));else if(tool.dataset.saleTool==='documents')openSaleRelations().catch(error=>notify(error.message));else openSaleApproval();return; }
   if (event.target.closest('[data-create-term]')) { ensurePaymentTermModal(); openModal('payment-term-form'); return; }
   if (event.target.closest('[data-create-seller]')) { ensureSellerModal(); openModal('seller-form'); return; }
