@@ -344,11 +344,18 @@ try {
 
     if ($method === 'POST' && $path === '/auth/setup') {
         assertSameOrigin();
-        if (!authSetupRequired($pdo)) fail('El acceso inicial ya fue configurado. Inicia sesión.', 409);
+        // Sin usuarios: crea la cuenta owner. Con usuarios: cualquiera con el token crea una cuenta de vendedor.
         $input = body();
         $setupToken = config()['setup_token'];
-        if ($setupToken === '') fail('El acceso inicial no está habilitado en el servidor. Define OFTAPLUS_SETUP_TOKEN.', 403);
-        if (!hash_equals($setupToken, (string) ($input['setupToken'] ?? ''))) fail('Token de instalación incorrecto.', 403);
+        if ($setupToken === '') fail('El registro no está habilitado en el servidor. Define OFTAPLUS_SETUP_TOKEN.', 403);
+        $tokenLimit = loginLimitState();
+        if ((int) $tokenLimit['blocked_until'] > time()) fail('Demasiados intentos. Espera un minuto e inténtalo otra vez.', 429);
+        if (!hash_equals($setupToken, (string) ($input['setupToken'] ?? ''))) {
+            $tokenLimit['attempts'] = (int) $tokenLimit['attempts'] + 1;
+            if ($tokenLimit['attempts'] >= 7) $tokenLimit = ['attempts' => 0, 'blocked_until' => time() + 60];
+            saveLoginLimitState($tokenLimit);
+            fail('Token de instalación incorrecto.', 403);
+        }
         $name = trim((string) ($input['name'] ?? ''));
         $email = mb_strtolower(trim((string) ($input['email'] ?? '')));
         $password = (string) ($input['password'] ?? '');
@@ -364,16 +371,19 @@ try {
         try {
             $lock = $pdo->prepare('SELECT id FROM companies WHERE id=? FOR UPDATE');
             $lock->execute([$companyId]);
-            if (!authSetupRequired($pdo)) fail('El acceso inicial ya fue configurado. Inicia sesión.', 409);
+            $isFirstUser = authSetupRequired($pdo);
+            $role = $isFirstUser ? 'owner' : 'seller';
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
             $existing = $pdo->prepare('SELECT id FROM users WHERE company_id=? AND LOWER(email)=? LIMIT 1');
             $existing->execute([$companyId, $email]);
             $existingId = $existing->fetchColumn();
-            if ($existingId) {
+            if ($isFirstUser && $existingId) {
                 $pdo->prepare('UPDATE users SET display_name=?,role="owner",active=1,password_hash=? WHERE id=?')->execute([$name, $passwordHash, (int) $existingId]);
                 $userId = (int) $existingId;
+            } elseif ($existingId) {
+                fail('Ya existe una cuenta con ese correo. Inicia sesión.', 409);
             } else {
-                $pdo->prepare('INSERT INTO users (company_id,branch_id,display_name,email,role,active,password_hash) VALUES (?,?,?,?,"owner",1,?)')->execute([$companyId, $branchId ?: null, $name, $email, $passwordHash]);
+                $pdo->prepare('INSERT INTO users (company_id,branch_id,display_name,email,role,active,password_hash) VALUES (?,?,?,?,?,1,?)')->execute([$companyId, $branchId ?: null, $name, $email, $role, $passwordHash]);
                 $userId = (int) $pdo->lastInsertId();
             }
             $pdo->commit();
@@ -384,7 +394,7 @@ try {
         session_regenerate_id(true);
         $_SESSION['user_id'] = $userId;
         $_SESSION['company_id'] = $companyId;
-        respond(['ok' => true, 'authenticated' => true, 'user' => ['id' => $userId, 'company_id' => $companyId, 'display_name' => $name, 'email' => $email, 'role' => 'owner', 'company_name' => $company['name']]], 201);
+        respond(['ok' => true, 'authenticated' => true, 'user' => ['id' => $userId, 'company_id' => $companyId, 'display_name' => $name, 'email' => $email, 'role' => $role, 'company_name' => $company['name']]], 201);
     }
 
     if ($method === 'POST' && $path === '/auth/logout') {
