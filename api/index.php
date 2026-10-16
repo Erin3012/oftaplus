@@ -406,6 +406,37 @@ try {
         respond(['ok' => true, 'database' => true]);
     }
 
+    // Indicadores del dashboard: documentos emitidos, boletas importadas (sin anuladas) y pagos registrados.
+    if ($method === 'GET' && $path === '/dashboard/summary') {
+        $company = tenant($pdo);
+        $companyId = (int) $company['id'];
+        $period = ($_GET['period'] ?? 'day') === 'month' ? 'month' : 'day';
+        $to = date('Y-m-d');
+        $from = $period === 'month' ? date('Y-m-01') : $to;
+        $salesStatement = $pdo->prepare('SELECT d.issue_date AS day, COUNT(*) AS documents, COALESCE(SUM(d.total),0) AS sales FROM documents d JOIN document_types t ON t.id = d.document_type_id WHERE d.company_id = ? AND t.direction = "sale" AND d.status IN ("issued","partially_paid","paid","delivered") AND d.issue_date BETWEEN ? AND ? GROUP BY d.issue_date');
+        $salesStatement->execute([$companyId, $from, $to]);
+        $receiptStatement = $pdo->prepare('SELECT DATE(created_at) AS day, COUNT(*) AS documents, COALESCE(SUM(total),0) AS sales, COALESCE(SUM(paid_total),0) AS collected, SUM(paid_total > 0) AS payments FROM sales_receipts WHERE company_id = ? AND DATE(created_at) BETWEEN ? AND ? AND status NOT LIKE "%ANUL%" GROUP BY DATE(created_at)');
+        $receiptStatement->execute([$companyId, $from, $to]);
+        $paymentStatement = $pdo->prepare('SELECT COUNT(*) AS payments, COALESCE(SUM(amount),0) AS collected FROM payments WHERE company_id = ? AND DATE(paid_at) BETWEEN ? AND ?');
+        $paymentStatement->execute([$companyId, $from, $to]);
+        $paid = $paymentStatement->fetch();
+
+        $summary = ['sales' => 0.0, 'documents' => 0, 'activeDays' => 0, 'collected' => (float) $paid['collected'], 'payments' => (int) $paid['payments']];
+        $receiptRows = $receiptStatement->fetchAll();
+        $daysWithSales = [];
+        foreach ([...$salesStatement->fetchAll(), ...$receiptRows] as $row) {
+            $summary['sales'] += (float) $row['sales'];
+            $summary['documents'] += (int) $row['documents'];
+            if ((int) $row['documents'] > 0) $daysWithSales[$row['day']] = true;
+        }
+        $summary['activeDays'] = count($daysWithSales);
+        foreach ($receiptRows as $row) {
+            $summary['collected'] += (float) $row['collected'];
+            $summary['payments'] += (int) $row['payments'];
+        }
+        respond(['ok' => true, 'period' => $period, 'from' => $from, 'to' => $to, 'summary' => $summary]);
+    }
+
     if ($method === 'GET' && $path === '/reports/summary') {
         $company = tenant($pdo);
         $from = dateParam('from', date('Y-m-d'));
