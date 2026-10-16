@@ -134,3 +134,24 @@ document.addEventListener('input',event=>{const input=event.target.closest('[dat
 document.addEventListener('change',event=>{if(event.target.matches('[data-payment-from],[data-payment-to],[data-payment-method-filter],[data-payment-limit]'))loadPayments(1);if(event.target.matches('[data-payment-document]')){const form=event.target.closest('[data-payment-form]'),option=event.target.selectedOptions[0],pending=Number(option?.dataset.pending||0),amount=form?.elements.amount;if(amount){amount.max=String(Math.floor(pending));amount.value=pending?String(Math.floor(pending)):''}const hint=form?.querySelector('[data-payment-pending]');if(hint)hint.textContent=pending?`Saldo pendiente: ${clp(pending)} · El cobro puede ser parcial.`:'Selecciona un documento con saldo pendiente.'}});
 document.addEventListener('input',event=>{if(event.target.matches('[data-payment-search]')){clearTimeout(paymentTimer);paymentTimer=setTimeout(()=>loadPayments(1),250)}});
 document.addEventListener('submit',async event=>{const form=event.target.closest('[data-payment-form]');if(!form)return;event.preventDefault();const error=form.querySelector('[data-payment-error]'),submit=form.querySelector('[type="submit"]'),amount=Number(form.elements.amount.value),max=Number(form.elements.amount.max);if(!form.elements.customerId.value){error.textContent='Selecciona un cliente o Venta directa.';error.hidden=false;return}if(!form.elements.documentId.value){error.textContent='Selecciona un documento pendiente.';error.hidden=false;return}if(!Number.isFinite(amount)||amount<=0||amount>max){error.textContent='El importe debe ser mayor que cero y no superar el saldo pendiente.';error.hidden=false;return}submit.disabled=true;submit.textContent='Guardando…';error.hidden=true;try{const result=await apiRequest('/payments',{method:'POST',body:JSON.stringify({documentId:Number(form.elements.documentId.value),paymentMethodId:Number(form.elements.paymentMethodId.value),amount,paidAt:form.elements.paidAt.value,reference:form.elements.reference.value.trim(),notes:form.elements.notes.value.trim()})});closeModal(form.closest('.modal-backdrop'));notify(`Cobro #${result.payment.id} registrado · ${clp(result.payment.amount)}`);loadPayments(paymentPage)}catch(failure){error.textContent=failure.message;error.hidden=false}finally{submit.disabled=false;submit.textContent='Guardar cobro'}});
+
+// Menú "Nuevo documento" de la barra superior: abre/cierra el desplegable.
+// Las opciones son enlaces a las pantallas de creación existentes; las pendientes usan .js-notify.
+(() => {
+  const menu = document.querySelector('[data-new-doc-menu]');
+  if (!menu) return;
+  const toggle = menu.querySelector('[data-new-doc-toggle]');
+  const dropdown = menu.querySelector('[data-new-doc-dropdown]');
+  const setOpen = open => {
+    dropdown.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+  };
+  toggle.addEventListener('click', () => setOpen(dropdown.hidden));
+  document.addEventListener('click', event => {
+    if (!toggle.contains(event.target)) setOpen(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setOpen(false);
+  });
+  window.addEventListener('hashchange', () => setOpen(false));
+})();

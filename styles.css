@@ -25,3 +25,17 @@
 
 .auth-switch-row{margin:14px 0 0;text-align:center;font-size:14px;opacity:.85}
 .auth-switch{background:none;border:0;padding:0;color:inherit;font:inherit;font-weight:600;text-decoration:underline;cursor:pointer}
+
+/* Menú "Nuevo documento" de la barra superior */
+.new-doc-menu{position:relative}
+.new-doc-caret{margin:0 0 0 2px!important;font-size:11px!important;opacity:.85}
+.new-doc-dropdown{position:absolute;z-index:60;top:calc(100% + 8px);right:0;width:248px;padding:8px;border:1px solid var(--line);border-radius:10px;background:var(--surface);box-shadow:0 14px 34px #12123526}
+.new-doc-dropdown[hidden]{display:none}
+.new-doc-group{margin:8px 10px 4px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.new-doc-group:first-child{margin-top:4px}
+.new-doc-dropdown a,.new-doc-dropdown button{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;margin:0;padding:9px 10px;border:0;border-radius:6px;background:none;color:var(--text);font:inherit;font-size:13px;text-align:left;text-decoration:none;cursor:pointer}
+.new-doc-dropdown a:hover,.new-doc-dropdown a:focus-visible{background:#eef5ff;color:var(--blue2);outline:none}
+.new-doc-dropdown .is-pending{color:var(--muted)}
+.new-doc-dropdown .is-pending:hover{background:var(--canvas)}
+.new-doc-soon{padding:2px 8px;border-radius:999px;background:var(--canvas);font-size:11px;font-weight:600;color:var(--muted)}
+@media(max-width:760px){.new-doc-dropdown{position:fixed;top:68px;left:16px;right:16px;width:auto}}
