@@ -13,3 +13,4 @@
 .sale-list-actions{min-width:150px;white-space:nowrap}
 @media(max-width:650px){.sale-payment-entry{grid-template-columns:1fr 1fr 30px;gap:7px}.sale-payment-entry label{font-size:11px}.sale-electronic-note{margin-right:10px;margin-left:10px}}
 @media print{.sale-electronic-note,[data-add-sale-line],.ticket-footer,.ticket-tabs{display:none!important}}
+.line-discount-cell{display:flex;gap:4px;align-items:center}.line-discount-cell .line-input{width:80px}

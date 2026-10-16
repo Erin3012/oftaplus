@@ -7,7 +7,7 @@ function localSaleDate() {
 }
 
 function saleLineMarkup(index = 1) {
-  return `<tr data-sale-line><td><button class="remove-line-button" type="button" data-remove-sale-line aria-label="Quitar artículo">×</button></td><td data-line-number>${index}</td><td><input class="line-input" placeholder="Busque por código o descripción" aria-label="Concepto" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="product-search-results" data-product-search /></td><td data-line-sku>—</td><td data-line-description>—</td><td data-line-base>$ 0</td><td data-line-pvp data-amount="0">$ 0</td><td><input class="line-input line-number" type="number" min="0.001" step="1" value="1" aria-label="Unidades" data-line-qty /></td><td data-line-gross>$ 0</td><td><input class="line-input line-number" type="number" min="0" max="100" step="0.01" value="0" aria-label="Descuento %" data-line-dto /></td><td data-line-net>$ 0</td><td data-line-tax-rate>19%</td><td data-line-discount>$ 0</td><td data-line-stock>—</td></tr>`;
+  return `<tr data-sale-line><td><button class="remove-line-button" type="button" data-remove-sale-line aria-label="Quitar artículo">×</button></td><td data-line-number>${index}</td><td><input class="line-input" placeholder="Busque por código o descripción" aria-label="Concepto" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="product-search-results" data-product-search /></td><td data-line-sku>—</td><td data-line-description>—</td><td data-line-base>$ 0</td><td data-line-pvp data-amount="0">$ 0</td><td><input class="line-input line-number" type="number" min="0.001" step="1" value="1" aria-label="Unidades" data-line-qty /></td><td data-line-gross>$ 0</td><td class="line-discount-cell"><input class="line-input line-number" type="number" min="0" max="100" step="0.01" value="0" aria-label="Descuento %" data-line-dto /><input class="line-input line-number" type="number" min="0" step="1" inputmode="numeric" placeholder="$" title="Pulse para introducir descuento en pesos" aria-label="Descuento en pesos" data-line-dto-amount /></td><td data-line-net>$ 0</td><td data-line-tax-rate>19%</td><td data-line-discount>$ 0</td><td data-line-stock>—</td></tr>`;
 }
 
 const SALE_TYPES = {
@@ -433,7 +433,21 @@ document.addEventListener('click', event => {
   }
 }, true);
 
-document.addEventListener('input', event => { if(event.target.matches('[data-line-qty],[data-line-dto]')) recalcTicket(); });
+function lineDiscountFromAmount(row) {
+  const amountInput = row.querySelector('[data-line-dto-amount]');
+  const percentInput = row.querySelector('[data-line-dto]');
+  const amount = Number(amountInput?.value || 0);
+  if (!amountInput || !percentInput || amountInput.value === '') return;
+  const price = Number(row.querySelector('[data-line-pvp]')?.dataset.amount || 0);
+  const rate = Number(row.querySelector('[data-product-search]')?.dataset.taxRate || 19);
+  const gross = computeLine(price, row.querySelector('[data-line-qty]')?.value, 0, rate).gross;
+  percentInput.value = gross > 0 ? String(Math.min(Math.round(Math.max(amount, 0) / gross * 10000) / 100, 100)) : '0';
+}
+document.addEventListener('input', event => {
+  if (event.target.matches('[data-line-dto-amount]')) { lineDiscountFromAmount(event.target.closest('tr')); recalcTicket(); return; }
+  if (event.target.matches('[data-line-dto]')) { const amountInput = event.target.closest('tr')?.querySelector('[data-line-dto-amount]'); if (amountInput) amountInput.value = ''; recalcTicket(); return; }
+  if (event.target.matches('[data-line-qty]')) { const row = event.target.closest('tr'); if (row?.querySelector('[data-line-dto-amount]')?.value) lineDiscountFromAmount(row); recalcTicket(); }
+});
 window.addEventListener('hashchange',()=>{
   const route = location.hash.slice(1);
   if(typeof docTypeMap!=='undefined' && docTypeMap[route] && typeof hydrateDocuments==='function') {
