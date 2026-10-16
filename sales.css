@@ -16,3 +16,11 @@
 @media print{.sale-electronic-note,[data-add-sale-line],.ticket-footer,.ticket-tabs{display:none!important}}
 .line-discount-cell{display:flex;gap:4px;align-items:center}.line-discount-cell .line-input{width:80px}
 .ticket-observations{margin:14px 22px 0}.observations-body{padding:12px 14px}.observations-body textarea{width:100%;box-sizing:border-box;padding:8px;border:1px solid #d7dce4;border-radius:3px;font:inherit;font-size:12px;color:#4b5565;resize:vertical}
+
+/* Buscador de clientes al estilo Gesvision: Código, Nombre, RUT, Teléfono móvil */
+.client-selector-head,.selector-row.client-selector-row{display:grid;grid-template-columns:110px minmax(0,1fr) 130px 140px;gap:12px;align-items:center}
+.client-selector-head{padding:8px 0;border-bottom:1px solid #dce2e9;color:var(--muted);font-size:10px;font-weight:700}
+.selector-row.client-selector-row{display:grid}
+.client-selector-row span{font-size:11px;color:var(--muted)}
+.client-create-prompt{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;padding:18px 0;color:var(--muted);font-size:11px}
+@media (max-width:600px){.client-selector-head span:nth-child(n+3),.selector-row.client-selector-row span:nth-child(n+3){display:none}.client-selector-head,.selector-row.client-selector-row{grid-template-columns:80px minmax(0,1fr)}}

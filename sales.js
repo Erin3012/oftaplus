@@ -52,7 +52,7 @@ async function hydrateNewBoleta(draftId = activeSaleDraftId) {
   try {
     const [customers, methods, options] = await Promise.all([apiRequest('/customers?limit=50'), apiRequest('/payment-methods'), apiRequest('/sale-options')]);
     const clientList = document.querySelector('[data-modal-layer="client-selector"] .selector-list');
-    if (clientList) clientList.innerHTML = selectorRows('client', customers.items);
+    if (clientList) clientList.innerHTML = clientSelectorRows(customers.items);
     saleOptions = options;
     const seller = document.querySelector('[data-sale-seller]');
     if (seller) seller.innerHTML = '<option value="">Sin asignar</option>' + options.sellers.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join('');
@@ -316,6 +316,67 @@ async function printSaleDocument(id) {
   win.document.write(`<!doctype html><html lang="es"><meta charset="utf-8"><title>Comprobante ${e(doc.prefix)}/${e(doc.number)}</title><style>body{font:14px Arial,sans-serif;color:#182433;max-width:760px;margin:35px auto;padding:20px}header{display:flex;justify-content:space-between;border-bottom:2px solid #162d4a;padding-bottom:14px}h1{font-size:21px;margin:0 0 8px}table{width:100%;border-collapse:collapse;margin-top:22px}th,td{text-align:left;border-bottom:1px solid #dce2e9;padding:9px}td:last-child,th:last-child{text-align:right}small{display:block;color:#66748a}.totals{text-align:right;margin-top:18px}.notice{margin-top:24px;padding:12px;background:#fff4d6;border:1px solid #ecd59c;font-size:12px}.toolbar{margin-bottom:18px}@media print{.toolbar{display:none}body{margin:0 auto}}</style><button class="toolbar" onclick="window.print()">Imprimir comprobante</button><header><div><h1>${e(doc.legal_name||doc.company_name||'Oftaplus')}</h1><div>RUT: ${e(doc.company_tax_id||'Pendiente configurar')}</div><div>${e(doc.branch||'')}</div><div>${e(doc.branch_address||'')}</div></div><div><strong>COMPROBANTE INTERNO</strong><br>Folio ${e(doc.prefix)}/${String(doc.number||'').padStart(6,'0')}<br>Fecha ${e(doc.issue_date)}</div></header><p><b>Cliente:</b> ${e(doc.customer_name||'Venta directa')} ${doc.customer_tax_id ? `· RUT ${e(doc.customer_tax_id)}` : ''}</p><table><thead><tr><th>Artículo</th><th>Cant.</th><th>Precio neto</th><th>Total</th></tr></thead><tbody>${lines}</tbody></table><div class="totals"><p>Base: ${clp(doc.subtotal)}</p><p>Descuentos: ${clp(doc.discount_total)}</p><p>IVA: ${clp(doc.tax_total)}</p><h2>Total: ${clp(doc.total)}</h2><p>Pagado: ${clp(doc.paid_total)} · Saldo: ${clp(doc.pending_total)}</p></div><h3>Abonos</h3>${payments}<div class="notice">Este documento es un comprobante interno de la aplicación. No es un Documento Tributario Electrónico (DTE) ni reemplaza una boleta electrónica autorizada por el SII.</div><script>window.onload=()=>window.print()</script></html>`);
   win.document.close();
 }
+
+// Lista de clientes al estilo de Gesvision: código, nombre, RUT y teléfono móvil.
+// Si no hay resultados, ofrece crear el cliente sin salir de la venta.
+function clientSelectorRows(items, query = '') {
+  const head = '<div class="client-selector-head" aria-hidden="true"><span>Código</span><span>Nombre</span><span>RUT</span><span>Teléfono móvil</span></div>';
+  const rows = items.map(item => `<button class="selector-row client-selector-row js-select-demo" type="button" data-select-kind="client" data-id="${escapeHtml(item.id)}" data-name="${escapeHtml(item.name)}"><span>${escapeHtml(item.code || '—')}</span><span><strong>${escapeHtml(item.name)}</strong></span><span>${escapeHtml(item.tax_id || '—')}</span><span>${escapeHtml(item.phone || '—')}</span></button>`).join('');
+  const create = items.length ? '' : `<div class="client-create-prompt"><span>¿No existe el cliente?</span><button class="primary-button" type="button" data-create-client data-client-query="${escapeHtml(query)}">+ Cree uno nuevo</button></div>`;
+  return head + rows + create;
+}
+
+function ensureClientQuickModal() {
+  if (document.querySelector('[data-modal-layer="client-quick-form"]')) return;
+  document.body.insertAdjacentHTML('beforeend', modal('client-quick-form', 'Nuevo cliente', '<form class="customer-form" data-client-quick-form><label>Nombre *<input name="name" required maxlength="180" /></label><label>RUT<input name="taxId" maxlength="40" placeholder="12.345.678-5" /></label><label>Teléfono móvil<input name="phone" maxlength="50" inputmode="tel" /></label><label>Correo<input name="email" type="email" maxlength="190" /></label><p class="form-error" data-client-quick-error hidden></p><div class="modal-actions"><button class="secondary-button modal-close" type="button">Cancelar</button><button class="primary-button" type="submit">Guardar y seleccionar</button></div></form>'));
+}
+
+function openClientQuickForm(query = '') {
+  ensureClientQuickModal();
+  const layer = document.querySelector('[data-modal-layer="client-quick-form"]');
+  const form = layer.querySelector('[data-client-quick-form]');
+  form.reset();
+  const text = query.trim();
+  // Si lo buscado parece un RUT, se completa ese campo; si no, el nombre.
+  if (/^[0-9.\-kK]+$/.test(text) && /\d/.test(text)) form.elements.taxId.value = text;
+  else form.elements.name.value = text;
+  layer.querySelector('[data-client-quick-error]').hidden = true;
+  openModal('client-quick-form');
+}
+
+document.addEventListener('click', event => {
+  const create = event.target.closest('[data-create-client]');
+  if (create) openClientQuickForm(create.dataset.clientQuery || '');
+});
+
+document.addEventListener('submit', async event => {
+  const form = event.target.closest('[data-client-quick-form]');
+  if (!form) return;
+  event.preventDefault();
+  const error = form.querySelector('[data-client-quick-error]');
+  const submit = form.querySelector('[type="submit"]');
+  error.hidden = true;
+  submit.disabled = true;
+  try {
+    const result = await apiRequest('/customers', { method: 'POST', body: JSON.stringify({
+      name: form.elements.name.value.trim(),
+      taxId: form.elements.taxId.value.trim(),
+      phone: form.elements.phone.value.trim(),
+      email: form.elements.email.value.trim(),
+    }) });
+    const customer = result.customer;
+    const input = document.querySelector('[data-sale-customer]');
+    if (input) { input.value = customer.name; input.dataset.customerId = String(customer.id); }
+    closeModal(form.closest('.modal-backdrop'));
+    closeModal(document.querySelector('[data-modal-layer="client-selector"]'));
+    notify(`Cliente creado con código ${customer.code}`);
+  } catch (failure) {
+    error.textContent = failure.message;
+    error.hidden = false;
+  } finally {
+    submit.disabled = false;
+  }
+});
 
 function ensureOpticalExamModal(){if(document.querySelector('[data-optical-exam-form]'))return;document.body.insertAdjacentHTML('beforeend',`<div class="modal-backdrop" data-modal-layer="optical-exam" hidden><section class="modal-card optical-exam-card" role="dialog" aria-modal="true"><div class="modal-head"><h2>Receta óptica del cliente</h2><button class="icon-button modal-close" type="button" aria-label="Cerrar">×</button></div><form data-optical-exam-form><div class="optical-exam-grid"><strong>Ojo</strong><strong>Esfera</strong><strong>Cilindro</strong><strong>Eje</strong><strong>Adición</strong><label>OD</label><input name="rightSphere" inputmode="decimal"><input name="rightCylinder" inputmode="decimal"><input name="rightAxis" inputmode="numeric"><input name="rightAddition" inputmode="decimal"><label>OI</label><input name="leftSphere" inputmode="decimal"><input name="leftCylinder" inputmode="decimal"><input name="leftAxis" inputmode="numeric"><input name="leftAddition" inputmode="decimal"></div><label class="optical-extra">Distancia pupilar<input name="pupillaryDistance" inputmode="decimal"></label><label class="optical-extra">Observaciones<textarea name="notes" rows="3" maxlength="1000"></textarea></label><p class="form-error" data-optical-error hidden></p><div class="modal-actions"><button class="secondary-button modal-close" type="button">Cancelar</button><button class="primary-button" type="submit">Guardar examen</button></div></form></section></div>`)}
 function openSaleStock(){const rows=[...document.querySelectorAll('.ticket-lines tbody tr[data-sale-line]')].map(row=>{const input=row.querySelector('[data-product-search]'),quantity=Number(row.querySelector('[data-line-qty]')?.value||0),stock=Number(row.dataset.stockQuantity||0);return input?.dataset.productId?`<tr><td>${escapeHtml(row.querySelector('[data-line-sku]')?.textContent||'—')}</td><td>${escapeHtml(row.querySelector('[data-line-description]')?.textContent||input.value)}</td><td>${quantity.toLocaleString('es-CL')}</td><td>${input.dataset.productType==='service'?'—':stock.toLocaleString('es-CL')}</td><td>${input.dataset.productType==='service'?'Servicio':(stock-quantity).toLocaleString('es-CL')}</td></tr>`:''}).filter(Boolean).join('');let layer=document.querySelector('[data-modal-layer="sale-stock"]');if(!layer){document.body.insertAdjacentHTML('beforeend',`<div class="modal-backdrop" data-modal-layer="sale-stock" hidden><section class="modal-card" role="dialog" aria-modal="true"><div class="modal-head"><h2>Disponibilidad de artículos</h2><button class="icon-button modal-close" type="button">×</button></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Referencia</th><th>Artículo</th><th>Venta</th><th>Disponible</th><th>Saldo</th></tr></thead><tbody data-sale-stock-rows></tbody></table></div></section></div>`);layer=document.querySelector('[data-modal-layer="sale-stock"]')}layer.querySelector('[data-sale-stock-rows]').innerHTML=rows||'<tr><td colspan="5">Agrega productos para consultar su stock disponible.</td></tr>';openModal('sale-stock')}
