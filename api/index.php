@@ -420,8 +420,12 @@ try {
         $paymentStatement = $pdo->prepare('SELECT COUNT(*) AS payments, COALESCE(SUM(amount),0) AS collected FROM payments WHERE company_id = ? AND DATE(paid_at) BETWEEN ? AND ?');
         $paymentStatement->execute([$companyId, $from, $to]);
         $paid = $paymentStatement->fetch();
+        // Cobros importados desde el listado de Gesvision (tabla imported_payments): cuentan como cobrados en el período.
+        $importedStatement = $pdo->prepare('SELECT COUNT(*) AS payments, COALESCE(SUM(amount),0) AS collected FROM imported_payments WHERE company_id = ? AND DATE(paid_at) BETWEEN ? AND ?');
+        $importedStatement->execute([$companyId, $from, $to]);
+        $imported = $importedStatement->fetch();
 
-        $summary = ['sales' => 0.0, 'documents' => 0, 'activeDays' => 0, 'collected' => (float) $paid['collected'], 'payments' => (int) $paid['payments']];
+        $summary = ['sales' => 0.0, 'documents' => 0, 'activeDays' => 0, 'collected' => (float) $paid['collected'] + (float) $imported['collected'], 'payments' => (int) $paid['payments'] + (int) $imported['payments']];
         $receiptRows = $receiptStatement->fetchAll();
         $daysWithSales = [];
         foreach ([...$salesStatement->fetchAll(), ...$receiptRows] as $row) {
