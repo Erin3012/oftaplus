@@ -1116,8 +1116,38 @@ try {
         respond(['ok' => true, 'items' => $items, 'total' => (int) $summary['total'], 'summary' => ['units' => (float) $summary['units'], 'costValue' => round((float) $summary['cost_value'], 2), 'priceValue' => round((float) $summary['price_value'], 2)]]);
     }
 
-    if ($method==='POST' && preg_match('#^/documents/(\d+)/approval-request$#',$path,$match)) {
-        $company=tenant($pdo);$documentId=(int)$match[1];$input=body();$reason=mb_substr(trim((string)($input['reason']??'')),0,500);$pdo->beginTransaction();try{$statement=$pdo->prepare('SELECT id,status,metadata_json FROM documents WHERE id=? AND company_id=? FOR UPDATE');$statement->execute([$documentId,(int)$company['id']]);$document=$statement->fetch();if(!$document)fail('Documento no encontrado.',404);if($document['status']!=='draft')fail('Solo se pueden solicitar aprobaciones para borradores.',409);$metadata=json_decode((string)($document['metadata_json']??''),true)?:[];$metadata['approval_request']=['status'=>'pending','reason'=>$reason,'requested_at'=>date(DATE_ATOM)];$pdo->prepare('UPDATE documents SET metadata_json=? WHERE id=?')->execute([json_encode($metadata,JSON_UNESCAPED_UNICODE),$documentId]);$pdo->commit();respond(['ok'=>true,'approvalRequest'=>$metadata['approval_request']]);}catch(Throwable $error){if($pdo->inTransaction())$pdo->rollBack();throw $error;}
+    if (preg_match('#^/documents/(\d+)/approvals$#', $path, $match) && $method === 'GET') {
+        $company = tenant($pdo);$documentId = (int) $match[1];
+        $check = $pdo->prepare('SELECT id FROM documents WHERE id=? AND company_id=?');$check->execute([$documentId, (int) $company['id']]);if (!$check->fetchColumn()) fail('Documento no encontrado.', 404);
+        $statement = $pdo->prepare('SELECT a.id,a.status,a.reason,a.requested_at,a.decided_at,a.decision_note,requester.display_name AS requested_by,decider.display_name AS decided_by FROM document_approvals a LEFT JOIN users requester ON requester.id=a.requested_by_user_id LEFT JOIN users decider ON decider.id=a.decided_by_user_id WHERE a.document_id=? AND a.company_id=? ORDER BY a.requested_at DESC,a.id DESC');
+        $statement->execute([$documentId, (int) $company['id']]);respond(['ok' => true, 'items' => $statement->fetchAll()]);
+    }
+    if (preg_match('#^/documents/(\d+)/approval-request$#', $path, $match) && $method === 'POST') {
+        $company = tenant($pdo);$user = requireAuthenticated($pdo);$documentId = (int) $match[1];$input = body();$reason = mb_substr(trim((string) ($input['reason'] ?? '')), 0, 500);
+        $pdo->beginTransaction();try {
+            $statement = $pdo->prepare('SELECT id,status FROM documents WHERE id=? AND company_id=? FOR UPDATE');$statement->execute([$documentId, (int) $company['id']]);$document = $statement->fetch();
+            if (!$document) fail('Documento no encontrado.', 404);
+            if ($document['status'] !== 'draft') fail('Solo se pueden solicitar aprobaciones para borradores.', 409);
+            $pending = $pdo->prepare('SELECT id FROM document_approvals WHERE document_id=? AND company_id=? AND status="pending" LIMIT 1');$pending->execute([$documentId, (int) $company['id']]);
+            if ($pending->fetchColumn()) fail('Ya hay una solicitud de visto bueno pendiente para este borrador.', 409);
+            $now = date('Y-m-d H:i:s');
+            $pdo->prepare('INSERT INTO document_approvals (company_id,document_id,status,reason,requested_by_user_id,requested_at,created_at) VALUES (?,?,"pending",?,?,?,?)')->execute([(int) $company['id'], $documentId, $reason, (int) $user['id'], $now, $now]);
+            $approvalId = (int) $pdo->lastInsertId();$pdo->commit();
+            respond(['ok' => true, 'approvalId' => $approvalId], 201);
+        } catch (Throwable $error) { if ($pdo->inTransaction()) $pdo->rollBack();throw $error; }
+    }
+    if (preg_match('#^/document-approvals/(\d+)/decision$#', $path, $match) && $method === 'POST') {
+        $company = tenant($pdo);$user = requireRole($pdo, ['owner', 'admin']);$approvalId = (int) $match[1];$input = body();
+        $decision = (string) ($input['decision'] ?? '');if (!in_array($decision, ['approve', 'reject'], true)) fail('Indica si el visto bueno se aprueba o se rechaza.', 422);
+        $note = mb_substr(trim((string) ($input['note'] ?? '')), 0, 500);
+        $pdo->beginTransaction();try {
+            $statement = $pdo->prepare('SELECT id,status FROM document_approvals WHERE id=? AND company_id=? FOR UPDATE');$statement->execute([$approvalId, (int) $company['id']]);$approval = $statement->fetch();
+            if (!$approval) fail('Solicitud no encontrada.', 404);
+            if ($approval['status'] !== 'pending') fail('La solicitud ya fue resuelta.', 409);
+            $status = $decision === 'approve' ? 'approved' : 'rejected';
+            $pdo->prepare('UPDATE document_approvals SET status=?,decided_by_user_id=?,decided_at=?,decision_note=? WHERE id=?')->execute([$status, (int) $user['id'], date('Y-m-d H:i:s'), $note, $approvalId]);
+            $pdo->commit();respond(['ok' => true, 'status' => $status]);
+        } catch (Throwable $error) { if ($pdo->inTransaction()) $pdo->rollBack();throw $error; }
     }
 
     if (preg_match('#^/documents/(\d+)/relations$#', $path, $match) && in_array($method,['GET','POST'],true)) {
