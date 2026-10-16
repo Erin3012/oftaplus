@@ -30,6 +30,7 @@ function newBoleta() {
     <p class="sale-electronic-note">La impresión disponible es un comprobante interno. La emisión electrónica SII requiere habilitar certificado digital, CAF y autorización del emisor. <button type="button" class="term-add-button" data-company-settings>Configurar datos del emisor</button></p>
     <section class="ticket-card ticket-lines-card"><div class="ticket-section-title"><strong>Detalle de artículos</strong><button class="secondary-button" type="button" data-add-sale-line>＋ Agregar artículo</button></div><div class="ticket-table-wrap"><table class="ticket-lines"><thead><tr><th>×</th><th>#</th><th>Concepto</th><th>Referencia</th><th>Descripción</th><th>Base</th><th>PVP</th><th>Unidades</th><th>Bruto</th><th>%Dto</th><th>Neto</th><th>%IVA</th><th>Total dto.</th><th>Stock</th></tr></thead><tbody>${saleLineMarkup()}</tbody></table></div></section>
     <section class="ticket-lower-grid"><div class="ticket-card payments-card"><div class="ticket-section-title"><strong>Cobros</strong></div><table class="payments-table"><thead><tr><th>Fecha</th><th>Forma de pago</th><th>Importe</th></tr></thead><tbody><tr><td colspan="3">Los cobros se registran al confirmar la venta.</td></tr></tbody></table><strong class="pending-payment" data-total-pending>Pendiente: $ 0</strong></div><div class="ticket-card ticket-summary"><div><span>Base</span><strong data-total-base>$ 0</strong></div><div><span>Cuota IVA</span><strong data-total-tax>$ 0</strong></div><div class="summary-total"><span>Total</span><strong data-total-amount data-amount="0">$ 0</strong></div></div></section>
+    <section class="ticket-card ticket-observations"><div class="ticket-section-title"><strong>Observaciones</strong></div><div class="observations-body"><textarea rows="3" maxlength="1000" placeholder="Escribe observaciones del documento" aria-label="Observaciones" data-sale-observations></textarea></div></section>
     <div class="ticket-tabs"><button class="is-active" type="button">Cobros</button><button type="button" data-sale-tool="documents">Doc. asociados</button><button type="button" data-sale-tool="stock">Stock</button><button type="button" data-sale-tool="approvals">Vistos buenos</button><button type="button" data-sale-tool="optical">Óptica</button></div>
     <div class="ticket-footer"><div class="footer-tools"></div><a class="secondary-button" href="#${typeCfg.route}">Cerrar</a><button class="secondary-button" type="button" data-save-draft>Guardar borrador</button><button class="primary-button" type="button" data-open-charge>▣ Continuar al cobro</button></div>
     ${modal('client-selector','Seleccionar cliente',`<div class="modal-search"><div class="search-box"><span>⌕</span><input placeholder="Buscar por nombre, RUT o correo" aria-label="Buscar cliente" /></div></div><div class="selector-list"><div class="product-lookup-status">Cargando clientes…</div></div>`)}</div>`;
@@ -149,7 +150,7 @@ async function loadSaleDraft(id) {
   const seller = document.querySelector('[data-sale-seller]'); if (seller) seller.value = result.document.seller_id || '';
   const term = document.querySelector('[data-sale-term]'); if (term) term.value = result.document.payment_term_id || '';
   const priceList = document.querySelector('[data-sale-price-list]'); if (priceList && result.document.metadata?.price_list) priceList.value = result.document.metadata.price_list;
-  const reason = document.querySelector('[data-sale-reason]'); if (reason) reason.value = result.document.notes || '';
+  const reason = document.querySelector('[data-sale-reason]'); if (reason) reason.value = result.document.notes || ''; const observations = document.querySelector('[data-sale-observations]'); if (observations) observations.value = result.document.observations || '';
   const tbody = document.querySelector('.ticket-lines tbody');
   if (!tbody) return;
   tbody.innerHTML = '';
@@ -175,7 +176,7 @@ async function saveSaleDraft() {
   if (!lines.length) { notify('Agrega al menos un producto antes de guardar el borrador.'); return; }
   const currentType = window._nextSaleType || 'BOL';
   const term = document.querySelector('[data-sale-term]')?.value || '';
-  const payload = { type: currentType, documentId: activeSaleDraftId, customerId: document.querySelector('[data-sale-customer]')?.dataset.customerId || null, sellerId: document.querySelector('[data-sale-seller]')?.value || null, paymentTermId: term || null, priceList: document.querySelector('[data-sale-price-list]')?.value || 'general', notes: document.querySelector('[data-sale-reason]')?.value || '', lines };
+  const payload = { type: currentType, documentId: activeSaleDraftId, customerId: document.querySelector('[data-sale-customer]')?.dataset.customerId || null, sellerId: document.querySelector('[data-sale-seller]')?.value || null, paymentTermId: term || null, priceList: document.querySelector('[data-sale-price-list]')?.value || 'general', notes: document.querySelector('[data-sale-reason]')?.value || '', observations: document.querySelector('[data-sale-observations]')?.value || '', lines };
   const result = await apiRequest('/documents/draft', { method: 'POST', body: JSON.stringify(payload) });
   activeSaleDraftId = Number(result.document.id);
   document.querySelector('[data-sale-title]').textContent = `Borrador #${activeSaleDraftId}`;
@@ -235,7 +236,7 @@ async function submitCharge(form) {
   const affectsReceivables = currentTypeAffectsReceivables(currentType);
   const totalAmount = Math.round(Number(document.querySelector('[data-total-amount]')?.dataset.amount || 0));
   if (!payments.length && termDays <= 0 && affectsReceivables && totalAmount > 0) { error.textContent = 'Ingresa un abono o selecciona una condición de pago a crédito.'; error.hidden = false; return; }
-  const payload = { type: currentType, documentId: activeSaleDraftId, customerId: document.querySelector('[data-sale-customer]')?.dataset.customerId || null, sellerId: document.querySelector('[data-sale-seller]')?.value || null, paymentTermId: term || null, priceList: document.querySelector('[data-sale-price-list]')?.value || 'general', notes: document.querySelector('[data-sale-reason]')?.value || '', lines, payments };
+  const payload = { type: currentType, documentId: activeSaleDraftId, customerId: document.querySelector('[data-sale-customer]')?.dataset.customerId || null, sellerId: document.querySelector('[data-sale-seller]')?.value || null, paymentTermId: term || null, priceList: document.querySelector('[data-sale-price-list]')?.value || 'general', notes: document.querySelector('[data-sale-reason]')?.value || '', observations: document.querySelector('[data-sale-observations]')?.value || '', lines, payments };
   button.disabled = true; button.textContent = 'Procesando…'; error.hidden = true;
   try {
     const result = await apiRequest('/documents/charge', { method: 'POST', body: JSON.stringify(payload) });
