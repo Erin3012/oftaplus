@@ -11,6 +11,7 @@
 .term-add-button{align-self:start;margin-top:5px;padding:4px 0;border:0;background:transparent;color:#2677a8;font:inherit;font-size:10px;text-align:left;cursor:pointer}
 .compact-action{min-height:29px;padding:4px 8px;margin:2px;font-size:10px;white-space:nowrap}
 .sale-list-actions{min-width:150px;white-space:nowrap}
+@media(max-width:760px){.compact-action{min-height:36px;padding:6px 10px;font-size:12px}.term-add-button{font-size:12px}.remove-line-button{width:36px;height:36px}}
 @media(max-width:650px){.sale-payment-entry{grid-template-columns:1fr 1fr 30px;gap:7px}.sale-payment-entry label{font-size:11px}.sale-electronic-note{margin-right:10px;margin-left:10px}}
 @media print{.sale-electronic-note,[data-add-sale-line],.ticket-footer,.ticket-tabs{display:none!important}}
 .line-discount-cell{display:flex;gap:4px;align-items:center}.line-discount-cell .line-input{width:80px}
