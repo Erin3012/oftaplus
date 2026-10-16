@@ -493,3 +493,21 @@ CREATE TABLE IF NOT EXISTS sales_receipts (
   KEY idx_sales_receipts_company_date (company_id, created_at),
   CONSTRAINT fk_sales_receipts_company FOREIGN KEY (company_id) REFERENCES companies(id)
 ) ENGINE=InnoDB;
+
+-- Cobros importados desde el listado de cobros emitidos de Gesvision (ver database/migrations/2026-10-16-cobros-importados.sql).
+CREATE TABLE IF NOT EXISTS imported_payments (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  company_id BIGINT UNSIGNED NOT NULL,
+  receipt_series VARCHAR(10) NOT NULL,
+  receipt_number INT UNSIGNED NOT NULL,
+  invoice_number VARCHAR(40) NULL,
+  customer_name VARCHAR(180) NOT NULL,
+  payment_type VARCHAR(60) NOT NULL,
+  amount DECIMAL(14,2) NOT NULL DEFAULT 0,
+  paid_at DATETIME NOT NULL,
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_imported_payments_number (company_id, receipt_series, receipt_number),
+  KEY idx_imported_payments_company_paid (company_id, paid_at),
+  CONSTRAINT fk_imported_payments_company FOREIGN KEY (company_id) REFERENCES companies(id)
+) ENGINE=InnoDB;
