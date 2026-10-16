@@ -72,3 +72,12 @@ php tools/importar_cobros.php ruta/Listado_de_cobros.xlsx --company-id=1        
 - Las filas sin serie (la fila de totales del Excel) se omiten. Los importes negativos (devoluciones) se aceptan.
 - En el módulo de Cobros aparecen junto a los cobros registrados, marcados como "Histórico", sin detalle ni acciones. Se filtran por fecha, cliente y tipo de pago (búsqueda), pero no por la lista de formas de pago de la empresa, porque el tipo viene de Gesvision como texto.
 - Pruebas sin base de datos: `php tests/imported_payments_test.php`.
+
+## Vistos buenos
+
+Tabla `document_approvals`, creada por `database/migrations/2026-10-16-vistos-buenos.sql`. Cada solicitud queda ligada a un borrador de venta, con estado `pending`, `approved` o `rejected`, motivo, quién la pidió y quién la resolvió con su nota y fecha. No modifica el documento, los cobros, el stock ni los clientes.
+
+- `POST /documents/{id}/approval-request`: crea una solicitud pendiente. Solo para borradores y solo si no hay otra pendiente.
+- `GET /documents/{id}/approvals`: lista las solicitudes del documento, de la más reciente a la más antigua.
+- `POST /document-approvals/{id}/decision` con `decision` = `approve` o `reject`: solo `owner` y `admin`. Una solicitud resuelta no se puede volver a resolver.
+- En el formulario de venta, el botón "Vistos buenos" muestra las solicitudes y permite solicitar una nueva.
