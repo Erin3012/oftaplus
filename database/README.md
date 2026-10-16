@@ -37,3 +37,22 @@ La interfaz actual seguirá usando mocks hasta conectar una API. Esta migración
 Tabla `feedback_reports`, creada por `database/migrations/2026-10-15-reportes-sugerencias.sql`. Guarda fecha y hora (`created_at`), usuario, tipo (`report` o `suggestion`), texto, estado (`new`, `in_review`, `resolved`) y metadatos del adjunto.
 
 Los adjuntos (JPG, PNG, WebP o PDF, máximo 5 MB) se guardan en `../oftaplus-storage/reports` junto a la carpeta del proyecto, fuera de la raíz pública. Para cambiar la ruta, define `OFTAPLUS_UPLOAD_DIR`. El nombre del archivo es aleatorio y el tipo se detecta por contenido, no por el nombre enviado. Los cambios de estado quedan en `audit_logs`.
+
+## Boletas importadas
+
+Tabla `sales_receipts`, creada por `database/migrations/2026-10-16-boletas-importadas.sql`. Guarda el listado de boletas exportado desde Gesvision: serie y número (`2026` + `2351`), sucursal, cliente, estado, total pagado, pendiente, descuento, total, fecha de creación y trabajador. Es un registro histórico de consulta: no crea documentos, clientes ni movimientos de stock.
+
+Importación desde el Excel (`.xlsx`, primera hoja):
+
+```bash
+php tools/importar_boletas.php ruta/Listado_de_boletas.xlsx --company-id=1 --dry-run   # solo valida
+php tools/importar_boletas.php ruta/Listado_de_boletas.xlsx --company-id=1            # guarda
+```
+
+- Una boleta se identifica por empresa, serie y número. Volver a importar el mismo listado actualiza los estados e importes existentes y no duplica filas.
+- Las filas sin serie (la fila de totales del Excel) se omiten.
+- Se rechaza una fila si pagado + pendiente no cuadra con el total, o si falta fecha o serie válida. Los errores muestran solo la serie, no el nombre del cliente.
+- Supuesto: la columna `Total -> Dto.` se guarda como `discount_total`. El encabezado está cortado en el Excel; confirmar con Gesvision.
+- Los archivos Excel están en `.gitignore` (`*.xlsx`). No subas el listado ni la base con datos reales al repositorio.
+
+Pruebas sin base de datos: `php tests/receipts_test.php`.

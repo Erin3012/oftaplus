@@ -1125,6 +1125,19 @@ try {
         respond(['ok' => true, 'items' => $statement->fetchAll()]);
     }
 
+    // Boletas importadas desde el listado de Gesvision (solo consulta). Mismos campos que /documents para la lista.
+    if ($method === 'GET' && $path === '/receipts') {
+        $company = tenant($pdo);
+        $from = dateParam('from', date('Y-m-d', strtotime('-6 months')));
+        $to = dateParam('to', date('Y-m-d'));
+        if ($from > $to) fail('La fecha inicial no puede ser posterior a la final.', 422);
+        $limit = min(max((int) ($_GET['limit'] ?? 50), 1), 500);
+        $statement = $pdo->prepare('SELECT series AS prefix, number, branch_name AS branch, customer_name, status, paid_total, pending_total, discount_total, total, created_at FROM sales_receipts WHERE company_id = ? AND DATE(created_at) BETWEEN ? AND ? ORDER BY created_at DESC, id DESC LIMIT ' . $limit);
+        $statement->execute([(int) $company['id'], $from, $to]);
+        $items = array_map(fn(array $row) => $row + ['id' => null, 'source' => 'receipt'], $statement->fetchAll());
+        respond(['ok' => true, 'items' => $items]);
+    }
+
     if ($method === 'POST' && preg_match('#^/documents/(\d+)/issue$#', $path, $match)) {
         $company = tenant($pdo);
         $documentId = (int) $match[1];
