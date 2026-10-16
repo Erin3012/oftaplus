@@ -456,6 +456,7 @@ CREATE TABLE IF NOT EXISTS feedback_reports (
   id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   company_id BIGINT UNSIGNED NOT NULL,
   user_id BIGINT UNSIGNED NULL,
+  contact_email VARCHAR(190) NULL,
   type ENUM('report','suggestion') NOT NULL,
   description TEXT NOT NULL,
   status ENUM('new','in_review','resolved') NOT NULL DEFAULT 'new',

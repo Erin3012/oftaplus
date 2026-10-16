@@ -1552,6 +1552,10 @@ try {
         $description = trim((string) ($_POST['description'] ?? ''));
         $error = reportInputError($type, $description);
         if ($error !== null) fail($error, 422);
+        $contactEmail = trim((string) ($_POST['contactEmail'] ?? ''));
+        $error = reportContactEmailError($contactEmail);
+        if ($error !== null) fail($error, 422);
+        $contactEmail = $contactEmail === '' ? null : $contactEmail;
         $attachment = null;
         $file = $_FILES['attachment'] ?? null;
         if (is_array($file) && (int) $file['error'] !== UPLOAD_ERR_NO_FILE) {
@@ -1567,14 +1571,14 @@ try {
             $attachment = ['path' => $storedName, 'name' => reportSafeFilename((string) $file['name']), 'mime' => $mime, 'size' => (int) $file['size']];
         }
         try {
-            $statement = $pdo->prepare('INSERT INTO feedback_reports (company_id, user_id, type, description, status, attachment_path, attachment_name, attachment_mime, attachment_size) VALUES (?, ?, ?, ?, "new", ?, ?, ?, ?)');
-            $statement->execute([(int) $user['company_id'], (int) $user['id'], $type, $description, $attachment['path'] ?? null, $attachment['name'] ?? null, $attachment['mime'] ?? null, $attachment['size'] ?? null]);
+            $statement = $pdo->prepare('INSERT INTO feedback_reports (company_id, user_id, contact_email, type, description, status, attachment_path, attachment_name, attachment_mime, attachment_size) VALUES (?, ?, ?, ?, ?, "new", ?, ?, ?, ?)');
+            $statement->execute([(int) $user['company_id'], (int) $user['id'], $contactEmail, $type, $description, $attachment['path'] ?? null, $attachment['name'] ?? null, $attachment['mime'] ?? null, $attachment['size'] ?? null]);
             $reportId = (int) $pdo->lastInsertId();
         } catch (Throwable $error) {
             if ($attachment !== null) @unlink($dir . '/' . $attachment['path']);
             throw $error;
         }
-        $report = $pdo->prepare('SELECT r.id, r.type, r.description, r.status, u.display_name AS reporter_name, (r.attachment_path IS NOT NULL) AS has_attachment, r.attachment_name, r.attachment_size, r.created_at, r.status_changed_at FROM feedback_reports r LEFT JOIN users u ON u.id = r.user_id WHERE r.id = ?');
+        $report = $pdo->prepare('SELECT r.id, r.type, r.description, r.status, r.contact_email, u.display_name AS reporter_name, (r.attachment_path IS NOT NULL) AS has_attachment, r.attachment_name, r.attachment_size, r.created_at, r.status_changed_at FROM feedback_reports r LEFT JOIN users u ON u.id = r.user_id WHERE r.id = ?');
         $report->execute([$reportId]);
         respond(['ok' => true, 'report' => $report->fetch()], 201);
     }
@@ -1583,7 +1587,7 @@ try {
         $user = requireRole($pdo, ['owner', 'admin']);
         $status = (string) ($_GET['status'] ?? '');
         if ($status !== '' && !in_array($status, REPORT_STATUSES, true)) fail('Estado no válido.', 422);
-        $sql = 'SELECT r.id, r.type, r.description, r.status, u.display_name AS reporter_name, (r.attachment_path IS NOT NULL) AS has_attachment, r.attachment_name, r.attachment_size, r.created_at, r.status_changed_at FROM feedback_reports r LEFT JOIN users u ON u.id = r.user_id WHERE r.company_id = ?';
+        $sql = 'SELECT r.id, r.type, r.description, r.status, r.contact_email, u.display_name AS reporter_name, (r.attachment_path IS NOT NULL) AS has_attachment, r.attachment_name, r.attachment_size, r.created_at, r.status_changed_at FROM feedback_reports r LEFT JOIN users u ON u.id = r.user_id WHERE r.company_id = ?';
         $params = [(int) $user['company_id']];
         if ($status !== '') {
             $sql .= ' AND r.status = ?';
