@@ -591,6 +591,30 @@ try {
         $input=body();$profile=$input['opticalExam']??null;if(!is_array($profile))fail('Los datos del examen óptico no son válidos.',422);$normalized=[];foreach(['right','left'] as $eye){$normalized[$eye]=[];foreach(['sphere','cylinder','axis','addition'] as $field){$value=trim((string)($profile[$eye][$field]??''));if(mb_strlen($value)>20)fail('El valor de la receta óptica es demasiado largo.',422);$normalized[$eye][$field]=$value;}}$normalized['pupillaryDistance']=mb_substr(trim((string)($profile['pupillaryDistance']??'')),0,20);$normalized['notes']=mb_substr(trim((string)($profile['notes']??'')),0,1000);$json=json_encode(['opticalExam'=>$normalized],JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);$existing=$pdo->prepare('SELECT id FROM customer_clinical_data WHERE customer_id=? ORDER BY id DESC LIMIT 1');$existing->execute([$customerId]);$rowId=$existing->fetchColumn();if($rowId!==false)$pdo->prepare('UPDATE customer_clinical_data SET data_json=? WHERE id=?')->execute([$json,(int)$rowId]);else $pdo->prepare('INSERT INTO customer_clinical_data (customer_id,data_json) VALUES (?,?)')->execute([$customerId,$json]);respond(['ok'=>true,'data'=>json_decode($json,true)]);
     }
 
+    // Resumen del cliente para el panel lateral de la venta: datos de contacto,
+    // documentos con saldo pendiente y últimos cobros.
+    if ($method === 'GET' && preg_match('#^/customers/(\d+)/summary$#', $path, $match)) {
+        $company = tenant($pdo);
+        $companyId = (int) $company['id'];
+        $customerId = (int) $match[1];
+
+        $customerStatement = $pdo->prepare('SELECT id, code, name, tax_id, email, phone, address FROM customers WHERE id = ? AND company_id = ? AND active = 1');
+        $customerStatement->execute([$customerId, $companyId]);
+        $customer = $customerStatement->fetch();
+        if (!$customer) fail('Cliente no encontrado.', 404);
+
+        $openStatement = $pdo->prepare('SELECT d.id, d.number, s.prefix, t.code AS document_type, d.issue_date, d.due_date, d.total, d.paid_total, (d.total - d.paid_total) AS pending_total FROM documents d JOIN document_types t ON t.id = d.document_type_id LEFT JOIN document_series s ON s.id = d.series_id WHERE d.company_id = ? AND d.customer_id = ? AND t.direction = "sale" AND d.status IN ("issued","partially_paid","paid","delivered") AND d.total > d.paid_total ORDER BY d.issue_date DESC, d.id DESC LIMIT 50');
+        $openStatement->execute([$companyId, $customerId]);
+        $openDocuments = $openStatement->fetchAll();
+        $openTotal = array_sum(array_map(static fn(array $row): float => (float) $row['pending_total'], $openDocuments));
+
+        $paymentStatement = $pdo->prepare('SELECT p.id, p.amount, p.paid_at, d.number AS document_number, s.prefix AS document_prefix, pm.name AS payment_method FROM payments p JOIN documents d ON d.id = p.document_id LEFT JOIN document_series s ON s.id = d.series_id JOIN payment_methods pm ON pm.id = p.payment_method_id WHERE p.company_id = ? AND d.customer_id = ? ORDER BY p.paid_at DESC, p.id DESC LIMIT 5');
+        $paymentStatement->execute([$companyId, $customerId]);
+        $payments = $paymentStatement->fetchAll();
+
+        respond(['ok' => true, 'customer' => $customer, 'openDocuments' => $openDocuments, 'openTotal' => round($openTotal, 2), 'payments' => $payments]);
+    }
+
     if ($method === 'GET' && $path === '/customers') {
         $company = tenant($pdo);
         $companyId = (int) $company['id'];

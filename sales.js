@@ -25,7 +25,7 @@ function newBoleta() {
   const terms = saleOptions.paymentTerms.map(item => `<option value="${escapeHtml(item.id)}" data-days="${Number(item.days)}">${escapeHtml(item.name)}</option>`).join('');
   const lists = saleOptions.priceLists.map(item => `<option value="${escapeHtml(item.code)}">${escapeHtml(item.name)}</option>`).join('');
   return `<div class="ticket-workspace"><div class="ticket-topline"><div><span class="ticket-kicker">${typeCfg.kicker}</span><strong>Oftaplus</strong></div><div class="ticket-window-actions"><button class="icon-button" type="button" data-close-sale aria-label="Cerrar venta">×</button></div></div>
-    <div class="ticket-document-head"><div class="ticket-number"><strong data-sale-title>${activeSaleDraftId ? `Borrador #${activeSaleDraftId}` : typeCfg.title}</strong><span data-sale-folio>${activeSaleDraftId ? 'Borrador guardado' : 'Sin número asignado'}</span></div><div class="ticket-date"><strong>${localSaleDate()}</strong><span><em>Fecha local</em></span></div><label class="ticket-client"><span>Cliente</span><div class="input-with-icon"><span>♟</span><input value="VENTA DIRECTA" aria-label="Cliente" data-sale-customer readonly /><button class="icon-button js-modal" type="button" data-modal="client-selector" aria-label="Seleccionar cliente">⌄</button></div></label></div>
+    <div class="ticket-document-head"><div class="ticket-number"><strong data-sale-title>${activeSaleDraftId ? `Borrador #${activeSaleDraftId}` : typeCfg.title}</strong><span data-sale-folio>${activeSaleDraftId ? 'Borrador guardado' : 'Sin número asignado'}</span></div><div class="ticket-date"><strong>${localSaleDate()}</strong><span><em>Fecha local</em></span></div><label class="ticket-client"><span>Cliente</span><div class="input-with-icon"><button class="client-summary-button" type="button" data-open-client-summary aria-label="Resumen de cliente" title="Resumen de cliente">♟</button><input value="VENTA DIRECTA" aria-label="Cliente" data-sale-customer readonly /><button class="icon-button js-modal" type="button" data-modal="client-selector" aria-label="Seleccionar cliente">⌄</button></div></label></div>
     <div class="ticket-toolbar"><label>Agente<select aria-label="Agente" data-sale-seller><option value="">Sin asignar</option>${sellers}</select><button class="term-add-button" type="button" data-create-seller>＋ Añadir agente</button></label><label>Tarifa<select aria-label="Tarifa de precios" data-sale-price-list>${lists || '<option value="general">General</option>'}</select></label><label>Motivo de venta<input aria-label="Motivo de venta" data-sale-reason placeholder="Venta en tienda" maxlength="120" /></label><label>Condición de pago<select aria-label="Condición de pago" data-sale-term><option value="">Seleccionar condición</option>${terms}</select><button class="term-add-button" type="button" data-create-term>＋ Crear condición</button></label></div>
     <p class="sale-electronic-note">La impresión disponible es un comprobante interno. La emisión electrónica SII requiere habilitar certificado digital, CAF y autorización del emisor. <button type="button" class="term-add-button" data-company-settings>Configurar datos del emisor</button></p>
     <section class="ticket-card ticket-lines-card"><div class="ticket-section-title"><strong>Detalle de artículos</strong><button class="secondary-button" type="button" data-add-sale-line>＋ Agregar artículo</button></div><div class="ticket-table-wrap"><table class="ticket-lines"><thead><tr><th>×</th><th>#</th><th>Concepto</th><th>Referencia</th><th>Descripción</th><th>Base</th><th>PVP</th><th>Unidades</th><th>Bruto</th><th>%Dto</th><th>Neto</th><th>%IVA</th><th>Total dto.</th><th>Stock</th></tr></thead><tbody>${saleLineMarkup()}</tbody></table></div></section>
@@ -325,6 +325,87 @@ function clientSelectorRows(items, query = '') {
   const create = items.length ? '' : `<div class="client-create-prompt"><span>¿No existe el cliente?</span><button class="primary-button" type="button" data-create-client data-client-query="${escapeHtml(query)}">+ Cree uno nuevo</button></div>`;
   return head + rows + create;
 }
+
+// Resumen de cliente: panel lateral de la venta con la ficha, lo pendiente de pago,
+// los últimos cobros y accesos de contacto (llamar, WhatsApp, correo).
+function whatsappNumber(phone) {
+  const digits = String(phone || '').replace(/\D/g, '');
+  return digits.length === 9 && digits.startsWith('9') ? '56' + digits : digits;
+}
+
+function ensureClientSummaryPanel() {
+  if (document.querySelector('[data-client-summary-panel]')) return;
+  document.body.insertAdjacentHTML('beforeend', '<aside class="client-summary-panel" data-client-summary-panel hidden aria-label="Resumen de cliente"><div class="client-summary-head"><h2>Resumen de cliente</h2><button class="icon-button" type="button" data-client-summary-close aria-label="Cerrar">×</button></div><div class="client-summary-body" data-client-summary-body></div></aside>');
+}
+
+function closeClientSummary() {
+  const panel = document.querySelector('[data-client-summary-panel]');
+  if (panel) panel.hidden = true;
+}
+
+function clientSummaryMarkup({ customer, openDocuments, openTotal, payments }) {
+  const phone = String(customer.phone || '').trim();
+  const email = String(customer.email || '').trim();
+  const wa = whatsappNumber(phone);
+  const contacts = `<div class="client-summary-actions">
+    ${phone ? `<a class="client-summary-link" href="tel:${escapeHtml(phone.replace(/\s/g, ''))}">Llamar</a>` : '<span class="client-summary-link is-disabled">Llamar</span>'}
+    ${wa ? `<a class="client-summary-link" href="https://wa.me/${escapeHtml(wa)}" target="_blank" rel="noopener">WhatsApp</a>` : '<span class="client-summary-link is-disabled">WhatsApp</span>'}
+    ${email ? `<a class="client-summary-link" href="mailto:${escapeHtml(email)}">Correo</a>` : '<span class="client-summary-link is-disabled">Correo</span>'}
+  </div>`;
+  const pending = openDocuments.length
+    ? openDocuments.map(doc => `<li><span><strong>${escapeHtml(doc.prefix || doc.document_type)}/${String(doc.number || '').padStart(6, '0')}</strong><small>${escapeHtml(doc.document_type)} · ${shortDate(doc.issue_date, false)}</small></span><b>${clp(doc.pending_total)}</b></li>`).join('')
+    : '<li class="client-summary-empty">No tiene documentos pendientes de pago.</li>';
+  const paid = payments.length
+    ? payments.map(payment => `<li><span><strong>${escapeHtml(payment.payment_method)}</strong><small>${escapeHtml(payment.document_prefix || 'Doc.')}/${String(payment.document_number || '').padStart(6, '0')} · ${shortDate(payment.paid_at, false)}</small></span><b>${clp(payment.amount)}</b></li>`).join('')
+    : '<li class="client-summary-empty">Sin cobros registrados.</li>';
+  return `<section class="client-summary-card">
+      <h3>${escapeHtml(customer.name)}</h3>
+      <dl>
+        <dt>Código</dt><dd>${escapeHtml(customer.code || '—')}</dd>
+        <dt>RUT</dt><dd>${escapeHtml(customer.tax_id || '—')}</dd>
+        <dt>Teléfono</dt><dd>${escapeHtml(phone || '—')}</dd>
+        <dt>Correo</dt><dd>${escapeHtml(email || '—')}</dd>
+        <dt>Dirección</dt><dd>${escapeHtml(customer.address || '—')}</dd>
+      </dl>
+      ${contacts}
+    </section>
+    <section class="client-summary-card">
+      <div class="client-summary-title"><h4>Pendiente de pago</h4><strong>${clp(openTotal)}</strong></div>
+      <ul class="client-summary-list">${pending}</ul>
+    </section>
+    <section class="client-summary-card">
+      <h4>Últimos cobros</h4>
+      <ul class="client-summary-list">${paid}</ul>
+    </section>`;
+}
+
+async function openClientSummary() {
+  ensureClientSummaryPanel();
+  const panel = document.querySelector('[data-client-summary-panel]');
+  const body = panel.querySelector('[data-client-summary-body]');
+  const customerId = document.querySelector('[data-sale-customer]')?.dataset.customerId;
+  panel.hidden = false;
+  if (!customerId) {
+    body.innerHTML = '<p class="client-summary-empty">Selecciona un cliente para ver su resumen.</p>';
+    return;
+  }
+  body.innerHTML = '<p class="client-summary-empty">Cargando resumen…</p>';
+  try {
+    const result = await apiRequest(`/customers/${encodeURIComponent(customerId)}/summary`);
+    body.innerHTML = clientSummaryMarkup(result);
+  } catch (failure) {
+    body.innerHTML = `<p class="client-summary-empty">${escapeHtml(failure.message)}</p>`;
+  }
+}
+
+document.addEventListener('click', event => {
+  if (event.target.closest('[data-open-client-summary]')) openClientSummary();
+  if (event.target.closest('[data-client-summary-close]')) closeClientSummary();
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeClientSummary();
+});
+window.addEventListener('hashchange', closeClientSummary);
 
 function ensureClientQuickModal() {
   if (document.querySelector('[data-modal-layer="client-quick-form"]')) return;
