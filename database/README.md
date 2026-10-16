@@ -81,3 +81,19 @@ Tabla `document_approvals`, creada por `database/migrations/2026-10-16-vistos-bu
 - `GET /documents/{id}/approvals`: lista las solicitudes del documento, de la más reciente a la más antigua.
 - `POST /document-approvals/{id}/decision` con `decision` = `approve` o `reject`: solo `owner` y `admin`. Una solicitud resuelta no se puede volver a resolver.
 - En el formulario de venta, el botón "Vistos buenos" muestra las solicitudes y permite solicitar una nueva.
+
+## Clientes importados
+
+Usa la tabla `customers` existente (sin migración). Importa el listado de clientes exportado desde Gesvision (`.xlsx`, primera hoja): código, razón social, NIE (se guarda en `tax_id`), teléfono móvil, email y domicilio. Los clientes nuevos entran activos y de tipo persona.
+
+```bash
+php tools/importar_clientes.php ruta/Listado_de_clientes.xlsx --company-id=1 --dry-run   # cuenta, sin guardar
+php tools/importar_clientes.php ruta/Listado_de_clientes.xlsx --company-id=1            # guarda
+```
+
+- Un cliente se identifica por empresa y código. Volver a importar el mismo listado actualiza los clientes existentes y no duplica filas.
+- Solo crea y actualiza: nunca borra clientes que no estén en el Excel.
+- Un campo vacío en el Excel no borra el dato que ya tenga el cliente en la app. El nombre sí se actualiza. Un cliente desactivado en la app sigue desactivado.
+- `--dry-run` cuenta nuevos, actualizados y sin cambios dentro de una transacción que se deshace; no deja nada escrito. Sin configuración de base solo valida el archivo.
+- Se rechaza una fila sin código o razón social, o con un código repetido en el Excel. Los errores muestran solo el número de fila, no los datos del cliente.
+- Pruebas sin base de datos: `php tests/customers_import_test.php`.
