@@ -56,3 +56,19 @@ php tools/importar_boletas.php ruta/Listado_de_boletas.xlsx --company-id=1      
 - Los archivos Excel están en `.gitignore` (`*.xlsx`). No subas el listado ni la base con datos reales al repositorio.
 
 Pruebas sin base de datos: `php tests/receipts_test.php`.
+
+## Cobros importados
+
+Tabla `imported_payments`, creada por `database/migrations/2026-10-16-cobros-importados.sql`. Guarda el listado de cobros emitidos exportado desde Gesvision: serie y número del cobro, factura, cliente, tipo de pago, importe, fecha de pago y fecha de creación. Es un registro histórico: no crea pagos, documentos, clientes ni movimientos de caja.
+
+Importación desde el Excel (`.xlsx`, primera hoja):
+
+```bash
+php tools/importar_cobros.php ruta/Listado_de_cobros.xlsx --company-id=1 --dry-run   # solo valida
+php tools/importar_cobros.php ruta/Listado_de_cobros.xlsx --company-id=1            # guarda
+```
+
+- Un cobro se identifica por empresa y serie/número (`Serie/Nº`). Volver a importar el mismo listado actualiza los importes existentes y no duplica filas.
+- Las filas sin serie (la fila de totales del Excel) se omiten. Los importes negativos (devoluciones) se aceptan.
+- En el módulo de Cobros aparecen junto a los cobros registrados, marcados como "Histórico", sin detalle ni acciones. Se filtran por fecha, cliente y tipo de pago (búsqueda), pero no por la lista de formas de pago de la empresa, porque el tipo viene de Gesvision como texto.
+- Pruebas sin base de datos: `php tests/imported_payments_test.php`.
