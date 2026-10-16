@@ -42,6 +42,13 @@ check('acepta exactamente 2000 caracteres', reportInputError('report', str_repea
 check('rechaza más de 2000 caracteres', reportInputError('report', str_repeat('a', REPORT_DESCRIPTION_MAX + 1)) !== null);
 check('cuenta caracteres multibyte y no bytes', reportInputError('report', str_repeat('ñ', REPORT_DESCRIPTION_MAX)) === null);
 
+echo "\n1b. Correo de contacto opcional\n";
+check('acepta un correo vacío', reportContactEmailError('') === null);
+check('acepta un correo válido', reportContactEmailError('eri@ejemplo.cl') === null);
+check('rechaza un correo sin arroba', reportContactEmailError('eri.ejemplo.cl') !== null);
+check('rechaza un correo con espacios', reportContactEmailError('eri @ejemplo.cl') !== null);
+check('rechaza un correo de más de 190 caracteres', reportContactEmailError(str_repeat('a', 185) . '@x.cl') !== null);
+
 echo "\n2. Límite de tamaño y errores de subida\n";
 check('acepta un adjunto de 5 MB exactos', reportAttachmentError(UPLOAD_ERR_OK, REPORT_ATTACHMENT_MAX_BYTES) === null);
 check('rechaza un adjunto de más de 5 MB', reportAttachmentError(UPLOAD_ERR_OK, REPORT_ATTACHMENT_MAX_BYTES + 1) !== null);

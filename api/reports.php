@@ -38,6 +38,14 @@ function reportAttachmentError(int $uploadError, int $size): ?string
     return null;
 }
 
+// El correo de contacto es opcional; si viene, debe ser válido.
+function reportContactEmailError(string $email): ?string
+{
+    if ($email === '') return null;
+    if (mb_strlen($email) > 190 || !filter_var($email, FILTER_VALIDATE_EMAIL)) return 'Ingresa un correo válido o déjalo vacío.';
+    return null;
+}
+
 // Usa el contenido del archivo y no el nombre ni el tipo que envía el navegador.
 function reportAttachmentMime(string $path): ?string
 {
