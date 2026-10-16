@@ -54,4 +54,5 @@
   .feedback-root{right:16px;bottom:16px}
   .feedback-card,.feedback-card.is-wide{width:calc(100vw - 32px)}
   .feedback-pill{display:none}
+  .app-main .content{padding-bottom:96px}
 }
