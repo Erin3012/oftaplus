@@ -13,6 +13,7 @@ session_set_cookie_params(['lifetime' => 0, 'path' => '/', 'httponly' => true, '
 session_start();
 
 require_once __DIR__ . '/reports.php';
+require_once __DIR__ . '/work_orders.php';
 
 function respond(array $data, int $status = 200): never
 {
@@ -1598,6 +1599,61 @@ try {
         header('X-Content-Type-Options: nosniff');
         readfile($file);
         exit;
+    }
+
+    // Órdenes de trabajo: se crean desde el formulario de venta y pueden quedar ligadas a un documento borrador.
+    if ($method === 'GET' && $path === '/work-orders') {
+        $user = requireRole($pdo, ['owner', 'admin', 'seller', 'cashier']);
+        $statement = $pdo->prepare('SELECT wo.id, wo.number, wo.status, wo.document_id, wo.customer_id, wo.created_at, (SELECT COUNT(*) FROM work_order_lines l WHERE l.work_order_id = wo.id) AS lines FROM work_orders wo WHERE wo.company_id = ? ORDER BY wo.number DESC LIMIT 50');
+        $statement->execute([(int) $user['company_id']]);
+        respond(['ok' => true, 'items' => $statement->fetchAll()]);
+    }
+
+    if ($method === 'POST' && $path === '/work-orders') {
+        $user = requireRole($pdo, ['owner', 'admin', 'seller', 'cashier']);
+        $input = body();
+        $companyId = (int) $user['company_id'];
+        $lines = is_array($input['lines'] ?? null) ? $input['lines'] : [];
+        if ($lineError = workOrderLinesError($lines)) fail($lineError, 422);
+        $documentId = !empty($input['documentId']) ? (int) $input['documentId'] : null;
+        $customerId = !empty($input['customerId']) ? (int) $input['customerId'] : null;
+        if ($documentId) {
+            $check = $pdo->prepare('SELECT id FROM documents WHERE id = ? AND company_id = ?');
+            $check->execute([$documentId, $companyId]);
+            if (!$check->fetchColumn()) fail('Documento no válido.', 422);
+        }
+        if ($customerId) {
+            $check = $pdo->prepare('SELECT id FROM customers WHERE id = ? AND company_id = ?');
+            $check->execute([$customerId, $companyId]);
+            if (!$check->fetchColumn()) fail('Cliente no válido.', 422);
+        }
+        $normalized = workOrderNormalizeLines($lines);
+        $productCheck = $pdo->prepare('SELECT id FROM products WHERE id = ? AND company_id = ?');
+        foreach ($normalized as $line) {
+            if ($line['productId'] === null) continue;
+            $productCheck->execute([$line['productId'], $companyId]);
+            if (!$productCheck->fetchColumn()) fail('Producto no válido.', 422);
+        }
+        $notes = trim((string) ($input['notes'] ?? ''));
+        $pdo->beginTransaction();
+        try {
+            // El bloqueo FOR UPDATE evita que dos OT reciban el mismo número.
+            $numberStatement = $pdo->prepare('SELECT COALESCE(MAX(number), 0) + 1 FROM work_orders WHERE company_id = ? FOR UPDATE');
+            $numberStatement->execute([$companyId]);
+            $number = (int) $numberStatement->fetchColumn();
+            $pdo->prepare('INSERT INTO work_orders (company_id, number, document_id, customer_id, notes, created_by) VALUES (?, ?, ?, ?, ?, ?)')
+                ->execute([$companyId, $number, $documentId, $customerId, $notes === '' ? null : mb_substr($notes, 0, WORK_ORDER_NOTES_MAX), (int) $user['id']]);
+            $orderId = (int) $pdo->lastInsertId();
+            $lineStatement = $pdo->prepare('INSERT INTO work_order_lines (work_order_id, line_number, product_id, concept, quantity, notes) VALUES (?, ?, ?, ?, ?, ?)');
+            foreach ($normalized as $index => $line) {
+                $lineStatement->execute([$orderId, $index + 1, $line['productId'], $line['concept'], $line['quantity'], $line['notes']]);
+            }
+            $pdo->commit();
+            respond(['ok' => true, 'workOrder' => ['id' => $orderId, 'number' => $number, 'status' => 'open', 'documentId' => $documentId]], 201);
+        } catch (Throwable $error) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $error;
+        }
     }
 
     fail('Ruta no encontrada.', 404);
