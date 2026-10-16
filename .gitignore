@@ -7,3 +7,4 @@ replica/datos/catalogo-stock.sql
 !database/schema.sql
 !database/migrations/*.sql
 .claude/settings.local.json
+*.xlsx
