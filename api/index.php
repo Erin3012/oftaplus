@@ -13,6 +13,7 @@ session_set_cookie_params(['lifetime' => 0, 'path' => '/', 'httponly' => true, '
 session_start();
 
 require_once __DIR__ . '/reports.php';
+require_once __DIR__ . '/work_orders.php';
 
 function respond(array $data, int $status = 200): never
 {
@@ -1150,8 +1151,10 @@ try {
         } catch (Throwable $error) { if ($pdo->inTransaction()) $pdo->rollBack();throw $error; }
     }
 
-    if (preg_match('#^/documents/(\d+)/relations$#', $path, $match) && in_array($method,['GET','POST'],true)) {
+    if (preg_match('#^/documents/(\d+)/relations(?:/(\d+))?$#', $path, $match) && in_array($method,['GET','POST','DELETE'],true)) {
         $company=tenant($pdo);$documentId=(int)$match[1];$check=$pdo->prepare('SELECT id FROM documents WHERE id=? AND company_id=?');$check->execute([$documentId,(int)$company['id']]);if(!$check->fetchColumn())fail('Documento no encontrado.',404);
+        if(isset($match[2])&&$method!=='DELETE')fail('Método no permitido.',405);
+        if($method==='DELETE'){$relationId=(int)($match[2]??0);if($relationId<1)fail('Indica la relación a quitar.',422);$statement=$pdo->prepare('DELETE FROM document_relations WHERE id=? AND (source_document_id=? OR target_document_id=?)');$statement->execute([$relationId,$documentId,$documentId]);if(!$statement->rowCount())fail('La relación no existe en este documento.',404);respond(['ok'=>true,'deleted'=>true]);}
         if($method==='GET'){$statement=$pdo->prepare('SELECT r.id,r.relation_type,other.id AS document_id,other.number,t.code AS document_type,s.prefix,other.status,other.issue_date,other.total,c.name AS customer_name FROM document_relations r JOIN documents other ON other.id=CASE WHEN r.source_document_id=? THEN r.target_document_id ELSE r.source_document_id END JOIN document_types t ON t.id=other.document_type_id LEFT JOIN document_series s ON s.id=other.series_id LEFT JOIN customers c ON c.id=other.customer_id WHERE r.source_document_id=? OR r.target_document_id=? ORDER BY other.issue_date DESC,other.id DESC');$statement->execute([$documentId,$documentId,$documentId]);respond(['ok'=>true,'items'=>$statement->fetchAll()]);}
         $input=body();$targetId=(int)($input['targetDocumentId']??0);if($targetId<1||$targetId===$documentId)fail('Selecciona otro documento para asociar.',422);$targetCheck=$pdo->prepare('SELECT id FROM documents WHERE id=? AND company_id=?');$targetCheck->execute([$targetId,(int)$company['id']]);if(!$targetCheck->fetchColumn())fail('El documento asociado no existe en esta empresa.',404);$pdo->prepare('INSERT IGNORE INTO document_relations (source_document_id,target_document_id,relation_type) VALUES (?,?,"associated")')->execute([$documentId,$targetId]);respond(['ok'=>true,'associated'=>true],201);
     }
@@ -1628,6 +1631,61 @@ try {
         header('X-Content-Type-Options: nosniff');
         readfile($file);
         exit;
+    }
+
+    // Órdenes de trabajo: se crean desde el formulario de venta y pueden quedar ligadas a un documento borrador.
+    if ($method === 'GET' && $path === '/work-orders') {
+        $user = requireRole($pdo, ['owner', 'admin', 'seller', 'cashier']);
+        $statement = $pdo->prepare('SELECT wo.id, wo.number, wo.status, wo.document_id, wo.customer_id, wo.created_at, (SELECT COUNT(*) FROM work_order_lines l WHERE l.work_order_id = wo.id) AS lines FROM work_orders wo WHERE wo.company_id = ? ORDER BY wo.number DESC LIMIT 50');
+        $statement->execute([(int) $user['company_id']]);
+        respond(['ok' => true, 'items' => $statement->fetchAll()]);
+    }
+
+    if ($method === 'POST' && $path === '/work-orders') {
+        $user = requireRole($pdo, ['owner', 'admin', 'seller', 'cashier']);
+        $input = body();
+        $companyId = (int) $user['company_id'];
+        $lines = is_array($input['lines'] ?? null) ? $input['lines'] : [];
+        if ($lineError = workOrderLinesError($lines)) fail($lineError, 422);
+        $documentId = !empty($input['documentId']) ? (int) $input['documentId'] : null;
+        $customerId = !empty($input['customerId']) ? (int) $input['customerId'] : null;
+        if ($documentId) {
+            $check = $pdo->prepare('SELECT id FROM documents WHERE id = ? AND company_id = ?');
+            $check->execute([$documentId, $companyId]);
+            if (!$check->fetchColumn()) fail('Documento no válido.', 422);
+        }
+        if ($customerId) {
+            $check = $pdo->prepare('SELECT id FROM customers WHERE id = ? AND company_id = ?');
+            $check->execute([$customerId, $companyId]);
+            if (!$check->fetchColumn()) fail('Cliente no válido.', 422);
+        }
+        $normalized = workOrderNormalizeLines($lines);
+        $productCheck = $pdo->prepare('SELECT id FROM products WHERE id = ? AND company_id = ?');
+        foreach ($normalized as $line) {
+            if ($line['productId'] === null) continue;
+            $productCheck->execute([$line['productId'], $companyId]);
+            if (!$productCheck->fetchColumn()) fail('Producto no válido.', 422);
+        }
+        $notes = trim((string) ($input['notes'] ?? ''));
+        $pdo->beginTransaction();
+        try {
+            // El bloqueo FOR UPDATE evita que dos OT reciban el mismo número.
+            $numberStatement = $pdo->prepare('SELECT COALESCE(MAX(number), 0) + 1 FROM work_orders WHERE company_id = ? FOR UPDATE');
+            $numberStatement->execute([$companyId]);
+            $number = (int) $numberStatement->fetchColumn();
+            $pdo->prepare('INSERT INTO work_orders (company_id, number, document_id, customer_id, notes, created_by) VALUES (?, ?, ?, ?, ?, ?)')
+                ->execute([$companyId, $number, $documentId, $customerId, $notes === '' ? null : mb_substr($notes, 0, WORK_ORDER_NOTES_MAX), (int) $user['id']]);
+            $orderId = (int) $pdo->lastInsertId();
+            $lineStatement = $pdo->prepare('INSERT INTO work_order_lines (work_order_id, line_number, product_id, concept, quantity, notes) VALUES (?, ?, ?, ?, ?, ?)');
+            foreach ($normalized as $index => $line) {
+                $lineStatement->execute([$orderId, $index + 1, $line['productId'], $line['concept'], $line['quantity'], $line['notes']]);
+            }
+            $pdo->commit();
+            respond(['ok' => true, 'workOrder' => ['id' => $orderId, 'number' => $number, 'status' => 'open', 'documentId' => $documentId]], 201);
+        } catch (Throwable $error) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $error;
+        }
     }
 
     fail('Ruta no encontrada.', 404);
