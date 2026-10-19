@@ -534,7 +534,7 @@ try {
         $users->execute([(int) $company['id']]);
         $terms = $pdo->prepare('SELECT id, name, days FROM payment_terms WHERE company_id = ? AND active = 1 ORDER BY days, name');
         $terms->execute([(int) $company['id']]);
-        $prices = $pdo->prepare('SELECT DISTINCT pp.price_list AS code, pp.price_list AS name FROM product_prices pp JOIN products p ON p.id = pp.product_id WHERE p.company_id = ? ORDER BY pp.price_list');
+        $prices = $pdo->prepare('SELECT pp.price_list AS code, pp.price_list AS name, COUNT(DISTINCT pp.product_id) AS products FROM product_prices pp JOIN products p ON p.id = pp.product_id WHERE p.company_id = ? GROUP BY pp.price_list ORDER BY pp.price_list');
         $prices->execute([(int) $company['id']]);
         $docTypes = $pdo->prepare('SELECT id, code, name, affects_stock, affects_receivables FROM document_types WHERE company_id = ? AND direction = "sale" AND active = 1 ORDER BY id');
         $docTypes->execute([(int) $company['id']]);
