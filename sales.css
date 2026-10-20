@@ -41,7 +41,7 @@
 .client-summary-card dd{margin:0;overflow-wrap:anywhere}
 .client-summary-title{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .client-summary-title strong{color:#b54236;font-size:14px}
-.client-summary-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.client-summary-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}
 .client-summary-link{display:grid;place-items:center;min-height:36px;padding:6px 8px;border:1px solid #bbd6e8;border-radius:6px;background:#fff;color:#2677a8;font-size:12px;font-weight:600;text-decoration:none}
 .client-summary-link:hover,.client-summary-link:focus-visible{background:#eef7fc}
 .client-summary-link.is-disabled{border-color:#e1e6ec;color:#a4adba;cursor:default}
