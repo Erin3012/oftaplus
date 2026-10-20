@@ -347,10 +347,11 @@ function clientSummaryMarkup({ customer, openDocuments, openTotal, payments }) {
   const phone = String(customer.phone || '').trim();
   const email = String(customer.email || '').trim();
   const wa = whatsappNumber(phone);
-  const contacts = `<div class="client-summary-actions">
-    ${phone ? `<a class="client-summary-link" href="tel:${escapeHtml(phone.replace(/\s/g, ''))}">Llamar</a>` : '<span class="client-summary-link is-disabled">Llamar</span>'}
+  const actions = `<div class="client-summary-actions">
+    <button class="client-summary-link" type="button" data-print-optical-exam="${escapeHtml(customer.id)}" data-customer-name="${escapeHtml(customer.name)}">Imprimir receta</button>
+    <button class="client-summary-link" type="button" data-view-optical-exam>Ver receta</button>
     ${wa ? `<a class="client-summary-link" href="https://wa.me/${escapeHtml(wa)}" target="_blank" rel="noopener">WhatsApp</a>` : '<span class="client-summary-link is-disabled">WhatsApp</span>'}
-    ${email ? `<a class="client-summary-link" href="mailto:${escapeHtml(email)}">Correo</a>` : '<span class="client-summary-link is-disabled">Correo</span>'}
+    ${phone ? `<a class="client-summary-link" href="tel:${escapeHtml(phone.replace(/\s/g, ''))}">Teléfono</a>` : '<span class="client-summary-link is-disabled">Teléfono</span>'}
   </div>`;
   const pending = openDocuments.length
     ? openDocuments.map(doc => `<li><span><strong>${escapeHtml(doc.prefix || doc.document_type)}/${String(doc.number || '').padStart(6, '0')}</strong><small>${escapeHtml(doc.document_type)} · ${shortDate(doc.issue_date, false)}</small></span><b>${clp(doc.pending_total)}</b></li>`).join('')
@@ -360,14 +361,14 @@ function clientSummaryMarkup({ customer, openDocuments, openTotal, payments }) {
     : '<li class="client-summary-empty">Sin cobros registrados.</li>';
   return `<section class="client-summary-card">
       <h3>${escapeHtml(customer.name)}</h3>
+      ${actions}
       <dl>
         <dt>Código</dt><dd>${escapeHtml(customer.code || '—')}</dd>
         <dt>RUT</dt><dd>${escapeHtml(customer.tax_id || '—')}</dd>
         <dt>Teléfono</dt><dd>${escapeHtml(phone || '—')}</dd>
-        <dt>Correo</dt><dd>${escapeHtml(email || '—')}</dd>
+        <dt>Correo</dt><dd>${email ? `<a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>` : '—'}</dd>
         <dt>Dirección</dt><dd>${escapeHtml(customer.address || '—')}</dd>
       </dl>
-      ${contacts}
     </section>
     <section class="client-summary-card">
       <div class="client-summary-title"><h4>Pendiente de pago</h4><strong>${clp(openTotal)}</strong></div>
@@ -398,9 +399,29 @@ async function openClientSummary() {
   }
 }
 
+// Imprime la última receta óptica guardada del cliente en una hoja aparte.
+async function printOpticalPrescription(customerId, customerName) {
+  const win = window.open('', '_blank', 'width=850,height=900');
+  try {
+    const result = await apiRequest(`/customers/${encodeURIComponent(customerId)}/clinical-data`);
+    const exam = result.data?.opticalExam || {};
+    const hasExam = ['right', 'left'].some(eye => Object.values(exam[eye] || {}).some(Boolean));
+    if (!hasExam) throw new Error('Este cliente no tiene receta óptica guardada.');
+    const eyeRow = (label, eye) => `<tr><th>${label}</th><td>${escapeHtml(eye?.sphere)}</td><td>${escapeHtml(eye?.cylinder)}</td><td>${escapeHtml(eye?.axis)}</td><td>${escapeHtml(eye?.addition)}</td></tr>`;
+    win.document.write(`<!doctype html><html lang="es"><meta charset="utf-8"><title>Receta ${escapeHtml(customerName)}</title><style>body{font:14px Arial,sans-serif;color:#182433;max-width:760px;margin:35px auto;padding:20px}h1{font-size:21px;margin:0 0 8px}table{width:100%;border-collapse:collapse;margin-top:22px}th,td{text-align:left;border-bottom:1px solid #dce2e9;padding:9px}small{display:block;color:#66748a}.notes{margin-top:24px;padding:12px;border:1px solid #dce2e9}.toolbar{margin-bottom:18px}@media print{.toolbar{display:none}}</style><button class="toolbar" onclick="window.print()">Imprimir receta</button><h1>Receta óptica</h1><p><b>Cliente:</b> ${escapeHtml(customerName)}</p><table><thead><tr><th>Ojo</th><th>Esfera</th><th>Cilindro</th><th>Eje</th><th>Adición</th></tr></thead><tbody>${eyeRow('OD', exam.right)}${eyeRow('OI', exam.left)}</tbody></table><p><b>Distancia pupilar:</b> ${escapeHtml(exam.pupillaryDistance || '—')}</p>${exam.notes ? `<div class="notes"><b>Observaciones</b><br>${escapeHtml(exam.notes)}</div>` : ''}<small>Impresa el ${new Date().toLocaleDateString('es-CL')}</small></html>`);
+    win.document.close();
+  } catch (failure) {
+    win.close();
+    throw failure;
+  }
+}
+
 document.addEventListener('click', event => {
   if (event.target.closest('[data-open-client-summary]')) openClientSummary();
   if (event.target.closest('[data-client-summary-close]')) closeClientSummary();
+  const print = event.target.closest('[data-print-optical-exam]');
+  if (print) printOpticalPrescription(print.dataset.printOpticalExam, print.dataset.customerName).catch(error => notify(error.message));
+  if (event.target.closest('[data-view-optical-exam]')) openOpticalExam().catch(error => notify(error.message));
 });
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape') closeClientSummary();
